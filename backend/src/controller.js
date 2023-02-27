@@ -235,6 +235,7 @@ const getGraph = (req, res) => {
     node [shape=${shape}, style=${style}]
     ${graph.digraph.node.map(nodeToDot).join("\n")}
     ${graph.digraph.edge.map(edgeToDot).join("\n")}
+    {rank=same; ${graph.digraph.node.map(nodeToDot).join("; ")}
   }
   `;
   // Render the graph with dot to svg
