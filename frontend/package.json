@@ -1,0 +1,41 @@
+{
+  "name": "frontend",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "prepare": "npm run smui-theme-light && npm run smui-theme-dark",
+    "smui-theme-light": "smui-theme compile build/smui.css -i src/theme",
+    "smui-theme-dark": "smui-theme compile build/smui-dark.css -i src/theme/dark",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "check": "svelte-check --tsconfig ./tsconfig.json"
+  },
+  "devDependencies": {
+    "@smui-extra/autocomplete": "^7.0.0-beta.0",
+    "@smui/chips": "^7.0.0-beta.0",
+    "@smui/circular-progress": "^7.0.0-beta.0",
+    "@smui/tab": "^7.0.0-beta.0",
+    "@smui/tab-bar": "^7.0.0-beta.0",
+    "@smui/textfield": "^7.0.0-beta.0",
+    "@sveltejs/vite-plugin-svelte": "^2.0.2",
+    "@tsconfig/svelte": "^3.0.0",
+    "sass": "^1.58.1",
+    "smui-theme": "^7.0.0-beta.0",
+    "svelte": "^3.55.1",
+    "svelte-check": "^2.10.3",
+    "tslib": "^2.5.0",
+    "typescript": "^4.9.3",
+    "vite": "^4.1.0"
+  },
+  "dependencies": {
+    "@smui/button": "^7.0.0-beta.0",
+    "@smui/icon-button": "^7.0.0-beta.0",
+    "@smui/list": "^7.0.0-beta.0",
+    "@smui/snackbar": "^7.0.0-beta.0",
+    "d3": "^7.8.2",
+    "svelte-material-ui": "^7.0.0-beta.0",
+    "uuid": "^9.0.0"
+  }
+}
