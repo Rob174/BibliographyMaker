@@ -11,4 +11,7 @@ The goal of this project is to provide an interface to ease the litterature revi
 - [ ] Add possibility to enter a source manually
 - [ ] Use stores to memorize inputs when switching between pages
 - [ ] Visualization as decomposition of graphes
+  - [x] Generate graphes from tags structure
+  - [ ] Incorporate to the visualization
 - [x] Put all papers in the same column ({rank=same; G; H; I; J})
+- [x] Switch backend in typescript

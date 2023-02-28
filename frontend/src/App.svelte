@@ -5,8 +5,8 @@
   import Visualize from "./components/visualize/Visualize.svelte";
   import SearchDoi from "./components/search_doi/SearchDoi.svelte";
   import { onMount } from "svelte";
-  const tabPossibilities = ["New paper", "Search DOI", "Visualize"];
-  let active = "New paper";
+  const tabPossibilities = ["Add paper by doi", "Add paper manually", "Search DOI", "Visualize"];
+  let active = "Add paper by doi";
   // Add listener so that ctrl + & switches tabs
   document.addEventListener("keydown", (event) => {
     if (event.ctrlKey && event.key === "&") {
@@ -61,7 +61,7 @@
       <Label>{tab}</Label>
     </Tab>
   </TabBar>
-  {#if active === "New paper"}
+  {#if active === "Add paper by doi"}
     <NewPaper />
   {:else if active === "Visualize"}
     <Visualize />
