@@ -15,6 +15,12 @@
     bind:value={text}
     {label}
     style={"width: 100%; margin-bottom: 2em;"}
+    on:keydown={(e) => {
+      // Check if ctrl+enter is pressed
+      if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+        dispatch("change", { index });
+      }
+    }}
   />
   {#if buttons.includes("format")}
     <IconButton

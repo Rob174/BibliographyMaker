@@ -33,6 +33,12 @@
           delayedFocus(i + 1);
           update++;
         }}
+        on:change={() => {
+          // Insert a new text after the current one
+          texts = [...texts.slice(0, i + 1), "", ...texts.slice(i + 1)];
+          delayedFocus(i + 1);
+          update++;
+        }}
         on:delete={() => {
           texts.splice(i, 1);
           if (texts.length === 0) {

@@ -70,6 +70,9 @@
           }
           e.detail.preventDefault();
         }
+        if(e.detail.key === "Enter") {
+          dispatch("enter", { index });
+        }
       }}
     />
     {#if buttons.includes("format")}
