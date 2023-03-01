@@ -13,6 +13,7 @@
   export let style: string = "width: 100%;";
   export let label: string = "";
   export let checker: (value: string) => boolean = () => true;
+  
   let textField;
   onMount(() => {
     if (focused) textField.focus();
@@ -40,7 +41,6 @@
       focused = true;
       // put cursor at end of text
       const i = document.querySelectorAll("." + uniqClass + " input")[0];
-      console.log(i);
       if (i instanceof HTMLInputElement)
         setTimeout(() => {
           i.setSelectionRange(value.length, value.length);
@@ -50,6 +50,8 @@
     withTrailingIcon={!disabled}
     on:keydown={(e) => {
       dispatch("keydown", e);
+      if(!checker(e))
+        e.preventDefault();
     }}
   >
     <HelperText validationMsg slot="helper">

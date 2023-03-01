@@ -8,7 +8,6 @@ export type Bibtex = {
     DOI: DOI;
     title: string[];
     author: Author[];
-    'container-title': string[];
     URL: URL;
     issued: {
         'date-parts': number[][];

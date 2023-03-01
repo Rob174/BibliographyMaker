@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc",
     "test": "npm run build && mocha --require ts-node/register test/**/*.ts --exit",
-    "dev": "npm run build&&nodemon dist/app.js",
+    "dev": "npm run build&&nodemon dist/src/server.js",
     "start": "node dist/app.js"
   },
   "author": "",

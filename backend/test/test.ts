@@ -21,7 +21,7 @@ describe("Test the backend", function () {
   // Test the postPaper function
   it("Test postPaper", (done) => {
     request(app)
-      .post("/")
+      .post("/papers/doi")
       .send({
         doi: "10.1016/j.dam.2005.05.020",
         relevant_text: "This is a test",
@@ -127,7 +127,7 @@ describe("Test the graph", function () {
   for (let i = 0; i < 2; i++) {
     it("Test postPaper", (done) => {
       request(app)
-        .post("/")
+        .post("/papers/doi")
         .send({
           doi: "10.1016/j.dam.2005.05.02" + i,
           relevant_text: "This is a test",
@@ -156,7 +156,7 @@ describe("Test the graph", function () {
   for (let i = 0; i < 7; i++) {
     it("Test postPaper", (done) => {
       request(app)
-        .post("/")
+        .post("/papers/doi")
         .send({
           doi: "10.1016/j.dam.2005.05.03" + i,
           relevant_text: "This is a test",
@@ -184,7 +184,7 @@ describe("Test the graph", function () {
   // Create the papers with tags "test" and "test4"
   it("Test postPaper", (done) => {
     request(app)
-      .post("/")
+      .post("/papers/doi")
       .send({
         doi: "10.1016/j.dam.2005.05.040",
         relevant_text: "This is a test",

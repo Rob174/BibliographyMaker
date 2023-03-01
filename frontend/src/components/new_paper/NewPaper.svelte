@@ -27,6 +27,7 @@
     exitingTags = value.tags;
     refreshPossValues = !refreshPossValues;
   });
+  
 </script>
 
 <!-- Following fields are required: doi, relevant texts (add function possible), tags (function add possible) -->
@@ -64,7 +65,9 @@
     <Button
       style="width:100%; margin-top:2em;"
       variant="raised"
-      on:click={() => save(relevantTexts, tags, analysisText)}>Save</Button
+      on:click={() => {
+        dispatch("save");
+      }}>Save</Button
     >
     <Button
       style="width:100%; margin-top:2em;"

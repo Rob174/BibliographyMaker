@@ -8,6 +8,7 @@ export const getTags = async () => {
       "Content-Type": "application/json",
     },
   })).json()
+  console.log("getTags: "+r)
   return r
 };
 export const getPapers = async () => {
