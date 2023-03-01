@@ -2,6 +2,8 @@
   import Textfield from "@smui/textfield";
   import Icon from "@smui/textfield/icon";
   import HelperText from "@smui/textfield/helper-text";
+  import { v4 as uuidv4 } from "uuid";
+  import { createEventDispatcher } from "svelte";
   import { onMount } from "svelte";
   export let focused = false;
   export let value: string | null = null;
@@ -15,9 +17,12 @@
   onMount(() => {
     if (focused) textField.focus();
   });
+  export let className = "";
+  const dispatch = createEventDispatcher();
+  let uniqClass = "a" + uuidv4().replace(/-/g, "").slice(0, 10);
 </script>
 
-<div {style}>
+<div {style} class={className+" "+uniqClass}>
   <!--
       Note: when you bind to `invalid`, but you only want to
       monitor it instead of updating it yourself, you also
@@ -31,9 +36,21 @@
     bind:value
     {label}
     {style}
-    on:focus={() => (focused = true)}
+    on:focus={() => {
+      focused = true;
+      // put cursor at end of text
+      const i = document.querySelectorAll("." + uniqClass + " input")[0];
+      console.log(i);
+      if (i instanceof HTMLInputElement)
+        setTimeout(() => {
+          i.setSelectionRange(value.length, value.length);
+        }, 100);
+    }}
     on:blur={() => (focused = false)}
     withTrailingIcon={!disabled}
+    on:keydown={(e) => {
+      dispatch("keydown", e);
+    }}
   >
     <HelperText validationMsg slot="helper">
       That's not a valid input.

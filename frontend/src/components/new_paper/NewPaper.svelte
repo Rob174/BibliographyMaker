@@ -1,64 +1,32 @@
 <script lang="ts">
-  import TextValue from "../form_elems/TextValue.svelte";
   import Button from "@smui/button";
-  import RelevantText from "./RelevantText.svelte";
-  import Tag from "./Tag.svelte";
-  import * as data from "../../data";
-  let doi: string;
-  export let relevantTexts: { text: string; focus: boolean; elem: any }[] = [
-    { text: "", focus: false, elem: null },
-  ];
+  import { clean } from "../../api/delete";
+  import { createEventDispatcher } from "svelte";
+  import MultilineFormatDel from "./InputLists/Inputs/MultilineButtons.svelte";
+  import MultilineFormatDelList from "./InputLists/MultilineFormatDelList.svelte";
+  import AutocompleteButList from "./InputLists/AutocompleteButList.svelte";
+  import {papersTags} from "../../data";
+
+  const dispatch = createEventDispatcher();
+
+  export let relevantTexts: string[] = [""];
   export let tags: string[] = [""];
-  let keyRelevantTexts = 0;
-  let keyTags = 0;
+  export let analysisText: string = "";
+  export let save = (relevantTexts, tags, analysis) => {};
+  let refreshPossValues = true;
   let errorMsg = "";
-  let analysisText = { text: "", focus: false, elem: null };
-  function save() {
-    const jsonData = {
-      doi: doi,
-      relevant_text: relevantTexts.map((x) => x.text),
-      tags: tags.filter((x) => x !== ""),
-      analysis: analysisText.text
-    };
-    console.log("json data: ", jsonData);
-    // Check if doi is not empty
-    const check = data.checkField(jsonData);
-    if (check.error === false) {
-      // Make a cross-origin request to backend
-      fetch(`http://localhost:${data.PORT}/`, {
-        method: "POST",
-        mode: "cors",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(jsonData)
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          console.log("Success:", data);
-          errorMsg = data.result;
-          setTimeout(() => {
-            errorMsg = "";
-          }, 5000);
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-          // If error show error message in frontend during 5 seconds
-          errorMsg = "Error: " + error;
-          setTimeout(() => {
-            errorMsg = "";
-          }, 5000);
-        });
-    } else {
-      // If error show error message in frontend during 5 seconds
-      errorMsg = "Error: " + check.message;
-      setTimeout(() => {
-        errorMsg = "";
-      }, 5000);
-    }
-    const buttons = document.querySelectorAll("button");
-    buttons[buttons.length - 1].focus();
+  export function setErrorMsg(msg: string) {
+    errorMsg = msg;
+    setTimeout(() => {
+      errorMsg = "";
+    }, 2000);
+    return;
   }
+  let exitingTags: string[] = [];
+  papersTags.subscribe((value) => {
+    exitingTags = value.tags;
+    refreshPossValues = !refreshPossValues;
+  });
 </script>
 
 <!-- Following fields are required: doi, relevant texts (add function possible), tags (function add possible) -->
@@ -67,127 +35,61 @@
   <Button
     style="width:100%; margin-bottom:2em;"
     variant="raised"
-    on:click={() => {
-      // Make a delete request to backend
-      fetch(`http://localhost:${data.PORT}/clean/`, {
-        method: "DELETE",
-        mode: "cors",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          console.log("Success:", data);
-          errorMsg = "Deleted all papers";
-          setTimeout(() => {
-            errorMsg = "";
-          }, 5000);
-          // Clear fields
-          // doi = "";
-          // relevantTexts = [{ text: "", focus: false, elem: null }];
-          // tags = [""];
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-          // If error show error message in frontend during 5 seconds
-          errorMsg = "Error: " + error;
-          setTimeout(() => {
-            errorMsg = "";
-          }, 5000);
-        });
-    }}>Clear all papers</Button
+    on:click={() => clean(setErrorMsg)}>Clear all papers</Button
   >
   <div class="form">
-    <TextValue
-      label="DOI"
-      style="width: 100%;"
-      bind:value={doi}
-      focused={true}
+    <slot />
+    <MultilineFormatDelList
+      label="Relevant Texts"
+      bind:texts={relevantTexts}
+      formatAction={(text) => text.replace("\n", " ")}
     />
-    {#key keyRelevantTexts}
-      {#each relevantTexts as { text, focus, elem }, i (i)}
-        <!-- Bind text to relevantTexts[i] in RelevantText.svelte -->
-        <RelevantText
-          bind:text={relevantTexts[i].text}
-          index={i}
-          on:remove={(i) => {
-            console.log("remove relevant text ", i.detail.index);
-            relevantTexts.splice(i.detail.index, 1);
-            keyRelevantTexts += 1;
-          }}
-          className="relevant-text"
-        />
-      {/each}
-    {/key}
+    <AutocompleteButList
+      label="Tags"
+      bind:texts={tags}
+      possibleValues={exitingTags}
+      formatAction={(text) => text.replace(" ", "")}
+    />
+    <!-- Analysis Text -->
+    <div class="analysis">
+    <MultilineFormatDel
+      label="Analysis Text"
+      bind:text={analysisText}
+      buttons={[]}
+      on:format={() => {
+        analysisText = analysisText.replace("\n", " ");
+      }}
+    />
+    </div>
     <Button
-      style="width:100%"
+      style="width:100%; margin-top:2em;"
+      variant="raised"
+      on:click={() => save(relevantTexts, tags, analysisText)}>Save</Button
+    >
+    <Button
+      style="width:100%; margin-top:2em;"
+      variant="raised"
+      on:keydown={(e) => {
+        if (e.key === "Tab") {
+          e.preventDefault();
+          document.querySelectorAll("input")[0].focus();
+        }
+      }}
       on:click={() => {
-        console.log("add relevant text ", relevantTexts);
-        keyRelevantTexts += 1;
-        relevantTexts.push({ text: "", focus: true, elem: null });
-        // Focus on last element after 100ms
+        dispatch("clearFields");
+        relevantTexts = [""];
+        tags = [""];
+        analysisText = "";
+        // Focus first input field
         setTimeout(() => {
-          document
-            .querySelectorAll("textarea")
-            [relevantTexts.length - 1].focus();
+          document.querySelectorAll("input")[0].focus();
         }, 100);
-      }}
-      variant="raised">Add Relevant Text</Button
-    >
-    {#key keyTags}
-      {#each tags as tag, i (i)}
-        <Tag
-          bind:text={tags[i]}
-          index={i}
-          on:remove={(v) => {
-            tags.splice(i, 1);
-            keyTags += 1;
-          }}
-        />
-      {/each}
-    {/key}
-    <Button
-      style="width:100%"
-      on:click={() => {
-        console.log("add tag ", tags);
-        keyTags += 1;
-        tags.push("");
-        // Focus on last element after 100ms
-        setTimeout(() => {
-          console.log("selecting input ", tags.length, document.querySelectorAll("input"));
-          const inputs = document.querySelectorAll("input");
-          document.querySelectorAll("input")[inputs.length-2].focus();
-        }, 200);
-      }}
-      variant="raised">Add Tag</Button
-    >
-    <RelevantText 
-    bind:text={analysisText.text}
-    index={-1}
-    className="relevant-text"
-    label="Comment?"
-    style="margin-top:2em;"
-    bind:this={analysisText.elem}/>
-    <Button style="width:100%; margin-top:2em;" variant="raised" on:click={save}
-      >Save</Button
-    >
-    <Button style="width:100%; margin-top:2em;" variant="raised" on:click={()=> {
-      doi = "";
-      relevantTexts = [{ text: "", focus: false, elem: null }];
-      tags = [""];
-      analysisText.text = "";
-      // Focus doi field input
-      setTimeout(() => {
-        document.querySelectorAll("input")[0].focus();
-      }, 100);
-    }}
-      >Clear</Button
+      }}>Clear</Button
     >
     {#if errorMsg !== ""}
       <p style="color:red;">{errorMsg}</p>
     {/if}
-    <span style="margin-top: 10vh"></span>
+    <span style="margin-top: 10vh" />
   </div>
 </div>
 
@@ -209,5 +111,13 @@
   }
   .form {
     width: 100%;
+  }
+  
+  .analysis {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    color: white;
   }
 </style>

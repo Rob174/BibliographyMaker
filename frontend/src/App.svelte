@@ -1,11 +1,20 @@
 <script lang="ts">
   import TabBar from "@smui/tab-bar";
   import Tab, { Label } from "@smui/tab";
-  import NewPaper from "./components/new_paper/NewPaper.svelte";
+  import NewPaperWithDOI from "./components/new_paper/NewPaperWithDOI.svelte";
+  import NewPaperWithoutDOI from "./components/new_paper/NewPaperWithoutDOI.svelte";
   import Visualize from "./components/visualize/Visualize.svelte";
   import SearchDoi from "./components/search_doi/SearchDoi.svelte";
+  import Headers from "./Headers.svelte";
   import { onMount } from "svelte";
-  const tabPossibilities = ["Add paper by doi", "Add paper manually", "Search DOI", "Visualize"];
+  import { getTags, getPapers } from "./api/get";
+  import { papersTags } from "./data";
+  const tabPossibilities = [
+    "Add paper by doi",
+    "Add paper manually",
+    "Search DOI",
+    "Visualize",
+  ];
   let active = "Add paper by doi";
   // Add listener so that ctrl + & switches tabs
   document.addEventListener("keydown", (event) => {
@@ -22,39 +31,26 @@
       }
     }
   });
+  // Everey 5s use get/getTags to update the tags
+  const updateFct = async () => {
+    // Get the tags
+    const tags = await getTags();
+    // Get the papers
+    const papers = await getPapers();
+    // Update the tags
+    papersTags.update((papersTags) => {
+      papersTags.tags = tags;
+      papersTags.papers = papers;
+      return papersTags;
+    });
+  };
+  onMount(async () => {
+    await updateFct();
+    setInterval(updateFct, 5000);
+  });
 </script>
 
-<head>
-  <link
-    rel="stylesheet"
-    href="../build/smui.css"
-    media="(prefers-color-scheme: light)"
-  />
-  <link
-    rel="stylesheet"
-    href="../build/smui-dark.css"
-    media="screen and (prefers-color-scheme: dark)"
-  />
-  <!-- Material Icons -->
-  <link
-    rel="stylesheet"
-    href="https://fonts.googleapis.com/icon?family=Material+Icons"
-  />
-  <link
-    rel="stylesheet"
-    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
-  />
-  <!-- Roboto -->
-  <link
-    rel="stylesheet"
-    href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,600,700"
-  />
-  <!-- Roboto Mono -->
-  <link
-    rel="stylesheet"
-    href="https://fonts.googleapis.com/css?family=Roboto+Mono"
-  />
-</head>
+<Headers />
 <main>
   <TabBar tabs={tabPossibilities} let:tab bind:active>
     <Tab {tab}>
@@ -62,7 +58,9 @@
     </Tab>
   </TabBar>
   {#if active === "Add paper by doi"}
-    <NewPaper />
+    <NewPaperWithDOI />
+  {:else if active === "Add paper manually"}
+    <NewPaperWithoutDOI />
   {:else if active === "Visualize"}
     <Visualize />
   {:else if active === "Search DOI"}

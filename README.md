@@ -15,3 +15,4 @@ The goal of this project is to provide an interface to ease the litterature revi
   - [ ] Incorporate to the visualization
 - [x] Put all papers in the same column ({rank=same; G; H; I; J})
 - [x] Switch backend in typescript
+- [ ] Correct bug graph visualization

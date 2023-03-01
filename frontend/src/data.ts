@@ -1,9 +1,12 @@
+import { writable, type Writable } from "svelte/store";
+
 export type Paper = {
   doi: string;
   relevantTexts: string[];
   tags: string[];
 };
 export const PORT = 3000;
+export const API_URL = `http://localhost:${PORT}`;
 export const checkField = (fields: any) => {
   const regexTag = /^[a-zA-Z0-9_-]+$/;
   const { doi, relevant_text, tags } = fields;
@@ -26,3 +29,4 @@ export const checkField = (fields: any) => {
   }
   return {error:false, message:""};
 };
+export const papersTags: Writable<{papers: Paper[]; tags: string[]}> = writable({papers: [], tags: []});
