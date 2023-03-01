@@ -145,19 +145,19 @@
     align-items: center;
     border-top: 4px solid var(--color-graph);
   }
-  :global(.graph svg .neutral :is(line, circle, path, rect, polyline)) {
+  :global(.graph svg .neutral :is(line, circle, path, rect, polyline, ellipse)) {
     stroke: var(--color-graph);
     stroke-width: 1px;
     fill: transparent;
   }
-  :global(.node polygon) {
+  :global(.node polygon, ellipse) {
     stroke: var(--color-graph);
     fill: black;
   }
   :global(.graph svg text) {
     fill: var(--color-graph);
   }
-  :global(svg .edge polygon) {
+  :global(svg .edge polygon, ellipse) {
     fill: var(--color-graph);
     stroke-width: 1px;
   }
@@ -170,16 +170,16 @@
     font-size: 3em;
     color: var(--accent2);
   }
-  :global(.hover > :is(polygon, polyline, path)) {
+  :global(.hover > :is(polygon, polyline, path, ellipse)) {
     stroke: var(--accent2);
     stroke-width: 5px;
     fill: transparent;
   }
-  :global(.edge.hover > :is(polygon)) {
+  :global(.edge.hover > :is(polygon, ellipse)) {
     stroke: var(--accent2);
     fill: var(--accent2);
   }
-  :global(.edge.neutral > :is(polygon)) {
+  :global(.edge.neutral > :is(polygon, ellipse)) {
     stroke: var(--color-graph);
     stroke-width: 1px;
   }
@@ -190,7 +190,7 @@
   :global(.node.neutral > text) {
     fill: var(--color-graph);
   }
-  :global(.node.done.neutral > :is(polygon, polyline, path)) {
+  :global(.node.done.neutral > :is(polygon, ellipse, polyline, path)) {
     stroke: var(--accent3);
   }
   :global(.node.done.neutral > :is(text)) {

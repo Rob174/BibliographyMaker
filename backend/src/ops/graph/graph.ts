@@ -25,14 +25,16 @@ export const buildJSONGraph = (
   structure?: TagStructure
 ) => {
   // Build the JSON
-  let edges, tagsEdges, papersEdges, mapPapers,nodes,papersNodes, tagsNodes,rootNode;
+  let edges,
+    tagsEdges,
+    papersEdges,
+    mapPapers,
+    nodes,
+    papersNodes,
+    tagsNodes,
+    rootNode;
   if (structure === undefined) {
-    const res = generateNodes(
-      papers,
-      tags,
-      uuidv4,
-      nodeGenerator
-    );
+    const res = generateNodes(papers, tags, uuidv4, nodeGenerator);
     nodes = res.nodes;
     papersNodes = res.papersNodes;
     tagsNodes = res.tagsNodes;
@@ -119,39 +121,42 @@ export const getJSONGraph = (req, res, send = true) => {
 };
 
 export const nodeToDot = (node) =>
-`"${node.id}" [label="${node.label}" id="${node.id}"]`;
+  `"${node.id}" [label="${node.label}" id="${node.id}"]`;
+export const firstNodeToDot = (node) =>
+  `"${node.id}" [label="" id="${node.id}" shape="circle"]`;
 export const edgeToDot = (edge) =>
-`"${edge.from}":w -> "${edge.to}" [dir="forward" tailport="e" headport="w" id="${edge.id}"]`;
-export function makeDot(graph,papersNodes, shape = "record", splineType = "polyline", style = ""){
+  `"${edge.from}":w -> "${edge.to}" [dir="forward" tailport="e" headport="w" id="${edge.id}"]`;
+export function makeDot(
+  graph,
+  papersNodes,
+  shape = "record",
+  splineType = "polyline",
+  style = ""
+) {
   const dotGraph = `
     digraph G {
       rankdir=LR;
       bgcolor=transparent;
       graph [splines=${splineType ? splineType : "polyline"}] 
       node [shape=${shape}, style=${style ? style : "filled"}]
-      ${graph.nodes.map(nodeToDot).join("\n")}
+      ${graph.nodes
+        .map((e, i) => {
+          return i === 0 ? firstNodeToDot(e) : nodeToDot(e);
+        })
+        .join("\n")}
       ${graph.edges.map(edgeToDot).join("\n")}
-      {rank=same; ${papersNodes.map(x=>'"'+x.id+'"').join(" ")};}
+      {rank=same; ${papersNodes.map((x) => '"' + x.id + '"').join(" ")};}
     }
     `;
+  // console.log(dotGraph);
   return dotGraph;
 }
 export const getGraph = (req, res) => {
-  const {
-    shape = "record",
-    splineType = "polyline",
-    style = ""
-  } = req.body;
-  const {
-    graph,
-    paperNode,
-    tagsNodes,
-    papersNodes,
-    tagsEdges,
-    papersEdges,
-  } = getJSONGraph(req, res, false);
-  const dotGraph = makeDot(graph, papersNodes,shape,splineType,style);
-  
+  const { shape = "record", splineType = "polyline", style = "" } = req.body;
+  const { graph, paperNode, tagsNodes, papersNodes, tagsEdges, papersEdges } =
+    getJSONGraph(req, res, false);
+  const dotGraph = makeDot(graph, papersNodes, shape, splineType, style);
+
   // Render the graph with dot to svg
   const dotProcess = spawn("dot", ["-Tsvg"]);
   dotProcess.stdin.write(dotGraph);
