@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import { getGraph, getJSONGraphRequest } from "./ops/graph/graph";
+import { getGraph, getGraphDOT, getGraphSVG, getJSONGraphRequest } from "./ops/graph/graph";
 import { postPaperWithDOI, postPaperWithoutDOI } from "./ops/post";
 import { getPapers, getPapersWithTitle, getTags } from "./ops/get";
 import { clean } from "./ops/graph/utils";
@@ -25,6 +25,8 @@ app.post("/papers/doi", postPaperWithDOI);
 app.post("/papers/withoutDoi", postPaperWithoutDOI);
 app.get("/papers", getPapers);
 app.get("/papersWith/:title", getPapersWithTitle);
+app.post("/graph/svg", getGraphSVG)
+app.post("/graph/dot", getGraphDOT)
 app.get("/tags", getTags);
 app.delete("/clean", clean);
 app.post("/graph", getGraph);

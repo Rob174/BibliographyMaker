@@ -178,3 +178,35 @@ export const getGraph = (req, res) => {
     });
   });
 };
+export const getGraphSVG = (req, res) => {
+  const { shape = "record", splineType = "polyline", style = "" } = req.body;
+  const { graph, paperNode, tagsNodes, papersNodes, tagsEdges, papersEdges } =
+    getJSONGraph(req, res, false);
+  const dotGraph = makeDot(graph, papersNodes, shape, splineType, style);
+
+  // Render the graph with dot to svg
+  const dotProcess = spawn("dot", ["-Tsvg"]);
+  dotProcess.stdin.write(dotGraph);
+  dotProcess.stdin.end();
+  let svg = "";
+  dotProcess.stdout.on("data", (data) => {
+    svg += data;
+  });
+  dotProcess.stdout.on("end", () => {
+    svg = cleanSVGGenerated(svg);
+    // Write the svg file
+    fs.writeFileSync("graph.svg", svg);
+    // Send the svg file
+    res.sendFile("graph.svg", { root: "." });
+  });
+};
+export const getGraphDOT = (req, res) => {
+  const { shape = "record", splineType = "polyline", style = "" } = req.body;
+  const { graph, paperNode, tagsNodes, papersNodes, tagsEdges, papersEdges } =
+    getJSONGraph(req, res, false);
+  const dotGraph = makeDot(graph, papersNodes, shape, splineType, style);
+  // Write the dot file
+  fs.writeFileSync("graph.dot", dotGraph);
+  // Send the dot file
+  res.sendFile("graph.dot", { root: "." });
+};

@@ -11,9 +11,11 @@ The goal of this project is to provide an interface to ease the litterature revi
 - [x] Add possibility to enter a source manually
 - [x] enter to add new tag/relevant text
 - [ ] Use stores to memorize inputs when switching between pages
-- [ ] Visualization as decomposition of graphes
+- [x] Visualization as decomposition of graphes
   - [x] Generate graphes from tags structure
-  - [ ] Incorporate to the visualization
+  - [x] Incorporate to the visualization
 - [x] Put all papers in the same column ({rank=same; G; H; I; J})
 - [x] Switch backend in typescript
-- [~] Correct bug graph visualization
+- [x] Correct bug graph visualization
+- [x] Add export/copy to clipboard to dot
+- [x] Add export/copy to clipboard to svg 

@@ -3,6 +3,8 @@ import { writable } from "svelte/store";
 export let selectedNode = writable({ selectedNode: null, id: 0 });
 export let updateSvgActive = writable({ status: false, id: null });
 import { papersMetadata, type ID } from "./papersData";
+import { getGraph } from "../../api/graph";
+import { serverRunning } from "../../api/get";
 var metadata;
 
 function updateSVGWindow() {
@@ -47,7 +49,6 @@ function updateSVGWindow() {
         const id = d3.select(this).attr("id");
         if (!metadata.has(id)) return "node neutral";
         const paper = metadata.get(id);
-        console.log(paper.tags.join(" "));
         return `node ${paper.tags.join(" ")}`;
       });
   }
@@ -149,7 +150,6 @@ function nodeHover(papers, tags) {
 }
 
 export function updateSVG(papers, papersData, tags) {
-  console.log("updateSVG");
   let updateAutorized = { status: false, id: null };
   updateSvgActive.subscribe((value) => {
     updateAutorized = value;
@@ -180,50 +180,9 @@ export async function requests() {
     return;
   }
   // Check that server is running with small timeout
-  const serverStatus = await fetch(`http://localhost:3000/`)
-    .then(() => {
-      return true;
-    })
-    .catch((error) => {
-      console.error("Error visualize:", error);
-      return null;
-    });
+  const serverStatus = await serverRunning();
   if (!serverStatus) {
     return;
   }
-  // Make a fetch request to backend to get the papers
-  const papers = await fetch(`http://localhost:3000/papers`)
-    .then((response) => response.json())
-    .then((data) => {
-      return data;
-    });
-  const args = {
-    shape: "box",
-    style: "rounded",
-    splineType: "polyline",
-  };
-  return await fetch(`http://localhost:3000/graph`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(args),
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      return {
-        svg: data.svg,
-        graph: data.svg,
-        papers: papers,
-        paperNode: data.paperNode,
-        tagsNodes: data.tagsNodes,
-        papersNodes: data.papersNodes,
-        paperTagsEdges: data.paperTagsEdges,
-        tagsPapersEdges: data.tagsPapersEdges,
-      };
-    })
-    .catch((error) => {
-      console.error("Error visualize:", error);
-      return null;
-    });
+  return await getGraph();
 }

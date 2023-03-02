@@ -319,4 +319,26 @@ describe("Test the graph", function () {
         done();
       });
   });
+  // Make the same request but ask for the graph.svg file
+  it("Test getGraphSvg", (done) => {
+    request(app)
+      .post("/graph/svg")
+      .send({structure:structure})
+      .expect(200)
+      .end((err, res) => {
+        if (err) return done(err);
+        done();
+      });
+  });
+  // Make the same request but ask for the graph.dot file
+  it("Test getGraphDOT", (done) => {
+    request(app)
+      .post("/graph/dot")
+      .send({structure:structure})
+      .expect(200)
+      .end((err, res) => {
+        if (err) return done(err);
+        done();
+      });
+  });
 });

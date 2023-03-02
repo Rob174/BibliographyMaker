@@ -52,20 +52,22 @@
 
 <Headers />
 <main>
-  <TabBar tabs={tabPossibilities} let:tab bind:active>
+  <TabBar tabs={tabPossibilities} let:tab bind:active style="position:fixed;">
     <Tab {tab}>
       <Label>{tab}</Label>
     </Tab>
   </TabBar>
-  {#if active === "Add paper by doi"}
-    <NewPaperWithDOI />
-  {:else if active === "Add paper manually"}
-    <NewPaperWithoutDOI />
-  {:else if active === "Visualize"}
-    <Visualize />
-  {:else if active === "Search DOI"}
-    <SearchDoi />
-  {/if}
+  <div style="position: fixed; width: 100%; height: 100%; margin-top: 3em; overflow-y: scroll;">
+    {#if active === "Add paper by doi"}
+      <NewPaperWithDOI />
+    {:else if active === "Add paper manually"}
+      <NewPaperWithoutDOI />
+    {:else if active === "Visualize"}
+      <Visualize />
+    {:else if active === "Search DOI"}
+      <SearchDoi />
+    {/if}
+  </div>
 </main>
 
 <style>

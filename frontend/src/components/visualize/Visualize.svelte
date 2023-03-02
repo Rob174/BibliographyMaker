@@ -12,6 +12,7 @@
   import { onDestroy } from "svelte";
   import { papersMetadata, tagsPoss } from "./papersData";
   import type { PaperTag } from "./papersData";
+  import MenuPanel from "./MenuPanel.svelte";
   // Make a fetch request to backend to get the papersVisu every 5 seconds
   let interval = 5000;
   let graphHtml;
@@ -104,6 +105,7 @@
     {/if}
   </div>
 </div>
+<MenuPanel />
 {#if selNode.selectedNode}
   {#key selNode.id}
     <DialogDetail
@@ -137,6 +139,7 @@
     height: 94vh;
     width: 99.5vw;
     margin: 0;
+    overflow: hidden;
   }
   .graph {
     flex: 1;
@@ -145,7 +148,9 @@
     align-items: center;
     border-top: 4px solid var(--color-graph);
   }
-  :global(.graph svg .neutral :is(line, circle, path, rect, polyline, ellipse)) {
+  :global(
+      .graph svg .neutral :is(line, circle, path, rect, polyline, ellipse)
+    ) {
     stroke: var(--color-graph);
     stroke-width: 1px;
     fill: transparent;
