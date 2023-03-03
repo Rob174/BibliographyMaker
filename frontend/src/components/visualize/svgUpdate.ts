@@ -2,16 +2,12 @@ import * as d3 from "d3";
 import { writable } from "svelte/store";
 export let selectedNode = writable({ selectedNode: null, id: 0 });
 export let updateSvgActive = writable({ status: false, id: null });
-import { papersMetadata, type ID } from "./papersData";
 import { getGraph } from "../../api/graph";
 import { serverRunning } from "../../api/get";
-import { othersShownStore, structureStore } from "../../data";
-var metadata;
+import { othersShownStore, nodesMetadata, structureStore } from "../../data";
+import { tagsPoss } from "../../types";
 
 function updateSVGWindow() {
-  papersMetadata.subscribe((value) => {
-    metadata = value;
-  });
   const svg = document.querySelector(".graph svg");
   // Set the size of the svg
   svg.setAttribute("width", "100%");
@@ -25,31 +21,18 @@ function updateSVGWindow() {
         .querySelector("#graph0")
         .setAttribute("transform", event.transform.toString());
     });
-  // Set all .node and .edge to class neutral
-  if (metadata.size > 0) {
-    papersMetadata.update((value) => {
-      Array.from(value.keys()).forEach((key) => {
-        value.set(key, {
-          id: value.get(key).id,
-          tags: [
-            ...value
-              .get(key)
-              .tags.filter(
-                (tag) => !Array.from(["neutral", "hover"]).includes(tag)
-              ),
-            "neutral",
-          ],
-        });
-      });
-      metadata = value;
-      return value;
+    let nodesMetadataMap;
+    nodesMetadata.subscribe((value) => {
+      nodesMetadataMap = value;
     });
+  // Set all .node and .edge to class neutral
+  if (nodesMetadataMap.size > 0) {
     d3.select(".graph svg")
       .selectAll(".node")
       .attr("class", function () {
         const id = d3.select(this).attr("id");
-        if (!metadata.has(id)) return "node neutral";
-        const paper = metadata.get(id);
+        if (!nodesMetadataMap.has(id)) return "node neutral";
+        const paper = nodesMetadataMap.get(id);
         return `node ${paper.tags.join(" ")}`;
       });
   }
@@ -149,8 +132,40 @@ function nodeHover(papers, tags) {
     });
   });
 }
-
+export function updateSVGClasses() {
+  let nodesMetadataMap;
+  nodesMetadata.subscribe((value) => {
+    nodesMetadataMap = value;
+  });
+  d3.selectAll(".node")
+    .nodes()
+    .forEach((e) => {
+      const element = d3.select(e);
+      // Get the id of the paper
+      const id = element.attr("id");
+      // Get the paper metadata
+      if (!nodesMetadataMap.has(id)) return;
+      const tags = nodesMetadataMap.get(id).tags;
+      // Add the tags to the node class
+      const currClass = element
+        .attr("class")
+        .split(" ")
+        .filter((value) => !tagsPoss.includes(value));
+      const newAttrClass = [...currClass, ...tags].join(" ");
+      element.attr("class", newAttrClass);
+    });
+    
+  d3.select(".graph svg")
+  .selectAll(".edge")
+  .attr("class", () => {
+    return "edge neutral";
+  });
+}
 export function updateSVG(papers, papersData, tags) {
+  let nodesMetadataMap;
+  nodesMetadata.subscribe((value) => {
+    nodesMetadataMap = value;
+  });
   let updateAutorized = { status: false, id: null };
   updateSvgActive.subscribe((value) => {
     updateAutorized = value;
@@ -161,16 +176,20 @@ export function updateSVG(papers, papersData, tags) {
   const svg = document.querySelector(".graph svg");
   // Check if svg exists, if not wait for it to exist
   if (!svg || !papers) {
+    // console.log("svg not ready");
     setTimeout(() => {
       updateSVG(papers, papersData, tags);
     }, 100);
     return;
   }
+  // console.log("updateSVG");
   updateSVGWindow();
   nodeClick(papers, papersData);
   nodeHover(papers, tags);
   // Make the pointer be a hand when hovering over the svg
   d3.select("svg").style("cursor", "grab");
+  updateSVGClasses();
+  // console.log("updateSVG done");
 }
 export async function requests() {
   let updateAutorized = { status: false, id: null };
@@ -193,5 +212,5 @@ export async function requests() {
   othersShownStore.subscribe((value) => {
     showOthers = value;
   });
-  return await getGraph(structure,showOthers);
+  return await getGraph(structure, showOthers);
 }

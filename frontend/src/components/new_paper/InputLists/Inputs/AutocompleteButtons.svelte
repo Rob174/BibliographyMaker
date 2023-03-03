@@ -125,7 +125,6 @@
                 : ''};"
               tabindex="0"
               on:click={() => {
-                console.log("accepting suggestion " + suggestion + " on click");
                 acceptSuggestion(suggestion);
                 selectedSuggestion = -1;
                 const i = document.querySelectorAll(
@@ -134,7 +133,6 @@
                 if (i instanceof HTMLInputElement) i.focus();
               }}
               on:keydown={(e) => {
-                console.log("dosomething with key " + e.key);
                 if (e.key === "Enter") {
                   acceptSuggestion(suggestion);
                   selectedSuggestion = -1;

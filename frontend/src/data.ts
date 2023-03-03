@@ -1,5 +1,15 @@
-import { writable, type Writable } from "svelte/store";
-import type { Paper, PaperWithDOIFields, PaperWithoutDOIFields, Tag, TagStructure } from "./types";
+import { derived, writable, type Readable, type Writable } from "svelte/store";
+import type {
+  Node,
+  Edge,
+  Graph,
+  Paper,
+  PaperWithDOIFields,
+  PaperWithoutDOIFields,
+  Tag,
+  TagStructure,
+  ID,
+} from "./types";
 
 export const PORT = 3000;
 export const API_URL = `http://localhost:${PORT}`;
@@ -9,9 +19,6 @@ export const checkField = (fields: any) => {
   if (doi == "" || doi == null) {
     return { error: true, message: "DOI is required" };
   }
-  // Check if relevant texts are not empty
-
-  const sentRelevantTexts = relevant_text.filter((text) => text != "");
   // Check if tags are not empty
   const sentTags = tags.filter((tag) => tag != "");
   if (sentTags.length == 0) {
@@ -29,10 +36,46 @@ export const checkField = (fields: any) => {
   }
   return { error: false, message: "" };
 };
-export const papersTags: Writable<{ papers: Paper[]; tags: Tag[] }> = writable({
-  papers: [],
-  tags: [],
+type GraphData = {
+  svg: string;
+  graph: Graph;
+  paperNode: Node;
+  tagsNodes: Node[];
+  papersNodes: Node[];
+  paperTagsEdges: Edge[];
+  tagsPapersEdges: Edge[];
+};
+export const graphStore: Writable<GraphData> = writable({
+  svg: "",
+  graph: { nodes: [], edges: [] },
+  paperNode: { id: "", label: "", type: "paper" },
+  tagsNodes: [],
+  papersNodes: [],
+  paperTagsEdges: [],
+  tagsPapersEdges: [],
 });
+export const nodesMetadata: Writable<Map<ID, { id: ID; tags: string[] }>> =
+  writable(new Map());
+export const papersStore: Writable<Paper[]> = writable([]);
+export const tagsStore: Writable<Tag[]> = writable([]);
+
+export function updatePaperMetadata() {
+  graphStore.subscribe((graphStore) => {
+    // For each paperNode if it is not yet in papersMetadata, add it with default tags todo and neutral
+    nodesMetadata.update((papersMetadata) => {
+      const nodes = graphStore.papersNodes.concat(graphStore.tagsNodes);
+      nodes.forEach((paperNode) => {
+        if (!papersMetadata.has(paperNode.id)) {
+          papersMetadata.set(paperNode.id, {
+            id: paperNode.id,
+            tags: ["todo", "neutral"],
+          });
+        }
+      });
+      return papersMetadata;
+    });
+  });
+}
 export const structureStore: Writable<TagStructure | undefined> =
   writable(undefined);
 export const othersShownStore: Writable<boolean> = writable(true);

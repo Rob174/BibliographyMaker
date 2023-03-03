@@ -26,7 +26,6 @@
 
   let newPaper;
   async function save() {
-    console.log("save");
     const resultMsg: string = await postPaperWithDOI(
       doi,
       relevantTexts,

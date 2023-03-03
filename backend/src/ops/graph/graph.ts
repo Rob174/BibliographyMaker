@@ -4,6 +4,7 @@ import * as model from "../../model";
 import { cleanSVGGenerated, makeNode } from "./utils";
 import { generateNodes } from "./generateNodes";
 import {
+  Edge,
   Graph,
   NodeTxtGenerator,
   PaperJSON,
@@ -34,9 +35,9 @@ export const buildJSONGraph = (
     papersNodes,
     tagsNodes,
     rootNode;
-    rootNode = makeNode(Array(33).fill('b').join(''), " ", "root");
+  rootNode = makeNode(Array(33).fill("b").join(""), " ", "root");
   if (structure === undefined) {
-    const res = generateNodes(rootNode,papers, tags, nodeGenerator);
+    const res = generateNodes(rootNode, papers, tags, nodeGenerator);
     nodes = res.nodes;
     papersNodes = res.papersNodes;
     tagsNodes = res.tagsNodes;
@@ -79,10 +80,10 @@ export const buildJSONGraph = (
   };
 };
 export const getJSONGraphRequest = (req, res) => {
-  return getJSONGraph(req, res, true);
+  return getJSONGraph(req.body, res, true);
 };
-export const getJSONGraph = (req, res, send = true) => {
-  const { shape = "record", structure,includeOthers = false } = req.body;
+export const getJSONGraph = (args, res, send = false) => {
+  const { shape = "record", structure, includeOthers = false } = args;
   let nodeGenerator = (txt1, txt2) => {
     if (txt2 === undefined) return txt1;
     return `{${txt1}|${txt2}}`;
@@ -114,10 +115,17 @@ export const getJSONGraph = (req, res, send = true) => {
     });
     return paperCpy;
   });
-  const result = buildJSONGraph(papers, tags, nodeGenerator, structure, includeOthers);
+  const result = buildJSONGraph(
+    papers,
+    tags,
+    nodeGenerator,
+    structure,
+    includeOthers
+  );
   // const dot = makeDot(result.graph,result.papersNodes,shape)
   // Write the dot file
   // fs.writeFileSync("graph.dot", dot);
+  // console.log("Graph generated "+JSON.stringify(result.graph));
   if (send) res.status(200).send(result);
   return result;
 };
@@ -153,40 +161,59 @@ export function makeDot(
   // console.log(dotGraph);
   return dotGraph;
 }
-export const getGraph = (req, res) => {
-  const { shape = "record", splineType = "polyline", style = "" } = req.body;
-  const { graph, paperNode, tagsNodes, papersNodes, tagsEdges, papersEdges } =
-    getJSONGraph(req, res, false);
-  const dotGraph = makeDot(graph, papersNodes, shape, splineType, style);
+export const getGraph = async (req, res) => {
+  const r = await getGraphFn(req.body);
+  res.status(200).send(r);
+};
+type GraphOutput = {
+  svg: string;
+  graph: Graph;
+  paperNode: Node;
+  tagsNodes: Node[];
+  papersNodes: Node[];
+  tagsEdges: Edge[];
+  papersEdges: Edge[];
+};
+export const getGraphFn = (args): Promise<GraphOutput> => {
+  return new Promise((resolve, reject) => {
+    const { shape = "record", splineType = "polyline", style = "" } = args;
+    const { graph, paperNode, tagsNodes, papersNodes, tagsEdges, papersEdges } =
+      getJSONGraph(args, undefined, false);
+    const dotGraph = makeDot(graph, papersNodes, shape, splineType, style);
 
-  // Render the graph with dot to svg
-  const dotProcess = spawn("dot", ["-Tsvg"]);
-  dotProcess.stdin.write(dotGraph);
-  dotProcess.stdin.end();
-  let svg = "";
-  dotProcess.stdout.on("data", (data) => {
-    svg += data;
-  });
-  dotProcess.stdout.on("end", () => {
-    svg = cleanSVGGenerated(svg);
-    // Copy the dot to the clipboard
-    // console.log("Copy to clipboard");
-    // console.log(dotGraph);
-    res.status(200).send({
-      svg: svg,
-      graph: graph,
-      paperNode: paperNode,
-      tagsNodes: tagsNodes,
-      papersNodes: papersNodes,
-      tagsEdges: tagsEdges,
-      papersEdges: papersEdges,
+    // Render the graph with dot to svg
+    const dotProcess = spawn("dot", ["-Tsvg"]);
+    dotProcess.stdin.write(dotGraph);
+    dotProcess.stdin.end();
+    let svg = "";
+    dotProcess.stdout.on("data", (data) => {
+      svg += data;
+    });
+    return dotProcess.stdout.on("end", () => {
+      svg = cleanSVGGenerated(svg);
+      // Copy the dot to the clipboard
+      // console.log("Copy to clipboard");
+      // console.log(dotGraph);
+      resolve({
+        svg: svg,
+        graph: graph,
+        paperNode: paperNode,
+        tagsNodes: tagsNodes,
+        papersNodes: papersNodes,
+        tagsEdges: tagsEdges,
+        papersEdges: papersEdges,
+      });
     });
   });
 };
 export const getGraphSVG = (req, res) => {
-  const { shape = "record", splineType = "polyline", style = "" } = req.body;
+  const svg = getGraphSVGFFn(req.body);
+  res.sendFile("graph.svg", { root: "." });
+};
+export const getGraphSVGFFn = (args) => {
+  const { shape = "record", splineType = "polyline", style = "" } = args;
   const { graph, paperNode, tagsNodes, papersNodes, tagsEdges, papersEdges } =
-    getJSONGraph(req, res, false);
+    getJSONGraph(args, undefined, false);
   const dotGraph = makeDot(graph, papersNodes, shape, splineType, style);
 
   // Render the graph with dot to svg
@@ -201,17 +228,56 @@ export const getGraphSVG = (req, res) => {
     svg = cleanSVGGenerated(svg);
     // Write the svg file
     fs.writeFileSync("graph.svg", svg);
-    // Send the svg file
-    res.sendFile("graph.svg", { root: "." });
+    // Send the svg file name
+    return "graph.svg";
   });
 };
 export const getGraphDOT = (req, res) => {
-  const { shape = "record", splineType = "polyline", style = "" } = req.body;
+  const dot = getGraphDOTFn(req.body);
+  res.sendFile("graph.dot", { root: "." });
+};
+export const getGraphDOTFn = (args) => {
+  const { shape = "record", splineType = "polyline", style = "" } = args;
   const { graph, paperNode, tagsNodes, papersNodes, tagsEdges, papersEdges } =
-    getJSONGraph(req, res, false);
+    getJSONGraph(args, undefined, false);
   const dotGraph = makeDot(graph, papersNodes, shape, splineType, style);
   // Write the dot file
   fs.writeFileSync("graph.dot", dotGraph);
-  // Send the dot file
-  res.sendFile("graph.dot", { root: "." });
+  // Return the dot file name
+  return "graph.dot";
+};
+const readFileToSocket = (socket, filePath, fileEvent) => {
+  socket.on(fileEvent, (data) => {
+    const fileStream = fs.createReadStream(filePath);
+    const chunks = [];
+
+    // Read file data in chunks and emit to the client
+    fileStream.on("data" + fileEvent, (chunk) => {
+      chunks.push(chunk);
+      socket.emit("fileData", chunk);
+    });
+
+    // Emit end event when the file has been completely sent
+    fileStream.on("end" + fileEvent, () => {
+      socket.emit("fileEnd");
+    });
+  });
+};
+
+export const emitGraphData = (socket, args = {}) => {
+  const { graph, paperNode, tagsNodes, papersNodes, tagsEdges, papersEdges } =
+    getJSONGraph(args, undefined, false);
+  socket.emit("graph", {
+    graph: graph,
+    paperNode: paperNode,
+    tagsNodes: tagsNodes,
+    papersNodes: papersNodes,
+    tagsEdges: tagsEdges,
+    papersEdges: papersEdges,
+  });
+  // emit graph svg and dot also
+  const svg = getGraphSVGFFn(args);
+  const dot = getGraphDOTFn(args);
+  readFileToSocket(socket, "graph.svg", "getGraphSVG");
+  readFileToSocket(socket, "graph.dot", "getGraphDOT");
 };

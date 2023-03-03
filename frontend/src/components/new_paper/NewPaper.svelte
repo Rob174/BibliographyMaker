@@ -5,7 +5,9 @@
   import MultilineFormatDel from "./InputLists/Inputs/MultilineButtons.svelte";
   import MultilineFormatDelList from "./InputLists/MultilineFormatDelList.svelte";
   import AutocompleteButList from "./InputLists/AutocompleteButList.svelte";
-  import { papersTags } from "../../data";
+  import { tagsStore } from "../../data";
+  import { onMount } from "svelte";
+  import { getTags } from "../../api/get";
 
   const dispatch = createEventDispatcher();
 
@@ -23,9 +25,15 @@
     return;
   }
   let exitingTags: string[] = [];
-  papersTags.subscribe((value) => {
-    exitingTags = value.tags.map((tag) => tag.name);
-    refreshPossValues = !refreshPossValues; 
+  tagsStore.subscribe((value) => {
+    exitingTags = value.map((tag) => tag.name);
+    refreshPossValues = !refreshPossValues;
+  });
+  onMount(async () => {
+    const tags = await getTags();
+    tagsStore.update(() => {
+      return tags;
+    });
   });
 </script>
 
@@ -72,7 +80,7 @@
       style="width:100%; margin-top:2em;"
       variant="raised"
       on:keydown={(e) => {
-        if(!(e instanceof KeyboardEvent)) return;
+        if (!(e instanceof KeyboardEvent)) return;
         if (e.key === "Tab") {
           e.preventDefault();
           document.querySelectorAll("input")[0].focus();

@@ -6,10 +6,8 @@
   import Visualize from "./components/visualize/Visualize.svelte";
   import SearchDoi from "./components/search_doi/SearchDoi.svelte";
   import Headers from "./Headers.svelte";
-  import { onMount } from "svelte";
-  import { getTags, getPapers } from "./api/get";
-  import { papersTags } from "./data";
   import DialogDetailUpdate from "./components/visualize/DialogDetailUpdate.svelte";
+  import { nodesMetadata } from "./data";
   const tabPossibilities = [
     "Add paper by doi",
     "Add paper manually",
@@ -32,22 +30,9 @@
       }
     }
   });
-  // Everey 5s use get/getTags to update the tags
-  const updateFct = async () => {
-    // Get the tags
-    const tags = await getTags();
-    // Get the papers
-    const papers = await getPapers();
-    // Update the tags
-    papersTags.update((papersTags) => {
-      papersTags.tags = tags;
-      papersTags.papers = papers;
-      return papersTags;
-    });
-  };
-  onMount(async () => {
-    await updateFct();
-    setInterval(updateFct, 5000);
+  let selectedDoneUpdate = false;
+  nodesMetadata.subscribe((value) => {
+    selectedDoneUpdate = !selectedDoneUpdate;
   });
 </script>
 
@@ -66,7 +51,7 @@
     {:else if active === "Add paper manually"}
       <NewPaperWithoutDOI />
     {:else if active === "Visualize"}
-      <Visualize />
+        <Visualize />
     {:else if active === "Search DOI"}
       <SearchDoi />
     {/if}

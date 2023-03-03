@@ -44,7 +44,6 @@ export const postPaperWithoutDOI = async (
     analysis: analysis,
   };
   // Make a post request to the backend
-  console.log("postPaper at "+API_URL);
   const r = await fetch(`${API_URL}/papers/withoutDoi`, {
     method: "POST",
     mode: "cors",
@@ -53,7 +52,6 @@ export const postPaperWithoutDOI = async (
     },
     body: JSON.stringify(json),
   });
-  console.log("postPaper result: "+JSON.stringify);
   // Field result contains always "Added" if the paper was added& successfully or the error message
   //   res.status(200).send({ result: "Added" });
   return (await r.json()).result;

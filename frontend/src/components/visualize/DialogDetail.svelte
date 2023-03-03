@@ -1,15 +1,16 @@
 <script lang="ts">
   import Dialog, { Header, Title, Content, Actions } from "@smui/dialog";
-  import Chip, { Set, LeadingIcon, TrailingIcon, Text } from "@smui/chips";
+  import Chip, { Set, TrailingIcon, Text } from "@smui/chips";
   import IconButton from "@smui/icon-button";
   import Paper from "@smui/paper";
   import { createEventDispatcher } from "svelte";
-  import { papersMetadata, tagsPoss } from "./papersData";
   import * as uuid from "uuid";
+  import { nodesMetadata } from "../../data";
   const dispatch = createEventDispatcher();
 
   export let open = false;
   export let element: Paper = null;
+  export let status : "todo"|"done" = "todo";
 
   function closeHandler(e: CustomEvent<{ action: string }>) {
     switch (e.detail.action) {
@@ -17,31 +18,23 @@
         break;
     }
   }
-  let selectedDone = [];
-  papersMetadata.subscribe((value) => {
-    if (!value.has(element.id)) return;
-    selectedDone = value
-      .get(element.id)
-      .tags.filter((tag) => Array.from(["todo", "done"]).includes(tag))
-      .filter((tag) => tag !== "todo");
-  });
-
+  let selection = []
   $: {
-    if (element !== null) {
-      papersMetadata.update((value) => {
-        if (!value.has(element.id)) return;
+    const sel = selection.length > 0 ? selection[0] : "todo";
+    if (element !== null && sel !== status) {
+      nodesMetadata.update((value) => {
+        if (!value.has(element.id)) return value;
         // try to remove the tag todo
         const state = value
           .get(element.id)
           .tags.filter((tag) => Array.from(["todo", "done"]).includes(tag));
-        const selection = selectedDone.length === 0 ? "todo" : selectedDone[0];
         if (state.length === 0) {
-          value.get(element.id).tags.push(selection);
+          value.get(element.id).tags.push(sel);
         } else {
           value.get(element.id).tags = value
             .get(element.id)
             .tags.filter((tag) => !Array.from(["todo", "done"]).includes(tag));
-          value.get(element.id).tags.push(selection);
+          value.get(element.id).tags.push(sel);
         }
         return value;
       });
@@ -97,7 +90,11 @@
         chips={["done"]}
         let:chip={chip1}
         filter
-        bind:selected={selectedDone}
+        bind:selected={selection}
+        on:SMUIChips:selection={(e) => {
+          console.log(e.detail);
+          selection = e.detail.selected;
+        }}
       >
         <Chip chip={chip1}>
           <Text>{chip1}</Text>
@@ -107,3 +104,5 @@
     <Actions />
   {/if}
 </Dialog>
+
+<!-- bind:selected={selectedDone} -->

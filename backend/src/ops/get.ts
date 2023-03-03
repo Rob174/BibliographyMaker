@@ -54,3 +54,13 @@ export const getPapers = (req, res) => {
   });
   res.status(200).send(papers);
 };
+export const emitPapersTags = (socket) => {
+  const papers = model.getPapers().map((paper) => {
+    return {
+      ...paper,
+    };
+  });
+  const tags = model.getTags();
+  socket.emit("papers", papers);
+  socket.emit("tags", tags);
+};

@@ -1,20 +1,23 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import DialogDetail from "./DialogDetail.svelte";
   import CircularProgress from "@smui/circular-progress";
   import {
     updateSVG,
     requests,
     selectedNode,
     updateSvgActive,
+    updateSVGClasses,
   } from "./svgUpdate";
-  import * as d3 from "d3";
   import { onDestroy } from "svelte";
-  import { papersMetadata, tagsPoss } from "./papersData";
-  import type { PaperTag } from "./papersData";
   import MenuPanel from "./MenuPanel.svelte";
+  import {
+    graphStore,
+    nodesMetadata,
+    papersStore,
+    updatePaperMetadata,
+  } from "../../data";
+  import { getPapers } from "../../api/get";
   // Make a fetch request to backend to get the papersVisu every 5 seconds
-  let interval = 5000;
   let graphHtml;
   let selNode;
   selectedNode.subscribe((value) => (selNode = value));
@@ -25,76 +28,49 @@
   let active = { status: true, id: 0 };
   updateSvgActive.subscribe((value) => (active = value));
   let errorMsg = "";
-  let metadata;
-  papersMetadata.subscribe(async (value) => {
-    metadata = value;
-    // Update the node class
-    d3.selectAll(".node")
-      .nodes()
-      .forEach((e) => {
-        const element = d3.select(e);
-        // Get the id of the paper
-        const id = element.attr("id");
-        // Get the paper metadata
-        if (!metadata.has(id)) return;
-        const tags = metadata.get(id).tags;
-        // Add the tags to the node class
-        const currClass = element
-          .attr("class")
-          .split(" ")
-          .filter((value) => !tagsPoss.includes(value));
-        const newAttrClass = [...currClass, ...tags].join(" ");
-        element.attr("class", newAttrClass);
-      });
-  });
   async function update() {
     if (!active.status) return;
     status = "updating";
     try {
       const res = await requests();
-      const {
-        svg,
-        graph,
-        papers,
-        paperNode,
-        tagsNodes,
-        papersNodes,
-        paperTagsEdges,
-        tagsPapersEdges,
-      } = res;
-      if (metadata.size === 0) {
-        papersMetadata.update((value) => {
-          return new Map(
-            papersNodes.map((paper) => [
-              paper.id,
-              { id: paper.id, tags: ["todo"] },
-            ])
-          );
-        });
-      }
-
-      papersVisu = papers;
-      graphHtml = svg;
-      updateSVG(papersNodes, papers, tagsNodes);
+      if (res === null) return;
+      graphStore.update((value) => {
+        return { ...res };
+      });
+      const r = await getPapers();
+      if (r === null) return;
+      papersStore.update((value) => {
+        return [...r];
+      });
+      console.log("update papers");
+      updatePaperMetadata();
+      updateSVG($graphStore.papersNodes, $papersStore, $graphStore.tagsNodes);
+      papersVisu = graphStore;
+      graphHtml = $graphStore.svg;
       status = "idle";
     } catch (e) {
       status = "error";
       console.error(e);
     }
   }
+  // console.log("refresh");
+  nodesMetadata.subscribe((value) => {
+    // console.log("update ", value);
+    updateSVGClasses();
+  });
   onMount(async () => {
-    selectedNode.update((value) => {
-      return { selectedNode: null, id: value.id };
-    });
-    await update();
-    // Set the timer id
-    const id = setInterval(update, interval);
-    updateSvgActive.update((value) => ({ status: true, id: id }));
+    setTimeout(async () => {
+      selectedNode.update((value) => {
+        return { selectedNode: null, id: value.id };
+      });
+      await update();
+      updateSvgActive.update(() => ({ status: true, id: null }));
+      // console.log("update ");
+      updateSVGClasses();
+    }, 200);
   });
   onDestroy(() => {
-    // Clear the timer
-    clearInterval(active.id);
-    updateSvgActive.update((value) => ({ status: false, id: null }));
+    updateSvgActive.update(() => ({ status: false, id: null }));
   });
 </script>
 

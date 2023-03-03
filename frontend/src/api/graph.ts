@@ -4,31 +4,30 @@ import { getPapers } from "./get";
 export const getGraph = async (structure?: TagStructure, showOthers: boolean = true) => {
   try {
     // Get tags with fetch request
-    const papers = await getPapers();
     const args = {
       shape: "box",
       style: "rounded",
       splineType: "polyline",
       structure: structure,
-      includeOthers: showOthers,
+      includeOthers: showOthers
     };
     const resp = await fetch(`${API_URL}/graph`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(args),
+      body: JSON.stringify(args)
     });
     const data = await resp.json();
+    if(data === null) return null;
     return {
       svg: data.svg,
       graph: data.svg,
-      papers: papers,
       paperNode: data.paperNode,
       tagsNodes: data.tagsNodes,
       papersNodes: data.papersNodes,
       paperTagsEdges: data.paperTagsEdges,
-      tagsPapersEdges: data.tagsPapersEdges,
+      tagsPapersEdges: data.tagsPapersEdges
     };
   } catch (error) {
     console.error("Error visualize:", error);
@@ -49,7 +48,7 @@ export const getGraphSVG = async (structure?: TagStructure): Promise<Blob> => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(args),
+      body: JSON.stringify(args)
     });
     const blob = await resp.blob();
     return blob;
@@ -72,7 +71,7 @@ export const getGraphDOT = async (structure?: TagStructure): Promise<Blob> => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(args),
+      body: JSON.stringify(args)
     });
     const blob = await resp.blob();
     return blob;

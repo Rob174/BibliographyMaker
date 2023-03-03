@@ -44,3 +44,26 @@ export type PaperWithoutDOIFields = {
   tags: string[];
   analysis: string;
 };
+export type ID = string;
+export type Node = {
+  id: ID;
+  label: string;
+  type: "paper" | "tag" | "root";
+};
+export type Edge = {
+    id: ID;
+  from: ID;
+  to: ID;
+};
+export type Graph = {
+  nodes: Node[];
+  edges: Edge[];
+};
+
+export const tagsPoss = ["done", "todo"];
+export const paperTagPoss = [...tagsPoss, "neutral", "hover"];
+export type PaperTag = "done" | "todo" | "neutral" | "hover";
+export type PaperMetadata = {
+  id: string;
+  tags: PaperTag[];
+};
