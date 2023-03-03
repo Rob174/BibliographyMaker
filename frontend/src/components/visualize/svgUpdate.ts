@@ -4,7 +4,7 @@ export let selectedNode = writable({ selectedNode: null, id: 0 });
 export let updateSvgActive = writable({ status: false, id: null });
 import { getGraph } from "../../api/graph";
 import { serverRunning } from "../../api/get";
-import { othersShownStore, nodesMetadata, structureStore } from "../../data";
+import { othersShownStore, nodesMetadata, structureStore, tagsStore } from "../../data";
 import { tagsPoss } from "../../types";
 
 function updateSVGWindow() {
@@ -108,10 +108,24 @@ function nodeHoverElem(node, enters) {
       }
     });
 }
+function tagsClickCopy(tags) {
+  tags.forEach((tag) => {
+    const id = tag.id;
+    const node = document.querySelector(`#${id}`);
+    d3.select(node).style("cursor", "text");
+    // Add click event listener to the node
+    node.addEventListener("click", () => {
+      console.log(node.textContent.split(" "))
+      const text = node.textContent.split(" ").at(-1).trim().split('\n').at(-1)
+      navigator.clipboard.writeText(text);
+    });
+  });
+}
 function nodeHover(papers, tags) {
   papers.forEach((paper) => {
     const id = paper.id;
     const node = document.querySelector(`#${id}`);
+    
     // Add click event listener to the node
     node.addEventListener("mouseover", () => {
       nodeHoverElem(node, true);
@@ -123,6 +137,7 @@ function nodeHover(papers, tags) {
   tags.forEach((tag) => {
     const id = tag.id;
     const node = document.querySelector(`#${id}`);
+    d3.select(node).style("cursor", "pointer");
     // Add click event listener to the node
     node.addEventListener("mouseover", () => {
       nodeHoverElem(node, true);
@@ -184,6 +199,7 @@ export function updateSVG(papers, papersData, tags) {
   }
   // console.log("updateSVG");
   updateSVGWindow();
+  tagsClickCopy(tags);
   nodeClick(papers, papersData);
   nodeHover(papers, tags);
   // Make the pointer be a hand when hovering over the svg

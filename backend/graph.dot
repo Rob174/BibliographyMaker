@@ -3,36 +3,9 @@
       rankdir=LR;
       bgcolor=transparent;
       graph [splines=polyline] 
-      node [shape=record, style=",filled"]
+      node [shape=box, style="rounded,filled"]
       "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb" [label="" id="bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb" shape="circle"]
-"t74ae1c0f9fa4446990627179a421a029" [label="test" id="t74ae1c0f9fa4446990627179a421a029"]
-"tb63add7313b14bae8e7d12d71ce0cc5d" [label="test2" id="tb63add7313b14bae8e7d12d71ce0cc5d"]
-"t5431f9020ef64e85a3ab0e3fc9eb986b" [label="test3" id="t5431f9020ef64e85a3ab0e3fc9eb986b"]
-"a522b40ada52d43739619f6e1bde0b389" [label="{1 papers|Others}" id="a522b40ada52d43739619f6e1bde0b389"]
-"a18eb3f20c7db4ae48265088dff295c35" [label="First vs. best improvement: An empirical study" id="a18eb3f20c7db4ae48265088dff295c35"]
-"afe5843da3c614290bd92e09cc221641b" [label="Subclasses of k-trees: Characterization and recogn..." id="afe5843da3c614290bd92e09cc221641b"]
-"afcb48ab11e514f75b038ca2ee03765b6" [label="Monotonicity of the minimum cardinality of an iden..." id="afcb48ab11e514f75b038ca2ee03765b6"]
-"a7097f183cdc040afb8b76311ba191cce" [label="The game chromatic index of forests of maximum deg..." id="a7097f183cdc040afb8b76311ba191cce"]
-"aebfdf3f3d3304ca2a599b60b2419c6d2" [label="Clutter nonidealness" id="aebfdf3f3d3304ca2a599b60b2419c6d2"]
-"a20d3bbbe93064d46952960e0799742fc" [label="Complexity results on restricted instances of a pa..." id="a20d3bbbe93064d46952960e0799742fc"]
-"aafc52c8578a446368a047f6f0042010f" [label="Bounded-hops power assignment in ad hoc wireless n..." id="aafc52c8578a446368a047f6f0042010f"]
-"ab1e42ae9fb844cb381102a0a0a2714a5" [label="Hamiltonian path saturated graphs with small size" id="ab1e42ae9fb844cb381102a0a0a2714a5"]
-"a86af46461522424591d426435f4f7009" [label="An annotated bibliography of combinatorial optimiz..." id="a86af46461522424591d426435f4f7009"]
-"ad0d47cf92cbe4bb58b72e991e06326bd" [label="Path-fan Ramsey numbers" id="ad0d47cf92cbe4bb58b72e991e06326bd"]
-      "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb":w -> "t74ae1c0f9fa4446990627179a421a029" [dir="forward" tailport="e" headport="w" id="bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb_t74ae1c0f9fa4446990627179a421a029"]
-"t74ae1c0f9fa4446990627179a421a029":w -> "tb63add7313b14bae8e7d12d71ce0cc5d" [dir="forward" tailport="e" headport="w" id="t74ae1c0f9fa4446990627179a421a029_tb63add7313b14bae8e7d12d71ce0cc5d"]
-"t74ae1c0f9fa4446990627179a421a029":w -> "t5431f9020ef64e85a3ab0e3fc9eb986b" [dir="forward" tailport="e" headport="w" id="t74ae1c0f9fa4446990627179a421a029_t5431f9020ef64e85a3ab0e3fc9eb986b"]
-"t74ae1c0f9fa4446990627179a421a029":w -> "a522b40ada52d43739619f6e1bde0b389" [dir="forward" tailport="e" headport="w" id="t74ae1c0f9fa4446990627179a421a029_a522b40ada52d43739619f6e1bde0b389"]
-"tb63add7313b14bae8e7d12d71ce0cc5d":w -> "a18eb3f20c7db4ae48265088dff295c35" [dir="forward" tailport="e" headport="w" id="tb63add7313b14bae8e7d12d71ce0cc5d_a18eb3f20c7db4ae48265088dff295c35"]
-"tb63add7313b14bae8e7d12d71ce0cc5d":w -> "afe5843da3c614290bd92e09cc221641b" [dir="forward" tailport="e" headport="w" id="tb63add7313b14bae8e7d12d71ce0cc5d_afe5843da3c614290bd92e09cc221641b"]
-"t5431f9020ef64e85a3ab0e3fc9eb986b":w -> "afcb48ab11e514f75b038ca2ee03765b6" [dir="forward" tailport="e" headport="w" id="t5431f9020ef64e85a3ab0e3fc9eb986b_afcb48ab11e514f75b038ca2ee03765b6"]
-"t5431f9020ef64e85a3ab0e3fc9eb986b":w -> "a7097f183cdc040afb8b76311ba191cce" [dir="forward" tailport="e" headport="w" id="t5431f9020ef64e85a3ab0e3fc9eb986b_a7097f183cdc040afb8b76311ba191cce"]
-"t5431f9020ef64e85a3ab0e3fc9eb986b":w -> "aebfdf3f3d3304ca2a599b60b2419c6d2" [dir="forward" tailport="e" headport="w" id="t5431f9020ef64e85a3ab0e3fc9eb986b_aebfdf3f3d3304ca2a599b60b2419c6d2"]
-"t5431f9020ef64e85a3ab0e3fc9eb986b":w -> "a20d3bbbe93064d46952960e0799742fc" [dir="forward" tailport="e" headport="w" id="t5431f9020ef64e85a3ab0e3fc9eb986b_a20d3bbbe93064d46952960e0799742fc"]
-"t5431f9020ef64e85a3ab0e3fc9eb986b":w -> "aafc52c8578a446368a047f6f0042010f" [dir="forward" tailport="e" headport="w" id="t5431f9020ef64e85a3ab0e3fc9eb986b_aafc52c8578a446368a047f6f0042010f"]
-"t5431f9020ef64e85a3ab0e3fc9eb986b":w -> "ab1e42ae9fb844cb381102a0a0a2714a5" [dir="forward" tailport="e" headport="w" id="t5431f9020ef64e85a3ab0e3fc9eb986b_ab1e42ae9fb844cb381102a0a0a2714a5"]
-"t5431f9020ef64e85a3ab0e3fc9eb986b":w -> "a86af46461522424591d426435f4f7009" [dir="forward" tailport="e" headport="w" id="t5431f9020ef64e85a3ab0e3fc9eb986b_a86af46461522424591d426435f4f7009"]
-"a522b40ada52d43739619f6e1bde0b389":w -> "ad0d47cf92cbe4bb58b72e991e06326bd" [dir="forward" tailport="e" headport="w" id="a522b40ada52d43739619f6e1bde0b389_ad0d47cf92cbe4bb58b72e991e06326bd"]
-      {rank=same; "a18eb3f20c7db4ae48265088dff295c35" "afe5843da3c614290bd92e09cc221641b" "afcb48ab11e514f75b038ca2ee03765b6" "a7097f183cdc040afb8b76311ba191cce" "aebfdf3f3d3304ca2a599b60b2419c6d2" "a20d3bbbe93064d46952960e0799742fc" "aafc52c8578a446368a047f6f0042010f" "ab1e42ae9fb844cb381102a0a0a2714a5" "a86af46461522424591d426435f4f7009" "ad0d47cf92cbe4bb58b72e991e06326bd";}
+      
+      {rank=same; ;}
     }
     

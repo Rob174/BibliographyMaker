@@ -1,10 +1,47 @@
 [
     {
-        "tag": "first",
-        "children": []
+        "tag":"u-k-first",
+        "children":[]
     },
     {
-        "tag": "best",
+        "tag":"u-k-first",
+        "children":[]
+    },
+    {
+        "tag":"d-best",
+        "children":[]
+    },
+    {
+        "tag":"approxWorst",
+        "children":[]
+    },
+    {
+        "tag":"worst",
+        "children":[]
+    },
+    {
+        "tag":"delayed",
+        "children":[]
+    },
+    {
+        "tag":"randomFirst",
+        "children":[]
+    },
+    {
+        "tag":"maxExpan",
+        "children":[]
+    },
+    {
+        "tag":"learned",
+        "children":[]
+    },
+    {
+        "tag":"orientedIterativeImpr",
+        "children":[]
+    },
+    {
+        "tag": "riskyFirstBest",
         "children": []
     }
+    
 ]

@@ -66,7 +66,8 @@
       icon="download"
       on:click={() => {
         console.log("Download SVG");
-        getGraphSVG().then((blob) => {
+        
+        getGraphSVG($structureStore).then((blob) => {
           const svgURL = URL.createObjectURL(blob);
           const a = document.createElement("a");
           a.href = svgURL;
@@ -82,7 +83,7 @@
       icon="download"
       on:click={() => {
         console.log("Download SVG");
-        getGraphDOT().then((blob) => {
+        getGraphDOT($structureStore).then((blob) => {
           const dotURL = URL.createObjectURL(blob);
           const a = document.createElement("a");
           a.href = dotURL;
@@ -98,7 +99,7 @@
       icon="content_copy"
       on:click={() => {
         console.log("Download SVG");
-        getGraphSVG().then(async (blob) => {
+        getGraphSVG($structureStore).then(async (blob) => {
           await copyBlobToClipboard(blob);
         });
       }}
@@ -106,7 +107,7 @@
     <IconButtonText
       text="Copy DOT"
       icon="content_copy"
-      on:click={() => {
+      on:click={($structureStore) => {
         console.log("Download SVG");
         getGraphDOT().then(async (blob) => {
           await copyBlobToClipboard(blob);

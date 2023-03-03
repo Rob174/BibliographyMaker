@@ -73,7 +73,7 @@ export const generateNodesEdgesHierarchical = (
   ) => {
     let seen_papers = new Set();
     nodes.forEach((node) => {
-      // Add tag
+      // Add tag object
       const tag = tags.find((tag) => tag.name === node.tag);
       if (tag) {
         tagsEdges.push(makeEdge(parentID, tag.id));
@@ -81,7 +81,7 @@ export const generateNodesEdgesHierarchical = (
         const papers = papersRemaining.filter((paper) => {
           return paper.tags.includes(node.tag);
         });
-        tagsNodes.push(makeNode(tag.id, nodeGenerator(tag.name), "tag"));
+        tagsNodes.push(makeNode(tag.id, nodeGenerator(`${papers.length} papers`, tag.name), "tag"));
         papers.forEach((paper) => {
           seen_papers.add(paper.id);
         });
