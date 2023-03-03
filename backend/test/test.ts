@@ -53,8 +53,8 @@ describe("Test the backend", function () {
       .expect(200)
       .end((err, res) => {
         if (err) return done(err);
-        assert(res.body.find((tag) => tag === "test"));
-        assert(res.body.find((tag) => tag === "test2"));
+        assert(res.body.find((tag) => tag.name === "test"));
+        assert(res.body.find((tag) => tag.name === "test2"));
         done();
       });
   });
@@ -269,7 +269,7 @@ describe("Test the graph", function () {
   it("Test getGraph", (done) => {
     request(app)
       .post("/graph")
-      .send({structure:structure})
+      .send({structure:structure, includeOthers: true})
       .expect(200)
       .end((err, res) => {
         if (err) return done(err);
@@ -323,7 +323,7 @@ describe("Test the graph", function () {
   it("Test getGraphSvg", (done) => {
     request(app)
       .post("/graph/svg")
-      .send({structure:structure})
+      .send({structure:structure, includeOthers: true})
       .expect(200)
       .end((err, res) => {
         if (err) return done(err);
@@ -334,7 +334,7 @@ describe("Test the graph", function () {
   it("Test getGraphDOT", (done) => {
     request(app)
       .post("/graph/dot")
-      .send({structure:structure})
+      .send({structure:structure, includeOthers: true})
       .expect(200)
       .end((err, res) => {
         if (err) return done(err);

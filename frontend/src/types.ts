@@ -1,4 +1,5 @@
 export type Paper = {
+    id: string;
     doi: DOI;
     bibtex: BibTex;
     relevant_text: RelevantText[];
@@ -14,7 +15,10 @@ export type BibTex = {
     URL: string;
 };
 export type RelevantText = string;
-export type Tag = string;
+export type Tag = {
+    id: string;
+    name: string;
+};
 export type TagStructureElement = {
     tag: string;
     children: TagStructureElement[];

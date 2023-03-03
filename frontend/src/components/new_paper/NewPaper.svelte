@@ -5,7 +5,7 @@
   import MultilineFormatDel from "./InputLists/Inputs/MultilineButtons.svelte";
   import MultilineFormatDelList from "./InputLists/MultilineFormatDelList.svelte";
   import AutocompleteButList from "./InputLists/AutocompleteButList.svelte";
-  import {papersTags} from "../../data";
+  import { papersTags } from "../../data";
 
   const dispatch = createEventDispatcher();
 
@@ -24,10 +24,9 @@
   }
   let exitingTags: string[] = [];
   papersTags.subscribe((value) => {
-    exitingTags = value.tags;
-    refreshPossValues = !refreshPossValues;
+    exitingTags = value.tags.map((tag) => tag.name);
+    refreshPossValues = !refreshPossValues; 
   });
-  
 </script>
 
 <!-- Following fields are required: doi, relevant texts (add function possible), tags (function add possible) -->
@@ -53,14 +52,14 @@
     />
     <!-- Analysis Text -->
     <div class="analysis">
-    <MultilineFormatDel
-      label="Analysis Text"
-      bind:text={analysisText}
-      buttons={[]}
-      on:format={() => {
-        analysisText = analysisText.replace("\n", " ");
-      }}
-    />
+      <MultilineFormatDel
+        label="Analysis Text"
+        bind:text={analysisText}
+        buttons={[]}
+        on:format={() => {
+          analysisText = analysisText.replace("\n", " ");
+        }}
+      />
     </div>
     <Button
       style="width:100%; margin-top:2em;"
@@ -115,7 +114,7 @@
   .form {
     width: 100%;
   }
-  
+
   .analysis {
     display: flex;
     flex-direction: row;

@@ -48,3 +48,6 @@ export const deterministicUuid = () => {
     };
     return uuidv4
   };
+  export const formatUUID = (uuid) => {
+    return uuid.replace(/-/g, "");
+  };

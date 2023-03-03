@@ -1,11 +1,10 @@
 import { spawn } from "child_process";
 import { deterministicUuid, formatTrim } from "../utils";
 import * as model from "../../model";
-import { cleanSVGGenerated } from "./utils";
+import { cleanSVGGenerated, makeNode } from "./utils";
 import { generateNodes } from "./generateNodes";
 import {
   Graph,
-  IDGenerator,
   NodeTxtGenerator,
   PaperJSON,
   Tag,
@@ -16,11 +15,12 @@ import {
   generateNodesEdgesHierarchical,
   generateEdgesSimple,
 } from "./generateEdges";
+// import package to copy to clipboard
+const copy = require("copy-to-clipboard");
 
 export const buildJSONGraph = (
   papers: PaperJSON[],
   tags: Tag[],
-  uuidv4: IDGenerator,
   nodeGenerator: NodeTxtGenerator,
   structure?: TagStructure,
   includeOthers = false
@@ -34,29 +34,25 @@ export const buildJSONGraph = (
     papersNodes,
     tagsNodes,
     rootNode;
+    rootNode = makeNode(Array(33).fill('b').join(''), " ", "root");
   if (structure === undefined) {
-    const res = generateNodes(papers, tags, uuidv4, nodeGenerator);
+    const res = generateNodes(rootNode,papers, tags, nodeGenerator);
     nodes = res.nodes;
     papersNodes = res.papersNodes;
     tagsNodes = res.tagsNodes;
     rootNode = res.rootNode;
     // console.log("Simple structure");
-    const result = generateEdgesSimple(rootNode, tags, uuidv4);
+    const result = generateEdgesSimple(rootNode, tags);
     edges = result.edges;
     tagsEdges = result.tagsEdges;
     papersEdges = result.papersEdges;
     mapPapers = result.mapPapers;
   } else {
     // console.log("Hierarchical structure");
-    rootNode = {
-      id: uuidv4(),
-      label: " ",
-    };
     const result = generateNodesEdgesHierarchical(
       rootNode,
       tags,
       papers,
-      uuidv4,
       structure,
       nodeGenerator,
       includeOthers
@@ -97,24 +93,28 @@ export const getJSONGraph = (req, res, send = true) => {
       return `${txt1}\\n${txt2}`;
     };
   }
-  const uuidv4 = deterministicUuid();
   // console.log("getGraph");
   // Build the JSON: Paper as main node, tags as subnodes and papers.bitex.title[0] as final nodes
   const tags = [];
-  const papers = model.getPapers().map((paper) => {
+  // availableTags is a set that maps the tag name to the tag object {name: string, id: string}
+  const availableTags = new Map();
+  model.getTags().forEach((tag) => {
+    availableTags.set(tag.name, tag);
+  });
+  const papers = model.getPapers().map((paper: PaperJSON) => {
     var paperCpy = { ...paper };
-    paperCpy.id = uuidv4();
-    paperCpy.tags.forEach((tag) => {
+    paperCpy.tags.forEach((tag: string) => {
+      const tagObj = availableTags.get(tag);
       let posTag = tags.map((tag) => tag.name).indexOf(tag);
-      if (!tags.map((tag) => tag.name).includes(tag)) {
-        tags.push({ name: tag, id: uuidv4(), papers: [] });
+      if (!tags.map((tag) => tag.id).includes(tagObj.id)) {
+        tags.push({ ...tagObj, papers: [] });
         posTag = tags.length - 1;
       }
       tags[posTag].papers.push(paperCpy.id);
     });
     return paperCpy;
   });
-  const result = buildJSONGraph(papers, tags, uuidv4, nodeGenerator, structure, includeOthers);
+  const result = buildJSONGraph(papers, tags, nodeGenerator, structure, includeOthers);
   // const dot = makeDot(result.graph,result.papersNodes,shape)
   // Write the dot file
   // fs.writeFileSync("graph.dot", dot);
@@ -169,6 +169,9 @@ export const getGraph = (req, res) => {
   });
   dotProcess.stdout.on("end", () => {
     svg = cleanSVGGenerated(svg);
+    // Copy the dot to the clipboard
+    // console.log("Copy to clipboard");
+    // console.log(dotGraph);
     res.status(200).send({
       svg: svg,
       graph: graph,

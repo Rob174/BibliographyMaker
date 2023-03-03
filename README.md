@@ -19,7 +19,9 @@ The goal of this project is to provide an interface to ease the litterature revi
 - [x] Correct bug graph visualization
 - [x] Add export/copy to clipboard to dot
 - [x] Add export/copy to clipboard to svg 
-- [ ] Bug with hierarchical structure on click on node
-- [ ] Fixed id for a paper in json migration 
+- [x] Bug with hierarchical structure on click on node
+- [x] Fixed id for a paper in json migration 
   - [x] Migration of current data to "a"+uuid without "-"
+  - [x] Migration of tags with uuids
+  - [x] Correction of the frontend
 - [ ] websocket to avoid spamming the server (requires everything in store)

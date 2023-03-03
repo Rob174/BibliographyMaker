@@ -106,18 +106,6 @@
   </div>
 </div>
 <MenuPanel />
-{#if selNode.selectedNode}
-  {#key selNode.id}
-    <DialogDetail
-      element={selNode.selectedNode}
-      on:close={() =>
-        selectedNode.update((value) => {
-          return { selectedNode: null, id: value.id };
-        })}
-      open={true}
-    />
-  {/key}
-{/if}
 {#if status !== "idle"}
   <div
     style="display: flex; justify-content: center; position: absolute; top: 4em; right: 0em; transform: translate(-100%,0%);"

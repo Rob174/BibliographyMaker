@@ -1,5 +1,4 @@
 import {
-  IDGenerator,
   Tag,
   Node,
   GeneratedEdges,
@@ -11,22 +10,17 @@ import {
   GeneratedNodesEdges,
   NodeTxtGenerator,
 } from "../../types";
-import { formatTrim } from "../utils";
-import { nodeToDot, edgeToDot } from "./graph";
+import { deterministicUuid, formatTrim } from "../utils";
+import { makeEdge, makeNode } from "./utils";
 export const generateEdgesSimple = (
   rootNode: Node,
-  tags: Tag[],
-  uuidv4: IDGenerator
+  tags: Tag[]
 ): GeneratedEdges => {
   const papersEdges: Edge[] = [];
   let mapPapers = new Map();
   tags.forEach((tag) => {
     tag.papers.forEach((paperId) => {
-      papersEdges.push({
-        id: uuidv4(),
-        from: tag.id,
-        to: paperId,
-      } as Edge);
+      papersEdges.push(makeEdge(tag.id, paperId));
       if (mapPapers.has(tag.name)) {
         mapPapers.set(tag.name, mapPapers.get(tag.name).concat(paperId));
       } else {
@@ -35,12 +29,7 @@ export const generateEdgesSimple = (
     });
   });
   const tagsEdges = tags.map((tag) => {
-    const v = {
-      id: uuidv4(),
-      from: rootNode.id,
-      to: tag.id,
-    } as Edge;
-    return v;
+    return makeEdge(rootNode.id, tag.id);
   });
   let edges = tagsEdges.concat(papersEdges);
   return { edges, tagsEdges, papersEdges, mapPapers };
@@ -49,7 +38,6 @@ export const generateNodesEdgesHierarchical = (
   rootNode: Node,
   tags: Tag[],
   papers: PaperJSON[],
-  uuidv4: IDGenerator,
   structure: TagStructure,
   nodeGenerator: NodeTxtGenerator,
   includeOthers: boolean = false
@@ -76,6 +64,7 @@ export const generateNodesEdgesHierarchical = (
   let tagsNodes: Node[] = [];
   let papersNodes: Node[] = [];
   const mapPapers = new Map();
+  const detUuid = deterministicUuid();
   const dfs = (
     nodes: TagStructureElement[],
     parentID: ID,
@@ -87,60 +76,54 @@ export const generateNodesEdgesHierarchical = (
       // Add tag
       const tag = tags.find((tag) => tag.name === node.tag);
       if (tag) {
-        tagsEdges.push({
-          id: uuidv4(),
-          from: parentID,
-          to: tag.id,
-        } as Edge);
+        tagsEdges.push(makeEdge(parentID, tag.id));
         // Add papers
         const papers = papersRemaining.filter((paper) => {
           return paper.tags.includes(node.tag);
         });
-        tagsNodes.push({label: nodeGenerator(`${tag.papers.length} papers`, tag.name), id: tag.id, type: "tag"});
+        tagsNodes.push(makeNode(tag.id, nodeGenerator(tag.name), "tag"));
         papers.forEach((paper) => {
           seen_papers.add(paper.id);
         });
         // Add papers to map
-        mapPapers.set(tags_conjonction.concat(node.tag).join(" "), papers.map((paper) => paper.id));
+        mapPapers.set(
+          tags_conjonction.concat(node.tag).join(" "),
+          papers.map((paper) => paper.id)
+        );
         // If there are no children, add papers
         if (node.children.length === 0) {
           papers.forEach((paper) => {
-            papersEdges.push({
-              id: uuidv4(),
-              from: tag.id,
-              to: paper.id,
-            } as Edge);
+            papersEdges.push(makeEdge(tag.id, paper.id));
           });
-          papersNodes = papersNodes.concat(papers.map((paper) => ({id:paper.id, label: nodeGenerator(formatTrim(paper.bibtex.title[0])), type: "paper"})));
+          papersNodes = papersNodes.concat(
+            papers.map((paper) => (makeNode(paper.id, nodeGenerator(formatTrim(paper.bibtex.title[0])), "paper")))
+          );
         }
         // Recurse
         dfs(node.children, tag.id, tags_conjonction.concat(node.tag), papers);
       }
     });
-    if(!includeOthers) return;
+    if (!includeOthers) return;
     // Add papers that are not in any tag under the artificial tag "Others"
     const others = papersRemaining.filter((paper) => {
       return !seen_papers.has(paper.id);
     });
-    if(others.length === 0 || nodes.length === 0) return;
-    papersNodes = papersNodes.concat(others.map((paper) => ({id:paper.id, label: nodeGenerator(formatTrim(paper.bibtex.title[0])), type: "paper"})));
+    if (others.length === 0 || nodes.length === 0) return;
+    papersNodes = papersNodes.concat(
+      others.map((paper) => (makeNode(paper.id, nodeGenerator(formatTrim(paper.bibtex.title[0])), "paper")))
+    );
     // Add papers to map
-    mapPapers.set(tags_conjonction.concat("Others").join(" "), others.map((paper) => paper.id));
-    const otherNode: Node = {label: nodeGenerator(`${others.length} papers`, "Others"), id: uuidv4(), type: "tag"};
+    mapPapers.set(
+      tags_conjonction.concat("Others").join(" "),
+      others.map((paper) => paper.id)
+    );
+    const otherNode: Node = makeNode(detUuid(), nodeGenerator(`${others.length} papers`, "Others"), "tag");
     others.forEach((paper) => {
-      papersEdges.push({
-        id: uuidv4(),
-        from: otherNode.id,
-        to: paper.id,
-      } as Edge);
+      papersEdges.push(makeEdge(otherNode.id, paper.id));
     });
     tagsNodes.push(otherNode);
     // Make edge to parent
-    tagsEdges.push({
-      id: uuidv4(),
-      from: parentID,
-      to: otherNode.id,
-    } as Edge);
+    tagsEdges.push(makeEdge(parentID, otherNode.id));
   };
 
   dfs(structure, rootNode.id, [], papers);
@@ -148,5 +131,14 @@ export const generateNodesEdgesHierarchical = (
   let edges = tagsEdges.concat(papersEdges);
   // nodes: rootNode, tags, papers
   let nodes = Array.from([rootNode]).concat(tagsNodes).concat(papersNodes);
-  return { edges, nodes, rootNode, tagsEdges, papersEdges, mapPapers, papersNodes, tagsNodes};
+  return {
+    edges,
+    nodes,
+    rootNode,
+    tagsEdges,
+    papersEdges,
+    mapPapers,
+    papersNodes,
+    tagsNodes,
+  };
 };

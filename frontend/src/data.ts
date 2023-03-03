@@ -1,11 +1,6 @@
 import { writable, type Writable } from "svelte/store";
-import type { TagStructure } from "./types";
+import type { Paper, Tag, TagStructure } from "./types";
 
-export type Paper = {
-  doi: string;
-  relevantTexts: string[];
-  tags: string[];
-};
 export const PORT = 3000;
 export const API_URL = `http://localhost:${PORT}`;
 export const checkField = (fields: any) => {
@@ -30,6 +25,6 @@ export const checkField = (fields: any) => {
   }
   return {error:false, message:""};
 };
-export const papersTags: Writable<{papers: Paper[]; tags: string[]}> = writable({papers: [], tags: []});
+export const papersTags: Writable<{papers: Paper[]; tags: Tag[]}> = writable({papers: [], tags: []});
 export const structureStore: Writable<TagStructure|undefined> = writable(undefined);
 export const othersShownStore: Writable<boolean> = writable(true);

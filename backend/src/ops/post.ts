@@ -1,4 +1,4 @@
-import { getBibtex } from "./utils";
+import { formatUUID, getBibtex } from "./utils";
 import { writePaper } from "../model";
 import { v4 as uuidv4 } from "uuid";
 import type { Bibtex, PaperJSON } from "../types";
@@ -21,8 +21,9 @@ export const postPaperWithDOI = async (req, res) => {
     res.status(400).send({ result: "Error: bibtex is null" });
     return;
   }
+  const id = formatUUID("a"+uuidv4());
   const paper = {
-    id: doi,
+    id: id,
     bibtex: bibtex,
     doi: doi,
     relevant_text: relevant_text,
@@ -59,8 +60,9 @@ export const postPaperWithoutDOI = async (req, res) => {
     published: { "date-parts": [[year, 1, 1]] },
     "published-print": { "date-parts": [[year, 1, 1]] },
   };
+  const id = formatUUID("a"+uuidv4());
   const paper: PaperJSON = {
-    id: uuidv4(),
+    id: id,
     bibtex: bibtex,
     doi: "",
     relevant_text: relevant_text,

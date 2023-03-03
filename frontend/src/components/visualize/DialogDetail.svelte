@@ -8,7 +8,7 @@
   import * as uuid from "uuid";
   const dispatch = createEventDispatcher();
 
-  export let open = true;
+  export let open = false;
   export let element: Paper = null;
 
   function closeHandler(e: CustomEvent<{ action: string }>) {

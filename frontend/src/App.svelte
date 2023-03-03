@@ -9,6 +9,7 @@
   import { onMount } from "svelte";
   import { getTags, getPapers } from "./api/get";
   import { papersTags } from "./data";
+  import DialogDetailUpdate from "./components/visualize/DialogDetailUpdate.svelte";
   const tabPossibilities = [
     "Add paper by doi",
     "Add paper manually",
@@ -57,7 +58,9 @@
       <Label>{tab}</Label>
     </Tab>
   </TabBar>
-  <div style="position: fixed; width: 100%; height: 100%; margin-top: 3em; overflow-y: scroll;">
+  <div
+    style="position: fixed; width: 100%; height: 100%; margin-top: 3em; overflow-y: scroll;"
+  >
     {#if active === "Add paper by doi"}
       <NewPaperWithDOI />
     {:else if active === "Add paper manually"}
@@ -68,6 +71,7 @@
       <SearchDoi />
     {/if}
   </div>
+  <DialogDetailUpdate />
 </main>
 
 <style>
