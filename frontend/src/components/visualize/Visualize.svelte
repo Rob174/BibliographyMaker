@@ -11,12 +11,15 @@
   import { onDestroy } from "svelte";
   import MenuPanel from "./MenuPanel.svelte";
   import {
+    clickedTagStore,
     graphStore,
     nodesMetadata,
     papersStore,
     updatePaperMetadata,
   } from "../../data";
   import { getPapers } from "../../api/get";
+  import Snackbar, { Actions, Label } from "@smui/snackbar";
+  import IconButton from "@smui/icon-button";
   // Make a fetch request to backend to get the papersVisu every 5 seconds
   let graphHtml;
   let selNode;
@@ -72,6 +75,7 @@
   onDestroy(() => {
     updateSvgActive.update(() => ({ status: false, id: null }));
   });
+
 </script>
 
 <div class="container-visu">

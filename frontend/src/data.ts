@@ -58,7 +58,7 @@ export const nodesMetadata: Writable<Map<ID, { id: ID; tags: string[] }>> =
   writable(new Map());
 export const papersStore: Writable<Paper[]> = writable([]);
 export const tagsStore: Writable<Tag[]> = writable([]);
-
+export const clickedTagStore: Writable<string> = writable("");
 export function updatePaperMetadata() {
   graphStore.subscribe((graphStore) => {
     // For each paperNode if it is not yet in papersMetadata, add it with default tags todo and neutral

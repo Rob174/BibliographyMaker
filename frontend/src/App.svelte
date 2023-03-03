@@ -7,7 +7,9 @@
   import SearchDoi from "./components/search_doi/SearchDoi.svelte";
   import Headers from "./Headers.svelte";
   import DialogDetailUpdate from "./components/visualize/DialogDetailUpdate.svelte";
-  import { nodesMetadata } from "./data";
+  import { clickedTagStore, nodesMetadata } from "./data";
+  import Snackbar, { Actions } from "@smui/snackbar";
+  import IconButton from "@smui/icon-button";
   const tabPossibilities = [
     "Add paper by doi",
     "Add paper manually",
@@ -34,6 +36,16 @@
   nodesMetadata.subscribe((value) => {
     selectedDoneUpdate = !selectedDoneUpdate;
   });
+  let snackbarWithClose: Snackbar;
+  let tagName = "";
+  let refreshSnack = false;
+  clickedTagStore.subscribe((value) => {
+    tagName = value;
+    refreshSnack = !refreshSnack;
+    if (!snackbarWithClose) return;
+    if(tagName === "") return;
+    snackbarWithClose.forceOpen();
+  });
 </script>
 
 <Headers />
@@ -51,13 +63,25 @@
     {:else if active === "Add paper manually"}
       <NewPaperWithoutDOI />
     {:else if active === "Visualize"}
-        <Visualize />
+      <Visualize />
     {:else if active === "Search DOI"}
       <SearchDoi />
     {/if}
   </div>
   <DialogDetailUpdate />
 </main>
+<div style="z-index:10000; height: fit-content;">
+  <Snackbar bind:this={snackbarWithClose} timeoutMs={4000} class="snack">
+    <Label>Tag name <code>{tagName}</code> copied into clipboard!</Label>
+    <Actions>
+      <IconButton
+        class="material-icons"
+        title="Dismiss"
+        style="color: white; background-color:white;">close</IconButton
+      >
+    </Actions>
+  </Snackbar>
+</div>
 
 <style>
   main {
@@ -69,5 +93,19 @@
     top: 0;
     z-index: 1;
     background-color: black;
+  }
+  code {
+    font-family: "Courier New", Courier, monospace;
+    background-color: hsl(0, 0%, 0%);
+    padding: 0.2em 0.6em;
+    color: var(--accent2);
+    border-radius: 0.2em;
+  }
+  :global(.snack div) {
+    background-color: hsl(0, 0%, 15%);
+    color: white;
+  }
+  :global(.snack span) {
+    color: white;
   }
 </style>

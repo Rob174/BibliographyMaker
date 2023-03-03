@@ -4,7 +4,7 @@ export let selectedNode = writable({ selectedNode: null, id: 0 });
 export let updateSvgActive = writable({ status: false, id: null });
 import { getGraph } from "../../api/graph";
 import { serverRunning } from "../../api/get";
-import { othersShownStore, nodesMetadata, structureStore, tagsStore } from "../../data";
+import { othersShownStore, nodesMetadata, structureStore, tagsStore, clickedTagStore } from "../../data";
 import { tagsPoss } from "../../types";
 
 function updateSVGWindow() {
@@ -118,6 +118,9 @@ function tagsClickCopy(tags) {
       console.log(node.textContent.split(" "))
       const text = node.textContent.split(" ").at(-1).trim().split('\n').at(-1)
       navigator.clipboard.writeText(text);
+      clickedTagStore.update((value) => {
+        return text;
+      });
     });
   });
 }
