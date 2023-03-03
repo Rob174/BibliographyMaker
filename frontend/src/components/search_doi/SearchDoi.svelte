@@ -111,5 +111,6 @@
   }
   :global(.snack span) {
     color: white;
-  }
+  } 
+  
 </style>
