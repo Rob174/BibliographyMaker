@@ -3,13 +3,26 @@
   import TextValue from "../form_elems/TextValue.svelte";
   import InputFormatDelList from "./InputLists/InputFormatDelList.svelte";
   import { postPaperWithoutDOI } from "../../api/post";
-  export let title: string = "";
-  export let authors: string[] = [""];
-  export let year: string = "";
-  export let url: string = "";
-  export let relevantTexts: string[] = [""];
-  export let tags: string[] = [""];
-  export let analysisText: string = "";
+  import {
+    defaultPaperWithoutDOIStore,
+    paperWithoutDOIStore,
+  } from "../../data";
+  let title: string = "";
+  let authors: string[] = [""];
+  let year: string = "";
+  let url: string = "";
+  let relevantTexts: string[] = [""];
+  let tags: string[] = [""];
+  let analysisText: string = "";
+  paperWithoutDOIStore.subscribe((paper) => {
+    title = paper.title;
+    authors = paper.authors;
+    year = paper.year;
+    url = paper.url;
+    relevantTexts = paper.relevant_text;
+    tags = paper.tags;
+    analysisText = paper.analysis;
+  });
 
   const update = (text: string) => {
     // Split on comma and remove spaces
@@ -37,6 +50,19 @@
     );
     newPaper.setErrorMsg(resultMsg);
   }
+  
+  $: {
+    // Update the store when any of the fields change
+    paperWithoutDOIStore.set({
+      title,
+      authors,
+      year,
+      url,
+      relevant_text: relevantTexts,
+      tags,
+      analysis: analysisText,
+    });
+  }
 </script>
 
 <NewPaper
@@ -45,6 +71,9 @@
   bind:analysisText
   bind:this={newPaper}
   on:save={save}
+  on:clearFields={() => {
+    paperWithoutDOIStore.set(defaultPaperWithoutDOIStore());
+  }}
 >
   <TextValue
     label="Title"
@@ -62,6 +91,7 @@
     style="width: 100%;"
     bind:value={year}
     checker={(event) => {
+      if (!(event instanceof KeyboardEvent)) return true;
       const keyPressed = event.key;
       const allowedKeys = [
         "Backspace",

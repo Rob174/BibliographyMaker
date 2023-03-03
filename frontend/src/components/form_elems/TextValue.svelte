@@ -12,7 +12,7 @@
   $: disabled = focused || !value || !dirty || invalid;
   export let style: string = "width: 100%;";
   export let label: string = "";
-  export let checker: (value: string) => boolean = () => true;
+  export let checker: (value: CustomEvent<any>) => boolean = () => true;
   
   let textField;
   onMount(() => {

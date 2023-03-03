@@ -10,7 +10,7 @@ The goal of this project is to provide an interface to ease the litterature revi
 # TODO
 - [x] Add possibility to enter a source manually
 - [x] enter to add new tag/relevant text
-- [ ] Use stores to memorize inputs when switching between pages
+- [x] Use stores to memorize inputs when switching between pages
 - [x] Visualization as decomposition of graphes
   - [x] Generate graphes from tags structure
   - [x] Incorporate to the visualization

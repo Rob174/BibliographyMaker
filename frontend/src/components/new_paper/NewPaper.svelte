@@ -72,6 +72,7 @@
       style="width:100%; margin-top:2em;"
       variant="raised"
       on:keydown={(e) => {
+        if(!(e instanceof KeyboardEvent)) return;
         if (e.key === "Tab") {
           e.preventDefault();
           document.querySelectorAll("input")[0].focus();
@@ -79,9 +80,6 @@
       }}
       on:click={() => {
         dispatch("clearFields");
-        relevantTexts = [""];
-        tags = [""];
-        analysisText = "";
         // Focus first input field
         setTimeout(() => {
           document.querySelectorAll("input")[0].focus();
