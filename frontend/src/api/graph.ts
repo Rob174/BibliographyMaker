@@ -1,7 +1,7 @@
 import { API_URL } from "../data";
 import type { TagStructure } from "../types";
 import { getPapers } from "./get";
-export const getGraph = async (structure?: TagStructure) => {
+export const getGraph = async (structure?: TagStructure, showOthers: boolean = true) => {
   try {
     // Get tags with fetch request
     const papers = await getPapers();
@@ -10,6 +10,7 @@ export const getGraph = async (structure?: TagStructure) => {
       style: "rounded",
       splineType: "polyline",
       structure: structure,
+      includeOthers: showOthers,
     };
     const resp = await fetch(`${API_URL}/graph`, {
       method: "POST",

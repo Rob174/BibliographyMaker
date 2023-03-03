@@ -51,7 +51,8 @@ export const generateNodesEdgesHierarchical = (
   papers: PaperJSON[],
   uuidv4: IDGenerator,
   structure: TagStructure,
-  nodeGenerator: NodeTxtGenerator
+  nodeGenerator: NodeTxtGenerator,
+  includeOthers: boolean = false
 ): GeneratedNodesEdges => {
   /**
    * Reminder: structure is of the form:
@@ -116,6 +117,7 @@ export const generateNodesEdgesHierarchical = (
         dfs(node.children, tag.id, tags_conjonction.concat(node.tag), papers);
       }
     });
+    if(!includeOthers) return;
     // Add papers that are not in any tag under the artificial tag "Others"
     const others = papersRemaining.filter((paper) => {
       return !seen_papers.has(paper.id);

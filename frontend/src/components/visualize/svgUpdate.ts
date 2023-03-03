@@ -5,6 +5,7 @@ export let updateSvgActive = writable({ status: false, id: null });
 import { papersMetadata, type ID } from "./papersData";
 import { getGraph } from "../../api/graph";
 import { serverRunning } from "../../api/get";
+import { othersShownStore, structureStore } from "../../data";
 var metadata;
 
 function updateSVGWindow() {
@@ -65,7 +66,7 @@ function nodeClick(papers, papersData) {
     const id = paper.id;
     const node = document.querySelector(`#${id}`);
     // Find data for paper using doi
-    const paperData = papersData.find((p) => p.doi === paper.doi);
+    const paperData = papersData.find((p) => p.id === paper.id);
     // Add click event listener to the node
     node.addEventListener("click", () => {
       selectedNode.update((selectedNodeObj) => {
@@ -184,5 +185,13 @@ export async function requests() {
   if (!serverStatus) {
     return;
   }
-  return await getGraph();
+  let structure = undefined;
+  structureStore.subscribe((value) => {
+    structure = value;
+  });
+  let showOthers = false;
+  othersShownStore.subscribe((value) => {
+    showOthers = value;
+  });
+  return await getGraph(structure,showOthers);
 }

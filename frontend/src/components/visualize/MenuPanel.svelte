@@ -2,6 +2,8 @@
   import IconButtonText from "../form_elems/IconButtonText.svelte";
   import { fade } from "svelte/transition";
   import { getGraphSVG, getGraphDOT } from "../../api/graph";
+  import { structureStore } from "../../data";
+  import OtherButton from "./OtherButton.svelte";
   export let open = false;
   async function copyBlobToClipboard(blob) {
     try {
@@ -20,6 +22,45 @@
 
 <div id="main" style={open ? "left:75vw;" : "left:calc(100vw - 2em);"}>
   <div id="icons">
+    <IconButtonText
+      text="Provide structure"
+      icon="account_tree"
+      on:click={() => {
+        console.log("Download SVG");
+        // Open a file dialog to select a json file
+        const input = document.createElement("input");
+        input.type = "file";
+        input.accept = "application/json";
+        // And put the content of the file in the structureStore value
+        input.onchange = (e) => {
+          if (!(e.target instanceof HTMLInputElement)) {
+            return;
+          }
+          const file = e.target.files[0];
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const text = e.target.result;
+            if (typeof text !== "string") {
+              return;
+            }
+            structureStore.set(JSON.parse(text));
+          };
+          reader.readAsText(file);
+        };
+        input.click();
+        // And remove the element from the DOM after the file has been selected
+        input.remove();
+      }}
+    />
+    <OtherButton />
+    <IconButtonText
+      text="Remove structure"
+      icon="delete"
+      on:click={() => {
+        // Reset the structureStore value to undefined
+        structureStore.set(undefined);
+      }}
+    />
     <IconButtonText
       text="Download SVG"
       icon="download"

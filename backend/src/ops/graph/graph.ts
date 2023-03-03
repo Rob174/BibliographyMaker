@@ -22,7 +22,8 @@ export const buildJSONGraph = (
   tags: Tag[],
   uuidv4: IDGenerator,
   nodeGenerator: NodeTxtGenerator,
-  structure?: TagStructure
+  structure?: TagStructure,
+  includeOthers = false
 ) => {
   // Build the JSON
   let edges,
@@ -57,7 +58,8 @@ export const buildJSONGraph = (
       papers,
       uuidv4,
       structure,
-      nodeGenerator
+      nodeGenerator,
+      includeOthers
     );
     edges = result.edges;
     tagsEdges = result.tagsEdges;
@@ -84,7 +86,7 @@ export const getJSONGraphRequest = (req, res) => {
   return getJSONGraph(req, res, true);
 };
 export const getJSONGraph = (req, res, send = true) => {
-  const { shape = "record", structure } = req.body;
+  const { shape = "record", structure,includeOthers = false } = req.body;
   let nodeGenerator = (txt1, txt2) => {
     if (txt2 === undefined) return txt1;
     return `{${txt1}|${txt2}}`;
@@ -112,7 +114,7 @@ export const getJSONGraph = (req, res, send = true) => {
     });
     return paperCpy;
   });
-  const result = buildJSONGraph(papers, tags, uuidv4, nodeGenerator, structure);
+  const result = buildJSONGraph(papers, tags, uuidv4, nodeGenerator, structure, includeOthers);
   // const dot = makeDot(result.graph,result.papersNodes,shape)
   // Write the dot file
   // fs.writeFileSync("graph.dot", dot);
@@ -138,7 +140,7 @@ export function makeDot(
       rankdir=LR;
       bgcolor=transparent;
       graph [splines=${splineType ? splineType : "polyline"}] 
-      node [shape=${shape}, style=${style ? style : "filled"}]
+      node [shape=${shape}, style="${style ? style : ""},filled"]
       ${graph.nodes
         .map((e, i) => {
           return i === 0 ? firstNodeToDot(e) : nodeToDot(e);
