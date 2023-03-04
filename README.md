@@ -25,3 +25,5 @@ The goal of this project is to provide an interface to ease the litterature revi
   - [x] Migration of tags with uuids
   - [x] Correction of the frontend
 - [ ] websocket to avoid spamming the server (requires everything in store)
+  - [x] basic setup (tags, papers, graph)
+  - [ ] Ask for structure

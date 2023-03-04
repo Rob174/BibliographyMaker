@@ -13,9 +13,18 @@ const corsOptions = {
   allowedHeaders: ["Content-Type", "Authorization"],
 };
 
-// Websocket
+// Websocket runnning on port 3001
 const server = http.createServer(app);
-const io = new Server(server);
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"],
+  },
+});
+server.listen(3001, () => {
+  console.log('listening on *:3001');
+});
+
 
 // Add middleware
 app.use(express.json());

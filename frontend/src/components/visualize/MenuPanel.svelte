@@ -2,14 +2,11 @@
   import IconButtonText from "../form_elems/IconButtonText.svelte";
   import { fade } from "svelte/transition";
   import { getGraphSVG, getGraphDOT } from "../../api/graph";
-  import { structureStore } from "../../data";
+  import { dotGraphStore, structureStore, svgGraphStore } from "../../data";
   import OtherButton from "./OtherButton.svelte";
   export let open = false;
   async function copyBlobToClipboard(blob) {
     try {
-      // Convert blob to text
-      const text = await blob.text();
-
       // Copy text to clipboard
       await navigator.clipboard.writeText(text);
 
@@ -26,7 +23,6 @@
       text="Provide structure"
       icon="account_tree"
       on:click={() => {
-        console.log("Download SVG");
         // Open a file dialog to select a json file
         const input = document.createElement("input");
         input.type = "file";
@@ -66,7 +62,7 @@
       icon="download"
       on:click={() => {
         console.log("Download SVG");
-        
+
         getGraphSVG($structureStore).then((blob) => {
           const svgURL = URL.createObjectURL(blob);
           const a = document.createElement("a");
@@ -82,36 +78,30 @@
       text="Download DOT"
       icon="download"
       on:click={() => {
-        console.log("Download SVG");
-        getGraphDOT($structureStore).then((blob) => {
-          const dotURL = URL.createObjectURL(blob);
-          const a = document.createElement("a");
-          a.href = dotURL;
-          a.download = "graph.dot";
-          a.click();
-          // Remove the element from the DOM
-          a.remove();
-        });
+        const blob = $dotGraphStore.file;
+        const dotURL = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = dotURL;
+        a.download = "graph.dot";
+        a.click();
+        // Remove the element from the DOM
+        a.remove();
       }}
     />
     <IconButtonText
       text="Copy SVG"
       icon="content_copy"
-      on:click={() => {
-        console.log("Download SVG");
-        getGraphSVG($structureStore).then(async (blob) => {
-          await copyBlobToClipboard(blob);
-        });
+      on:click={async () => {
+        const text = $svgGraphStore.text;
+        await copyBlobToClipboard(text);
       }}
     />
     <IconButtonText
       text="Copy DOT"
       icon="content_copy"
-      on:click={($structureStore) => {
-        console.log("Download SVG");
-        getGraphDOT().then(async (blob) => {
-          await copyBlobToClipboard(blob);
-        });
+      on:click={async () => {
+        const text = $svgGraphStore.text;
+        await copyBlobToClipboard(text);
       }}
     />
   </div>

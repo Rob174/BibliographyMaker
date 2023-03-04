@@ -10,6 +10,10 @@
   import { clickedTagStore, nodesMetadata } from "./data";
   import Snackbar, { Actions } from "@smui/snackbar";
   import IconButton from "@smui/icon-button";
+  import { initSocket } from "./api/websocket";
+
+  initSocket();
+
   const tabPossibilities = [
     "Add paper by doi",
     "Add paper manually",

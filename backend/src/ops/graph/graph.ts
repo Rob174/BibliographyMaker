@@ -247,20 +247,10 @@ export const getGraphDOTFn = (args) => {
   return "graph.dot";
 };
 const readFileToSocket = (socket, filePath, fileEvent) => {
-  socket.on(fileEvent, (data) => {
-    const fileStream = fs.createReadStream(filePath);
-    const chunks = [];
+  socket.on(fileEvent, () => {
+    const fileBuffer = fs.readFileSync(filePath);
 
-    // Read file data in chunks and emit to the client
-    fileStream.on("data" + fileEvent, (chunk) => {
-      chunks.push(chunk);
-      socket.emit("fileData", chunk);
-    });
-
-    // Emit end event when the file has been completely sent
-    fileStream.on("end" + fileEvent, () => {
-      socket.emit("fileEnd");
-    });
+    socket.emit("file"+fileEvent, { data: fileBuffer, isBinary: true });
   });
 };
 
@@ -278,6 +268,6 @@ export const emitGraphData = (socket, args = {}) => {
   // emit graph svg and dot also
   const svg = getGraphSVGFFn(args);
   const dot = getGraphDOTFn(args);
-  readFileToSocket(socket, "graph.svg", "getGraphSVG");
-  readFileToSocket(socket, "graph.dot", "getGraphDOT");
+  readFileToSocket(socket, "graph.svg", "GetGraphSVG");
+  readFileToSocket(socket, "graph.dot", "GetGraphDOT");
 };

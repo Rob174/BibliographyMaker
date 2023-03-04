@@ -6,8 +6,6 @@
   import MultilineFormatDelList from "./InputLists/MultilineFormatDelList.svelte";
   import AutocompleteButList from "./InputLists/AutocompleteButList.svelte";
   import { tagsStore } from "../../data";
-  import { onMount } from "svelte";
-  import { getTags } from "../../api/get";
 
   const dispatch = createEventDispatcher();
 
@@ -28,12 +26,6 @@
   tagsStore.subscribe((value) => {
     exitingTags = value.map((tag) => tag.name);
     refreshPossValues = !refreshPossValues;
-  });
-  onMount(async () => {
-    const tags = await getTags();
-    tagsStore.update(() => {
-      return tags;
-    });
   });
 </script>
 

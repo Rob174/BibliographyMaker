@@ -12,7 +12,7 @@
     status = metadata
       .get(selNode.selectedNode.id)
       .tags.filter((tag) => Array.from(["todo", "done"]).includes(tag))
-      .filter((tag) => tag !== "todo")[0];
+      .filter((tag) => tag !== "todo")[0] as "todo"|"done";
   });
 </script>
 
