@@ -57,6 +57,9 @@ io.on('connection', (socket) => {
   socket.on('disconnect', () => {
     console.log('user disconnected');
   });
+  socket.on("getGraph", (args) => {
+    emitGraphData(socket, args);
+  });
 });
 // Export default the app for use in other modules typescript with import app from "./app";
 export default app;

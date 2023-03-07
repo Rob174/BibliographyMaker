@@ -206,8 +206,8 @@ export const getGraphFn = (args): Promise<GraphOutput> => {
     });
   });
 };
-export const getGraphSVG = (req, res) => {
-  const svg = getGraphSVGFFn(req.body);
+export const getGraphSVG = async (req, res) => {
+  const svg = await getGraphSVGFFn(req.body);
   res.sendFile("graph.svg", { root: "." });
 };
 export const getGraphSVGFFn = (args) => {
@@ -217,19 +217,21 @@ export const getGraphSVGFFn = (args) => {
   const dotGraph = makeDot(graph, papersNodes, shape, splineType, style);
 
   // Render the graph with dot to svg
-  const dotProcess = spawn("dot", ["-Tsvg"]);
-  dotProcess.stdin.write(dotGraph);
-  dotProcess.stdin.end();
-  let svg = "";
-  dotProcess.stdout.on("data", (data) => {
-    svg += data;
-  });
-  dotProcess.stdout.on("end", () => {
-    svg = cleanSVGGenerated(svg);
-    // Write the svg file
-    fs.writeFileSync("graph.svg", svg);
-    // Send the svg file name
-    return "graph.svg";
+  return new Promise((resolve, reject) => {
+    const dotProcess = spawn("dot", ["-Tsvg"]);
+    dotProcess.stdin.write(dotGraph);
+    dotProcess.stdin.end();
+    let svg = "";
+    dotProcess.stdout.on("data", (data) => {
+      svg += data;
+    });
+    dotProcess.stdout.on("end", () => {
+      svg = cleanSVGGenerated(svg);
+      // Write the svg file
+      fs.writeFileSync("graph.svg", svg);
+      // Send the svg file name
+      resolve("graph.svg");
+    });
   });
 };
 export const getGraphDOT = (req, res) => {
@@ -241,20 +243,21 @@ export const getGraphDOTFn = (args) => {
   const { graph, paperNode, tagsNodes, papersNodes, tagsEdges, papersEdges } =
     getJSONGraph(args, undefined, false);
   const dotGraph = makeDot(graph, papersNodes, shape, splineType, style);
+  
   // Write the dot file
   fs.writeFileSync("graph.dot", dotGraph);
   // Return the dot file name
   return "graph.dot";
 };
-const readFileToSocket = (socket, filePath, fileEvent) => {
-  socket.on(fileEvent, () => {
-    const fileBuffer = fs.readFileSync(filePath);
 
-    socket.emit("file"+fileEvent, { data: fileBuffer, isBinary: true });
-  });
+const readFileToSocket = (socket, filePath, fileEvent) => {
+  const fileBuffer = fs.readFileSync(filePath);
+  // Show content of the file
+
+  socket.emit("data" + fileEvent, { data: fileBuffer, isBinary: true });
 };
 
-export const emitGraphData = (socket, args = {}) => {
+export const emitGraphData = async (socket, args = {}) => {
   const { graph, paperNode, tagsNodes, papersNodes, tagsEdges, papersEdges } =
     getJSONGraph(args, undefined, false);
   socket.emit("graph", {
@@ -266,7 +269,8 @@ export const emitGraphData = (socket, args = {}) => {
     papersEdges: papersEdges,
   });
   // emit graph svg and dot also
-  const svg = getGraphSVGFFn(args);
+  const svg = await getGraphSVGFFn(args);
+  console.log("SVG generated ", svg);
   const dot = getGraphDOTFn(args);
   readFileToSocket(socket, "graph.svg", "GetGraphSVG");
   readFileToSocket(socket, "graph.dot", "GetGraphDOT");
