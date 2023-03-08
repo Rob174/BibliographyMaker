@@ -13,6 +13,7 @@ export type BibTex = {
   author: { given: string; family: string }[];
   link: { URL: string }[];
   URL: string;
+  DOI: string;
 };
 export type RelevantText = string;
 export type Tag = {
@@ -34,6 +35,7 @@ export type PaperWithDOIFields = {
   relevant_text: string[];
   tags: string[];
   analysis: string;
+  id_in_db?: string;
 };
 export type PaperWithoutDOIFields = {
   title: string;
@@ -43,6 +45,7 @@ export type PaperWithoutDOIFields = {
   relevant_text: string[];
   tags: string[];
   analysis: string;
+  id_in_db?: string;
 };
 export type ID = string;
 export type Node = {

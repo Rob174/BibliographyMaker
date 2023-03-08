@@ -5,12 +5,15 @@
   import MultilineFormatDel from "./InputLists/Inputs/MultilineButtons.svelte";
   import MultilineFormatDelList from "./InputLists/MultilineFormatDelList.svelte";
   import AutocompleteButList from "./InputLists/AutocompleteButList.svelte";
-  import { tagsStore } from "../../data";
+  import { nodesMetadata, tagsStore } from "../../data";
   import { onMount } from "svelte";
   import { getTags } from "../../api/get";
+  import Switch from "@smui/switch";
+  import FormField from "@smui/form-field";
+  import SwitchText from "../form_elems/SwitchText.svelte";
 
   const dispatch = createEventDispatcher();
-
+  export let id_in_db = "";
   export let relevantTexts: string[] = [""];
   export let tags: string[] = [""];
   export let analysisText: string = "";
@@ -35,6 +38,23 @@
       return tags;
     });
   });
+  var done;
+  let text;
+  onMount(async () => {
+    console.log("onMount");
+    nodesMetadata.subscribe((value) => {
+      if (id_in_db === "") return;
+      const state = value
+        .get(id_in_db)
+        .tags.filter((tag) => Array.from(["todo", "done"]).includes(tag));
+      if (state.length === 1) {
+        done = state[0] === "done";
+      }
+      done = false;
+      text = done ? "DONE" : "TODO";
+    });
+  });
+  console.log("done", done);
 </script>
 
 <!-- Following fields are required: doi, relevant texts (add function possible), tags (function add possible) -->
@@ -76,6 +96,31 @@
         dispatch("save");
       }}>Save</Button
     >
+    {#if id_in_db !== ""}
+      <SwitchText
+        style="width:100%; margin-top:2em;"
+        on:change={(e) => {
+          console.log("change", e.detail);
+          const sel = e.detail;
+          nodesMetadata.update((value) => {
+            if (!value.has(id_in_db)) return value;
+            console.log("update before", value.get(id_in_db).tags);
+            let tagsFiltered = value
+              .get(id_in_db)
+              .tags.filter(
+                (tag) => !Array.from(["todo", "done"]).includes(tag)
+              );
+            tagsFiltered.push(sel);
+            value.set(id_in_db, {
+              ...value.get(id_in_db),
+              tags: tagsFiltered,
+            });
+            console.log("update after", value.get(id_in_db).tags);
+            return value;
+          });
+        }}
+      />
+    {/if}
     <Button
       style="width:100%; margin-top:2em;"
       variant="raised"

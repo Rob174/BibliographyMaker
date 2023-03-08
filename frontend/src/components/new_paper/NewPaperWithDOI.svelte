@@ -7,11 +7,13 @@
   let relevantTexts: string[] = [""];
   let tags: string[] = [""];
   let analysisText: string = "";
+  let id_in_db: string = "";
   paperWithDOIStore.subscribe((paper) => {
     doi = paper.doi;
     relevantTexts = paper.relevant_text
     tags = paper.tags;
     analysisText = paper.analysis;
+    id_in_db = paper.id_in_db || "";
   });
   $: {
     // Update the store when any of the fields change
@@ -20,6 +22,7 @@
       relevant_text: relevantTexts,
       tags,
       analysis: analysisText,
+      id_in_db
     });
   }
 
@@ -30,7 +33,8 @@
       doi,
       relevantTexts,
       tags,
-      analysisText
+      analysisText,
+      id_in_db
     );
     newPaper.setErrorMsg(resultMsg);
   }
@@ -41,6 +45,7 @@
   bind:tags
   bind:analysisText
   bind:this={newPaper}
+  bind:id_in_db
   on:save={save}
   on:clearFields={() => {
     paperWithDOIStore.set(defaultPaperWithDOIStore());

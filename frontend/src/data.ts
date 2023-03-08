@@ -58,11 +58,12 @@ export const nodesMetadata: Writable<Map<ID, { id: ID; tags: string[] }>> =
   writable(new Map());
 export const papersStore: Writable<Paper[]> = writable([]);
 export const tagsStore: Writable<Tag[]> = writable([]);
-export const clickedTagStore: Writable<string> = writable("");
+export const clickedSnackStore: Writable<string> = writable("");
 export function updatePaperMetadata() {
   graphStore.subscribe((graphStore) => {
     // For each paperNode if it is not yet in papersMetadata, add it with default tags todo and neutral
     nodesMetadata.update((papersMetadata) => {
+      console.log("Updating papersMetadata");
       const nodes = graphStore.papersNodes.concat(graphStore.tagsNodes);
       nodes.forEach((paperNode) => {
         if (!papersMetadata.has(paperNode.id)) {
@@ -78,6 +79,14 @@ export function updatePaperMetadata() {
 }
 export const structureStore: Writable<TagStructure | undefined> =
   writable(undefined);
+  export const tabPossibilities = [
+    "Add paper by doi",
+    "Add paper manually",
+    "Search DOI",
+    "Visualize",
+  ];
+  export const activeTabStore: Writable<string> =
+    writable("Add paper by doi");
 export const othersShownStore: Writable<boolean> = writable(true);
 export const defaultPaperWithDOIStore: () => PaperWithDOIFields = () => {
   return {
@@ -104,3 +113,34 @@ export const defaultPaperWithoutDOIStore: () => PaperWithoutDOIFields = () => {
 export const paperWithoutDOIStore: Writable<PaperWithoutDOIFields> = writable(
   defaultPaperWithoutDOIStore()
 );
+export const edit = (paper: any) => {
+  if (!paper.bibtex.DOI && paper.bibtex.DOI !== "") {
+    // Update the paperWithDOIStore
+    paperWithDOIStore.update((paperWithDOIStore) => {
+      
+      paperWithDOIStore.doi = paper.bibtex.DOI;
+      paperWithDOIStore.relevant_text = paper.relevant_text;
+      paperWithDOIStore.tags = paper.tags;
+      paperWithDOIStore.analysis = paper.analysis;
+      paperWithDOIStore.id_in_db = paper.id;
+      return paperWithDOIStore;
+    });
+    return "Add paper with DOI"
+  } else {
+    // Update the paperWithoutDOIStore
+    paperWithoutDOIStore.update((paperWithoutDOIStore) => {
+      paperWithoutDOIStore.title = paper.bibtex.title[0];
+      paperWithoutDOIStore.authors = paper.bibtex.author.map((author) => {
+        return author.family + " " + author.given;
+      });
+      paperWithoutDOIStore.year = paper.bibtex.created["date-parts"][0][0];
+      paperWithoutDOIStore.url = paper.bibtex.URL;
+      paperWithoutDOIStore.relevant_text = paper.relevant_text;
+      paperWithoutDOIStore.tags = paper.tags;
+      paperWithoutDOIStore.analysis = paper.analysis;
+      paperWithoutDOIStore.id_in_db = paper.id;
+      return paperWithoutDOIStore;
+    });
+    return "Add paper manually"
+  }
+}

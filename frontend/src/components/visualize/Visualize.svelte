@@ -11,7 +11,7 @@
   import { onDestroy } from "svelte";
   import MenuPanel from "./MenuPanel.svelte";
   import {
-    clickedTagStore,
+    clickedSnackStore,
     graphStore,
     nodesMetadata,
     papersStore,

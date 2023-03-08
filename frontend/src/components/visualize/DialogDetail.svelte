@@ -5,24 +5,36 @@
   import Paper from "@smui/paper";
   import { createEventDispatcher } from "svelte";
   import * as uuid from "uuid";
-  import { nodesMetadata } from "../../data";
+  import {
+  activeTabStore,
+    clickedSnackStore,
+    edit,
+    nodesMetadata,
+    papersStore,
+    paperWithDOIStore,
+    paperWithoutDOIStore,
+  } from "../../data";
+  import Button from "@smui/button/src/Button.svelte";
   const dispatch = createEventDispatcher();
 
   export let open = false;
-  export let element: Paper = null;
-  export let status : "todo"|"done" = "todo";
+  export let element: Paper;
+  let paper_data = $papersStore.find((p) => p.id === element.id);
+  export let status: "todo" | "done" = "todo";
 
   function closeHandler(e: CustomEvent<{ action: string }>) {
     switch (e.detail.action) {
       case "close":
+        dispatch("close");
         break;
     }
   }
-  let selection = []
+  let selection = [];
   $: {
     const sel = selection.length > 0 ? selection[0] : "todo";
     if (element !== null && sel !== status) {
       nodesMetadata.update((value) => {
+        console.log("update 1")
         if (!value.has(element.id)) return value;
         // try to remove the tag todo
         const state = value
@@ -100,6 +112,18 @@
           <Text>{chip1}</Text>
         </Chip>
       </Set>
+      <Button
+        on:click={() => {
+          const msg = edit(paper_data);
+          clickedSnackStore.set("See " + msg);
+          activeTabStore.set("")
+          activeTabStore.set(msg)
+        }}
+        style="width:100%; margin-top:2em;"
+        variant="raised"
+      >
+        Edit
+      </Button>
     </Content>
     <Actions />
   {/if}

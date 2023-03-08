@@ -1,0 +1,90 @@
+[
+  {
+    "name": "Mention conclusion",
+    "tag": "mention-concl-FIvsBI",
+    "children": [
+      {
+        "name": "Using the conclusion directly",
+        "tag": "useDirect-FIvsBI",
+        "children": [
+          {
+            "name": "Near TSP",
+            "tag": "near-tsp",
+            "children": [
+            ]
+          },
+          {
+            "name": "Different problem",
+            "tag": "different-problem",
+            "children": [
+            ]
+          },
+          {
+            "tag": "others",
+            "children": [
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Redo the experiment",
+        "tag": "redoExp",
+        "children": [
+          {
+            "name": "Same results",
+            "tag": "sameRes",
+            "children": [
+              {
+                "name": "Near TSP",
+                "tag": "near-tsp"
+              },
+              {
+                "name": "Different problem",
+                "tag": "different-problem"
+              }
+            ]
+          },
+          {
+            "name": "Different results",
+            "tag": "diffRes",
+            "children": [
+              {
+                "name": "Near TSP",
+                "tag": "near-tsp"
+              },
+              {
+                "name": "Different problem",
+                "tag": "different-problem"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "tag":"others",
+        "children":[
+        ]
+      },
+      {
+        "name": "exclLanguage",
+        "tag": "exclLanguage"
+      },
+      {
+        "name": "exclAccess",
+        "tag": "exclAccess"
+      },
+      {
+        "name": "exclBook",
+        "tag": "exclBook"
+      },
+      {
+        "name": "deadlink",
+        "tag": "deadlink"
+      },
+      {
+        "name": "notCited",
+        "tag": "notCited"
+      }
+    ]
+  }
+]

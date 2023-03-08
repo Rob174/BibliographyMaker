@@ -3,13 +3,15 @@ export const postPaperWithDOI = async (
   doi,
   relevant_texts,
   tags,
-  analysis
+  analysis,
+  id_in_db = ""
 ): Promise<string> => {
   const json = {
     doi: doi,
     relevant_text: relevant_texts,
     tags: tags,
     analysis: analysis,
+    id_in_db: id_in_db
   };
   // Make a post request to the backend
   const r = await fetch(`${API_URL}/papers/doi`, {
@@ -32,7 +34,8 @@ export const postPaperWithoutDOI = async (
   url,
   relevant_texts,
   tags,
-  analysis
+  analysis,
+  id_in_db = ""
 ): Promise<string> => {
   const json = {
     title: title,
@@ -42,6 +45,7 @@ export const postPaperWithoutDOI = async (
     relevant_text: relevant_texts,
     tags: tags,
     analysis: analysis,
+    id_in_db: id_in_db
   };
   // Make a post request to the backend
   const r = await fetch(`${API_URL}/papers/withoutDoi`, {

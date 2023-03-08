@@ -14,6 +14,7 @@
   let relevantTexts: string[] = [""];
   let tags: string[] = [""];
   let analysisText: string = "";
+  let id_in_db: string = "";
   paperWithoutDOIStore.subscribe((paper) => {
     title = paper.title;
     authors = paper.authors;
@@ -22,6 +23,7 @@
     relevantTexts = paper.relevant_text;
     tags = paper.tags;
     analysisText = paper.analysis;
+    id_in_db = paper.id_in_db || "";
   });
 
   const update = (text: string) => {
@@ -45,7 +47,8 @@
       url,
       relevantTexts,
       tags,
-      analysisText
+      analysisText,
+      id_in_db
     );
     newPaper.setErrorMsg(resultMsg);
   }
@@ -60,6 +63,7 @@
       relevant_text: relevantTexts,
       tags,
       analysis: analysisText,
+      id_in_db
     });
   }
 </script>
@@ -69,6 +73,7 @@
   bind:tags
   bind:analysisText
   bind:this={newPaper}
+  bind:id_in_db
   on:save={save}
   on:clearFields={() => {
     paperWithoutDOIStore.set(defaultPaperWithoutDOIStore());
@@ -81,7 +86,7 @@
     focused={true}
   />
   <InputFormatDelList
-    label="Author"
+    label="Author (family name, first name)"
     bind:texts={authors}
     formatAction={update}
   />

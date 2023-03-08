@@ -7,16 +7,14 @@
   import SearchDoi from "./components/search_doi/SearchDoi.svelte";
   import Headers from "./Headers.svelte";
   import DialogDetailUpdate from "./components/visualize/DialogDetailUpdate.svelte";
-  import { clickedTagStore, nodesMetadata } from "./data";
+  import { activeTabStore, clickedSnackStore, nodesMetadata } from "./data";
   import Snackbar, { Actions } from "@smui/snackbar";
   import IconButton from "@smui/icon-button";
-  const tabPossibilities = [
-    "Add paper by doi",
-    "Add paper manually",
-    "Search DOI",
-    "Visualize",
-  ];
+  import {tabPossibilities} from "./data";
   let active = "Add paper by doi";
+  activeTabStore.subscribe((value) => {
+    active = value;
+  });
   // Add listener so that ctrl + & switches tabs
   document.addEventListener("keydown", (event) => {
     if (event.ctrlKey && event.key === "&") {
@@ -37,13 +35,13 @@
     selectedDoneUpdate = !selectedDoneUpdate;
   });
   let snackbarWithClose: Snackbar;
-  let tagName = "";
+  let htmlContent = "";
   let refreshSnack = false;
-  clickedTagStore.subscribe((value) => {
-    tagName = value;
+  clickedSnackStore.subscribe((value) => {
+    htmlContent = value;
     refreshSnack = !refreshSnack;
     if (!snackbarWithClose) return;
-    if(tagName === "") return;
+    if(htmlContent === "") return;
     snackbarWithClose.forceOpen();
   });
 </script>
@@ -72,7 +70,7 @@
 </main>
 <div style="z-index:10000; height: fit-content;">
   <Snackbar bind:this={snackbarWithClose} timeoutMs={4000} class="snack">
-    <Label>Tag name <code>{tagName}</code> copied into clipboard!</Label>
+    <Label>{@html htmlContent}</Label>
     <Actions>
       <IconButton
         class="material-icons"
@@ -94,7 +92,7 @@
     z-index: 1;
     background-color: black;
   }
-  code {
+  :global(code) {
     font-family: "Courier New", Courier, monospace;
     background-color: hsl(0, 0%, 0%);
     padding: 0.2em 0.6em;

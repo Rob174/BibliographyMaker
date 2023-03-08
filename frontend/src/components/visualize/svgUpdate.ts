@@ -4,7 +4,7 @@ export let selectedNode = writable({ selectedNode: null, id: 0 });
 export let updateSvgActive = writable({ status: false, id: null });
 import { getGraph } from "../../api/graph";
 import { serverRunning } from "../../api/get";
-import { othersShownStore, nodesMetadata, structureStore, tagsStore, clickedTagStore } from "../../data";
+import { othersShownStore, nodesMetadata, structureStore, tagsStore, clickedSnackStore } from "../../data";
 import { tagsPoss } from "../../types";
 
 function updateSVGWindow() {
@@ -53,6 +53,7 @@ function nodeClick(papers, papersData) {
     // Add click event listener to the node
     node.addEventListener("click", () => {
       selectedNode.update((selectedNodeObj) => {
+        console.log("click on paper");
         paperData.id = id;
         return { selectedNode: paperData, id: selectedNodeObj.id + 1 };
       });
@@ -118,8 +119,8 @@ function tagsClickCopy(tags) {
       console.log(node.textContent.split(" "))
       const text = node.textContent.split(" ").at(-1).trim().split('\n').at(-1)
       navigator.clipboard.writeText(text);
-      clickedTagStore.update((value) => {
-        return text;
+      clickedSnackStore.update((value) => {
+        return "Tag name <code>"+text+"</code> copied into clipboard!";
       });
     });
   });
