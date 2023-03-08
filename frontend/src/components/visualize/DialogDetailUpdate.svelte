@@ -17,22 +17,22 @@
     status = metadata
       .get(selNode.selectedNode.id)
       .tags.filter((tag) => Array.from(["todo", "done"]).includes(tag))
-      .filter((tag) => tag !== "todo")[0];
+      .filter((tag) => tag !== "todo")[0] as "todo" | "done";
   });
-  $:  open = selNode.selectedNode !== null;
+  $: open = selNode.selectedNode !== null;
 </script>
 
 {#if selNode.selectedNode !== null}
-{#key id}
-  <DialogDetail
-    element={selNode.selectedNode}
-    on:close={() =>
-      selectedNode.update((value) => {
-        open = false;
-        return { selectedNode: null, id: value.id };
-      })}
-    {status}
-    bind:open
-  />
-{/key}
+  {#key id}
+    <DialogDetail
+      element={selNode.selectedNode}
+      on:close={() =>
+        selectedNode.update((value) => {
+          open = false;
+          return { selectedNode: null, id: value.id };
+        })}
+      {status}
+      bind:open
+    />
+  {/key}
 {/if}
