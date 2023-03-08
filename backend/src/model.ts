@@ -33,6 +33,22 @@ export const writePaper = (paper) => {
   writeFileSync(file_name, JSON.stringify(data));
   return true;
 };
+export const updatePaper = (paper) => {
+  // Show current folder
+  const data = JSON.parse(readFileSync(file_name).toString());
+  // Remove the old paper
+  data.papers = data.papers.filter((x) => x.id !== paper.id);
+  // Add the new paper
+  data.papers.push(paper);
+  // Insert new tags
+  paper.tags
+    .filter((tag) => !data.tags.map((x) => x.name).includes(tag))
+    .forEach((tag) => {
+      data.tags.push({ name: tag, id: formatUUID("t"+uuidv4()) });
+    });
+  writeFileSync(file_name, JSON.stringify(data));
+  return true;
+};
 export const getPapers = () => {
   const data = JSON.parse(readFileSync(file_name).toString());
   return data.papers;
@@ -51,10 +67,4 @@ export const clean = () => {
   // Rename the former data file into data.json.bak
   renameSync(file_name, file_name + ".bak");
   writeFileSync(file_name, JSON.stringify(generateEmptyData()));
-};
-module.exports = {
-  writePaper,
-  getPapers,
-  getTags,
-  clean,
 };

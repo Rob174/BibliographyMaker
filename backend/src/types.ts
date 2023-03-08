@@ -9,6 +9,9 @@ export type Bibtex = {
   title: string[];
   author: Author[];
   URL: URL;
+  created: {
+    "date-parts": number[][];
+  };
   issued: {
     "date-parts": number[][];
   };
@@ -52,12 +55,16 @@ export type TagJSON = {
 };
 export type Tag = TagJSON & {
   papers: string[];
+  origId?: ID;
+  conjonction?: string[];
 };
 export type ID = string;
 export type IDGenerator = () => ID;
 export type NodeTxtGenerator = (txt1: string, txt2?: string) => string;
 export type Node = {
   id: ID;
+  origId?: ID;
+  conjonction?: string[];
   label: string;
   type: "paper" | "tag" | "root";
 };
