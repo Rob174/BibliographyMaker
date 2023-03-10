@@ -65,7 +65,7 @@
 >
   {#if element !== null}
     <Header>
-      <Title id="fullscreen-title">{element.bibtex.title}</Title>
+      <Title id="fullscreen-title" style="word-wrap: break-word; width: 90%;">{element.bibtex.title}</Title>
       <IconButton
         action="close"
         class="material-icons"
@@ -128,6 +128,16 @@
         Edit
       </Button>
       <ButtonsCitation paper={paper_data} />
+      <Button
+        on:click={() => {
+          // Copy in clipboard the ID of the paper
+          navigator.clipboard.writeText(paper_data.id);
+        }}
+        style="width:100%; margin-top:2em;"
+        variant="raised"
+      >
+        Get ID in JSON
+      </Button>
     </Content>
     <Actions />
   {/if}

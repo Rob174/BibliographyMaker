@@ -53,16 +53,19 @@
       text = done ? "DONE" : "TODO";
     });
   });
+  $: {
+    if(relevantTexts.length === 0) relevantTexts = [""];
+  }
 </script>
 
 <!-- Following fields are required: doi, relevant texts (add function possible), tags (function add possible) -->
 <div class="main">
   <h1>New Paper</h1>
-  <Button
+  <!-- <Button
     style="width:100%; margin-bottom:2em;"
     variant="raised"
     on:click={() => clean(setErrorMsg)}>Clear all papers</Button
-  >
+  > -->
   <div class="form">
     <slot />
     <MultilineFormatDelList
