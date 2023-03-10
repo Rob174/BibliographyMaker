@@ -2,13 +2,13 @@ import { GeneratedNodes, NodeTxtGenerator, PaperJSON, Tag, Node } from "../../ty
 import { formatTrim } from "../utils";
 import { makeNode } from "./utils";
 
-export const generateNodes = (rootNode: Node,papers: PaperJSON[], tags: Tag[], nodeGenerator: NodeTxtGenerator): GeneratedNodes => {
+export const generateNodes = (rootNode: Node,papers: (PaperJSON & {citationId})[], tags: Tag[], nodeGenerator: NodeTxtGenerator): GeneratedNodes => {
   let nodes = [];
   // Add main node
   nodes.push(rootNode);
   // Add papers
   const papersNodes = papers.map((paper) => {
-    return makeNode(paper.id, nodeGenerator(formatTrim(paper.bibtex.title[0])), "paper");
+    return makeNode(paper.id, nodeGenerator(formatTrim(paper.bibtex.title[0]),paper.citationId), "paper");
   });
   nodes = nodes.concat(papersNodes);
   // Add tags

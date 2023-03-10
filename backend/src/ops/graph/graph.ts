@@ -16,11 +16,12 @@ import {
   generateNodesEdgesHierarchical,
   generateEdgesSimple,
 } from "./generateEdges";
+import { cite, getCitationId } from "../citation";
 // import package to copy to clipboard
 const copy = require("copy-to-clipboard");
 
 export const buildJSONGraph = (
-  papers: PaperJSON[],
+  papers: (PaperJSON & {citationId})[],
   tags: Tag[],
   nodeGenerator: NodeTxtGenerator,
   structure?: TagStructure,
@@ -82,7 +83,7 @@ export const buildJSONGraph = (
 export const getJSONGraphRequest = (req, res) => {
   return getJSONGraph(req.body, res, true);
 };
-export const getJSONGraph = (args, res, send = false) => {
+export const getJSONGraph = async (args, res, send = false) => {
   const { shape = "record", structure, includeOthers = false } = args;
   let nodeGenerator = (txt1, txt2) => {
     if (txt2 === undefined) return txt1;
@@ -102,8 +103,8 @@ export const getJSONGraph = (args, res, send = false) => {
   model.getTags().forEach((tag) => {
     availableTags.set(tag.name, tag);
   });
-  const papers = model.getPapers().map((paper: PaperJSON) => {
-    var paperCpy = { ...paper };
+  const papers = await Promise.all(model.getPapers().map(async (paper: PaperJSON) => {
+    var paperCpy = { ...paper, citationId: await getCitationId(paper.bibtex)};
     paperCpy.tags.forEach((tag: string) => {
       const tagObj = availableTags.get(tag);
       let posTag = tags.map((tag) => tag.name).indexOf(tag);
@@ -114,7 +115,7 @@ export const getJSONGraph = (args, res, send = false) => {
       tags[posTag].papers.push(paperCpy.id);
     });
     return paperCpy;
-  });
+  }));
   const result = buildJSONGraph(
     papers,
     tags,
@@ -175,10 +176,10 @@ type GraphOutput = {
   papersEdges: Edge[];
 };
 export const getGraphFn = (args): Promise<GraphOutput> => {
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     const { shape = "record", splineType = "polyline", style = "" } = args;
     const { graph, paperNode, tagsNodes, papersNodes, tagsEdges, papersEdges } =
-      getJSONGraph(args, undefined, false);
+      await getJSONGraph(args, undefined, false);
     const dotGraph = makeDot(graph, papersNodes, shape, splineType, style);
 
     // Render the graph with dot to svg
@@ -210,10 +211,10 @@ export const getGraphSVG = (req, res) => {
   const svg = getGraphSVGFFn(req.body);
   res.sendFile("graph.svg", { root: "." });
 };
-export const getGraphSVGFFn = (args) => {
+export const getGraphSVGFFn = async (args) => {
   const { shape = "record", splineType = "polyline", style = "" } = args;
   const { graph, paperNode, tagsNodes, papersNodes, tagsEdges, papersEdges } =
-    getJSONGraph(args, undefined, false);
+    await getJSONGraph(args, undefined, false);
   const dotGraph = makeDot(graph, papersNodes, shape, splineType, style);
 
   // Render the graph with dot to svg
@@ -236,10 +237,10 @@ export const getGraphDOT = (req, res) => {
   const dot = getGraphDOTFn(req.body);
   res.sendFile("graph.dot", { root: "." });
 };
-export const getGraphDOTFn = (args) => {
+export const getGraphDOTFn = async (args) => {
   const { shape = "record", splineType = "polyline", style = "" } = args;
   const { graph, paperNode, tagsNodes, papersNodes, tagsEdges, papersEdges } =
-    getJSONGraph(args, undefined, false);
+    await getJSONGraph(args, undefined, false);
   const dotGraph = makeDot(graph, papersNodes, shape, splineType, style);
   // Write the dot file
   fs.writeFileSync("graph.dot", dotGraph);
@@ -264,9 +265,9 @@ const readFileToSocket = (socket, filePath, fileEvent) => {
   });
 };
 
-export const emitGraphData = (socket, args = {}) => {
+export const emitGraphData = async (socket, args = {}) => {
   const { graph, paperNode, tagsNodes, papersNodes, tagsEdges, papersEdges } =
-    getJSONGraph(args, undefined, false);
+    await getJSONGraph(args, undefined, false);
   socket.emit("graph", {
     graph: graph,
     paperNode: paperNode,

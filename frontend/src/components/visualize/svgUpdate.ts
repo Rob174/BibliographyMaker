@@ -7,6 +7,24 @@ import { serverRunning } from "../../api/get";
 import { othersShownStore, nodesMetadata, structureStore, tagsStore, clickedSnackStore } from "../../data";
 import { tagsPoss } from "../../types";
 
+class Transform {
+  translateX: number;
+  translateY: number;
+  scale: number;
+  constructor(matrix) {
+    this.translateX = matrix.e;
+    this.translateY = matrix.f;
+    this.scale = matrix.a;
+  }
+  movePosition(x, y) {
+    this.translateX += x;
+    this.translateY += y;
+    return this;
+  }
+  getString() {
+    return `translate(${this.translateX}, ${this.translateY}) scale(${this.scale})`;
+  }
+}
 function updateSVGWindow() {
   const svg = document.querySelector(".graph svg");
   // Set the size of the svg
@@ -20,11 +38,11 @@ function updateSVGWindow() {
       svg
         .querySelector("#graph0")
         .setAttribute("transform", event.transform.toString());
-    });
+    })
     let nodesMetadataMap;
     nodesMetadata.subscribe((value) => {
       nodesMetadataMap = value;
-    });
+    })
   // Set all .node and .edge to class neutral
   if (nodesMetadataMap.size > 0) {
     d3.select(".graph svg")

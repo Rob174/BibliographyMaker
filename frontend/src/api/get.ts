@@ -21,7 +21,11 @@ export const getPapers = async () => {
       "Content-Type": "application/json",
     },
   });
-  return r.json();
+  const data = (await r.json()).map((paper: any) => {
+    paper.tags = Array.from(new Set(paper.tags));
+    return paper;
+  });
+  return data;
 };
 export const serverRunning = async () => {
   try {

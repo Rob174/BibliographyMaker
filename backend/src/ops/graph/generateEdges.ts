@@ -37,7 +37,7 @@ export const generateEdgesSimple = (
 export const generateNodesEdgesHierarchical = (
   rootNode: Node,
   tags: Tag[],
-  papers: PaperJSON[],
+  papers: (PaperJSON & {citationId})[],
   structure: TagStructure,
   nodeGenerator: NodeTxtGenerator,
   includeOthers: boolean = false
@@ -66,6 +66,51 @@ export const generateNodesEdgesHierarchical = (
   let papersNodes: Node[] = [];
   const mapPapers = new Map();
   const detUuid = deterministicUuid();
+  const process_tag = (tagOrig, tags_conjonction, node, papersRemaining, parentID, seen_papers) => {
+    const tag = tagOrig;
+    tag.origId = tag.id;
+    tag.conjonction = tags_conjonction.concat(node.tag);
+    tag.id = detUuid();
+    // Add papers
+    const papers = papersRemaining.filter((paper) => {
+      return paper.tags.includes(node.tag);
+    });
+    // If no papers, don't add tag
+    if (papers.length === 0) {return;}
+    tagsEdges.push(makeEdge(parentID, tag.id));
+    tagsNodes.push(
+      makeNode(
+        tag.id,
+        nodeGenerator(`${papers.length} papers`, tag.name),
+        "tag"
+      )
+    );
+    papers.forEach((paper) => {
+      seen_papers.add(paper.id);
+    });
+    // Add papers to map
+    mapPapers.set(
+      tags_conjonction.concat(node.tag).join(" "),
+      papers.map((paper) => paper.id)
+    );
+    // If there are no children, add papers
+    if (!node.children || node.children.length === 0) {
+      papers.forEach((paper) => {
+        papersEdges.push(makeEdge(tag.id, paper.id));
+      });
+      papersNodes = papersNodes.concat(
+        papers.map((paper) =>
+          makeNode(
+            paper.id,
+            nodeGenerator(formatTrim(paper.bibtex.title[0]), paper.citationId),
+            "paper"
+          )
+        )
+      );
+    } else {
+      dfs(node.children, tag.id, tags_conjonction.concat(node.tag), papers);
+    }
+  };
   const dfs = (
     nodes: TagStructureElement[],
     parentID: ID,
@@ -77,83 +122,34 @@ export const generateNodesEdgesHierarchical = (
       // Add tag object
       const tagOrig = tags.find((tag) => tag.name === node.tag);
       if (tagOrig) {
-        const tag = tagOrig;
-        tag.origId = tag.id;
-        tag.conjonction = tags_conjonction.concat(node.tag);
-        tag.id = detUuid();
-        tagsEdges.push(makeEdge(parentID, tag.id));
-        // Add papers
-        const papers = papersRemaining.filter((paper) => {
-          return paper.tags.includes(node.tag);
-        });
-        tagsNodes.push(
-          makeNode(
-            tag.id,
-            nodeGenerator(`${papers.length} papers`, tag.name),
-            "tag"
-          )
-        );
-        papers.forEach((paper) => {
-          seen_papers.add(paper.id);
-        });
-        // Add papers to map
-        mapPapers.set(
-          tags_conjonction.concat(node.tag).join(" "),
-          papers.map((paper) => paper.id)
-        );
-        // If there are no children, add papers
-        if (!node.children || node.children.length === 0) {
-          papers.forEach((paper) => {
-            papersEdges.push(makeEdge(tag.id, paper.id));
+        let usedPapersRemaining = papersRemaining;
+        if(node.tag === 'others') {
+          usedPapersRemaining = papersRemaining.filter((paper) => {
+            return !seen_papers.has(paper.id);
           });
-          papersNodes = papersNodes.concat(
-            papers.map((paper) =>
-              makeNode(
-                paper.id,
-                nodeGenerator(formatTrim(paper.bibtex.title[0])),
-                "paper"
-              )
-            )
-          );
         }
-        // Recurse if children not undefined
-        if (node.children)
-          dfs(node.children, tag.id, tags_conjonction.concat(node.tag), papers);
+        process_tag(tagOrig, tags_conjonction, node, usedPapersRemaining, parentID, seen_papers);
       }
     });
-    if (!includeOthers || nodes.filter(x=>x.tag === "others").length !== 1) return;
-    // Add papers that are not in any tag under the artificial tag "Others"
-    const others = papersRemaining.filter((paper) => {
-      return !seen_papers.has(paper.id);
-    });
-    if (others.length === 0 || nodes.length === 0) return;
-    papersNodes = papersNodes.concat(
-      others.map((paper) =>
-        makeNode(
-          paper.id,
-          nodeGenerator(formatTrim(paper.bibtex.title[0])),
-          "paper"
-        )
-      )
-    );
-    // Add papers to map
-    mapPapers.set(
-      tags_conjonction.concat("Others").join(" "),
-      others.map((paper) => paper.id)
-    );
-    const otherNode: Node = makeNode(
-      detUuid(),
-      nodeGenerator(`${others.length} papers`, "Others"),
-      "tag"
-    );
-    others.forEach((paper) => {
-      papersEdges.push(makeEdge(otherNode.id, paper.id));
-    });
-    tagsNodes.push(otherNode);
-    // Make edge to parent
-    tagsEdges.push(makeEdge(parentID, otherNode.id));
   };
-
+  // Add the default tag "others" in the list of tags
+  if (includeOthers) {
+    tags.push({
+      id: detUuid(),
+      name: "others",
+      papers: papers.map((paper) => paper.id),
+    });
+  }
+  // By default add the others tag to all papers
+  for(let i = 0; i < papers.length; i++) {
+    try {
+      papers[i].tags.push("others");
+    } catch(e) {
+      console.error(e);
+      console.log(papers[i]);
+      papers[i].tags = ["others"];
+    }
+  }
   dfs(structure, rootNode.id, [], papers);
 
   let edges = tagsEdges.concat(papersEdges);

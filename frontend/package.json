@@ -34,6 +34,7 @@
     "@smui/icon-button": "^7.0.0-beta.0",
     "@smui/list": "^7.0.0-beta.0",
     "@smui/snackbar": "^7.0.0-beta.0",
+    "citation-js": "^0.6.7",
     "d3": "^7.8.2",
     "socket.io": "^4.6.1",
     "socket.io-client": "^4.6.1",

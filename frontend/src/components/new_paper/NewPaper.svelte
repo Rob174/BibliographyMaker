@@ -41,7 +41,6 @@
   var done;
   let text;
   onMount(async () => {
-    console.log("onMount");
     nodesMetadata.subscribe((value) => {
       if (id_in_db === "") return;
       const state = value
@@ -54,7 +53,6 @@
       text = done ? "DONE" : "TODO";
     });
   });
-  console.log("done", done);
 </script>
 
 <!-- Following fields are required: doi, relevant texts (add function possible), tags (function add possible) -->
@@ -100,11 +98,9 @@
       <SwitchText
         style="width:100%; margin-top:2em;"
         on:change={(e) => {
-          console.log("change", e.detail);
           const sel = e.detail;
           nodesMetadata.update((value) => {
             if (!value.has(id_in_db)) return value;
-            console.log("update before", value.get(id_in_db).tags);
             let tagsFiltered = value
               .get(id_in_db)
               .tags.filter(
@@ -115,7 +111,6 @@
               ...value.get(id_in_db),
               tags: tagsFiltered,
             });
-            console.log("update after", value.get(id_in_db).tags);
             return value;
           });
         }}

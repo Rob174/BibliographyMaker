@@ -45,7 +45,6 @@
       papersStore.update((value) => {
         return [...r];
       });
-      console.log("update papers");
       updatePaperMetadata();
       updateSVG($graphStore.papersNodes, $papersStore, $graphStore.tagsNodes);
       papersVisu = graphStore;

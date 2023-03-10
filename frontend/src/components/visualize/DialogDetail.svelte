@@ -15,10 +15,12 @@
     paperWithoutDOIStore,
   } from "../../data";
   import Button from "@smui/button/src/Button.svelte";
+  import ButtonsCitation from "./ButtonsCitation.svelte";
   const dispatch = createEventDispatcher();
 
   export let open = false;
   export let element: Paper;
+  console.log("element", element);
   let paper_data = $papersStore.find((p) => p.id === element.id);
   export let status: "todo" | "done" = "todo";
 
@@ -73,6 +75,7 @@
       </IconButton>
     </Header>
     <Content id="fullscreen-content">
+      <div>DOI: {element.bibtex.DOI}</div>
       <div>
         <!-- Link opened in a new tab -->
         Link:
@@ -124,6 +127,7 @@
       >
         Edit
       </Button>
+      <ButtonsCitation paper={paper_data} />
     </Content>
     <Actions />
   {/if}

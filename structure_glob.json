@@ -59,12 +59,12 @@
             ]
           }
         ]
-      },
-      {
-        "tag":"others",
-        "children":[
-        ]
-      },
+      }
+    ]
+  },
+  {
+    "tag":"others",
+    "children":[
       {
         "name": "exclLanguage",
         "tag": "exclLanguage"

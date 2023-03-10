@@ -63,7 +63,6 @@ export function updatePaperMetadata() {
   graphStore.subscribe((graphStore) => {
     // For each paperNode if it is not yet in papersMetadata, add it with default tags todo and neutral
     nodesMetadata.update((papersMetadata) => {
-      console.log("Updating papersMetadata");
       const nodes = graphStore.papersNodes.concat(graphStore.tagsNodes);
       nodes.forEach((paperNode) => {
         if (!papersMetadata.has(paperNode.id)) {
@@ -114,7 +113,7 @@ export const paperWithoutDOIStore: Writable<PaperWithoutDOIFields> = writable(
   defaultPaperWithoutDOIStore()
 );
 export const edit = (paper: any) => {
-  if (!paper.bibtex.DOI && paper.bibtex.DOI !== "") {
+  if (paper.bibtex.DOI !== undefined && paper.bibtex.DOI !== "") {
     // Update the paperWithDOIStore
     paperWithDOIStore.update((paperWithDOIStore) => {
       
@@ -125,7 +124,7 @@ export const edit = (paper: any) => {
       paperWithDOIStore.id_in_db = paper.id;
       return paperWithDOIStore;
     });
-    return "Add paper with DOI"
+    return "Add paper by doi"
   } else {
     // Update the paperWithoutDOIStore
     paperWithoutDOIStore.update((paperWithoutDOIStore) => {
@@ -133,7 +132,13 @@ export const edit = (paper: any) => {
       paperWithoutDOIStore.authors = paper.bibtex.author.map((author) => {
         return author.family + " " + author.given;
       });
-      paperWithoutDOIStore.year = paper.bibtex.created["date-parts"][0][0];
+      let year
+      if (paper.bibtex.created !== undefined) {
+        year = paper.bibtex.created["date-parts"][0][0];
+      } else {
+        year = paper.bibtex.issued["date-parts"][0][0];
+      }
+      paperWithoutDOIStore.year = year;
       paperWithoutDOIStore.url = paper.bibtex.URL;
       paperWithoutDOIStore.relevant_text = paper.relevant_text;
       paperWithoutDOIStore.tags = paper.tags;

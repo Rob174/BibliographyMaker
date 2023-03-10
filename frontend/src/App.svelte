@@ -13,6 +13,7 @@
   import {tabPossibilities} from "./data";
   let active = "Add paper by doi";
   activeTabStore.subscribe((value) => {
+    console.log("update active tab ", value)
     active = value;
   });
   // Add listener so that ctrl + & switches tabs
@@ -48,6 +49,7 @@
 
 <Headers />
 <main>
+  {#key active}
   <TabBar tabs={tabPossibilities} let:tab bind:active style="position:fixed;">
     <Tab {tab}>
       <Label>{tab}</Label>
@@ -66,7 +68,9 @@
       <SearchDoi />
     {/if}
   </div>
+  {/key}
   <DialogDetailUpdate />
+
 </main>
 <div style="z-index:10000; height: fit-content;">
   <Snackbar bind:this={snackbarWithClose} timeoutMs={4000} class="snack">
