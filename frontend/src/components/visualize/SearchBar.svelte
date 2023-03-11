@@ -93,7 +93,9 @@
         const containerWidth = container.clientWidth;
         const containerHeight = container.clientHeight;
         // Apply the matrix to the coords
-        const matrix = graph.getCTM();
+        let matrix;
+        if (graph instanceof SVGGraphicsElement) matrix = graph.getCTM();
+        else return;
         const width = containerWidth / matrix.a;
         const height = containerHeight / matrix.d;
         // Recap of the grid coords
