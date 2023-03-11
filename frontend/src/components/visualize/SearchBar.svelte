@@ -120,21 +120,23 @@
         console.log("x: ", x, " y: ", y);
         console.log("newX: ", newX, " newY: ", newY);
         // Set #graph0 transform to translate(newX, newY) and scale(scale)
-        var initialTransform = d3.zoomIdentity.scale(scale).translate(newX, newY);
+        var initialTransform = d3.zoomIdentity
+          .scale(scale)
+          .translate(newX, newY);
         zoom.transform(d3.select(svg), initialTransform);
         // Temporary change the color of the paper g texts to red
         const texts = document.querySelectorAll(`#${id} text`);
         texts.forEach((text) => {
-          text.style.fill = "white";
+          if (text instanceof SVGTextElement) text.style.fill = "white";
         });
         const path = document.querySelector(`#${id} path`);
-        path.style.fill = "red";
+        if (path instanceof SVGPathElement) path.style.fill = "red";
         console.log(texts);
         setTimeout(() => {
           texts.forEach((text) => {
-            text.style.fill = "";
+            if (text instanceof SVGTextElement) text.style.fill = "";
           });
-          path.style.fill = "";
+          if (path instanceof SVGPathElement) path.style.fill = "";
         }, 1000);
       }}
     />
