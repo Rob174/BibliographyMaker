@@ -5,6 +5,7 @@ export type Paper = {
   relevant_text: RelevantText[];
   tags: Tag[];
   analysis: string;
+  citation?: string;
 };
 export type DOI = string;
 export type BibTex = {

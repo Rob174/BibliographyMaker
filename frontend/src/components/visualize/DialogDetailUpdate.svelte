@@ -7,7 +7,6 @@
   let open = false;
   selectedNode.subscribe((value) => {
     id++;
-    console.log("open", open, selNode.selectedNode, selNode.id);
     return (selNode = value);
   });
   let status: "todo" | "done" = "todo";
@@ -19,10 +18,8 @@
       .get(selNode.selectedNode.id)
       .tags.filter((tag) => Array.from(["todo", "done"]).includes(tag))
       .filter((tag) => tag !== "todo")[0] as "todo" | "done";
-    console.log("open", open, selNode.selectedNode, selNode.id);
   });
   $: open = selNode.selectedNode !== null;
-  console.log("open", open, selNode.selectedNode, selNode.id);
 </script>
 
 {#if selNode.selectedNode !== null}

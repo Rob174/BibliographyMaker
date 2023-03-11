@@ -10,7 +10,7 @@
 
 <div {style}>
   <FormField>
-    <Switch on:SMUISwitch:change={
+    <Switch value={done} on:SMUISwitch:change={
       (e) => {
         label = e.detail.selected ? "DONE" : "TODO";
         dispatch("change", label.toLowerCase());

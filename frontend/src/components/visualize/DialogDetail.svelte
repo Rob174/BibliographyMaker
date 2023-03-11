@@ -6,8 +6,10 @@
   import { createEventDispatcher } from "svelte";
   import * as uuid from "uuid";
   import {
-  activeTabStore,
+    activeTabStore,
     clickedSnackStore,
+    countDoneStore,
+    updateCountDone,
     edit,
     nodesMetadata,
     papersStore,
@@ -20,7 +22,6 @@
 
   export let open = false;
   export let element: Paper;
-  console.log("element", element);
   let paper_data = $papersStore.find((p) => p.id === element.id);
   export let status: "todo" | "done" = "todo";
 
@@ -31,29 +32,10 @@
         break;
     }
   }
-  let selection = [];
-  $: {
-    const sel = selection.length > 0 ? selection[0] : "todo";
-    if (element !== null && sel !== status) {
-      nodesMetadata.update((value) => {
-        console.log("update 1")
-        if (!value.has(element.id)) return value;
-        // try to remove the tag todo
-        const state = value
-          .get(element.id)
-          .tags.filter((tag) => Array.from(["todo", "done"]).includes(tag));
-        if (state.length === 0) {
-          value.get(element.id).tags.push(sel);
-        } else {
-          value.get(element.id).tags = value
-            .get(element.id)
-            .tags.filter((tag) => !Array.from(["todo", "done"]).includes(tag));
-          value.get(element.id).tags.push(sel);
-        }
-        return value;
-      });
-    }
-  }
+  let selection = status === "todo" ? [] : ["done"];
+  nodesMetadata.subscribe((value) => {
+    selection = value.get(element.id).tags.includes("done") ? ["done"] : [];
+  });
 </script>
 
 <Dialog
@@ -65,7 +47,9 @@
 >
   {#if element !== null}
     <Header>
-      <Title id="fullscreen-title" style="word-wrap: break-word; width: 90%;">{element.bibtex.title}</Title>
+      <Title id="fullscreen-title" style="word-wrap: break-word; width: 90%;"
+        >{element.bibtex.title}</Title
+      >
       <IconButton
         action="close"
         class="material-icons"
@@ -75,6 +59,7 @@
       </IconButton>
     </Header>
     <Content id="fullscreen-content">
+      <div>Abreviation: {element.citation}</div>
       <div>DOI: {element.bibtex.DOI}</div>
       <div>
         <!-- Link opened in a new tab -->
@@ -101,26 +86,40 @@
         <div>Analysis</div>
         <div>{element.analysis}</div>
       {/if}
-      <Set
-        chips={["done"]}
-        let:chip={chip1}
-        filter
-        bind:selected={selection}
-        on:SMUIChips:selection={(e) => {
-          console.log(e.detail);
-          selection = e.detail.selected;
-        }}
-      >
-        <Chip chip={chip1}>
+      <Set chips={["done"]} let:chip={chip1} filter bind:selected={selection}>
+        <Chip
+          chip={chip1}
+          on:SMUIChip:selection={(e) => {
+            nodesMetadata.update((value) => {
+              if (!value.has(element.id)) return value;
+              // try to remove the tag todo
+              const pties = value.get(element.id);
+              const state = pties
+                .tags.filter((tag) =>
+                  Array.from(["todo", "done"]).includes(tag)
+                );
+              const toAdd = e.detail.selected ? "done" : "todo";
+              state.push(toAdd);
+              pties.tags = state;
+              value.set(element.id, pties);
+              return value;
+            });
+            updateCountDone();
+          }}
+        >
           <Text>{chip1}</Text>
         </Chip>
       </Set>
       <Button
         on:click={() => {
+          console.log("Edit");
           const msg = edit(paper_data);
           clickedSnackStore.set("See " + msg);
-          activeTabStore.set("")
-          activeTabStore.set(msg)
+          console.log("activeTabStore", $activeTabStore);
+          activeTabStore.set("");
+          console.log("activeTabStore", $activeTabStore);
+          activeTabStore.set(msg);
+          console.log("activeTabStore", $activeTabStore);
         }}
         style="width:100%; margin-top:2em;"
         variant="raised"

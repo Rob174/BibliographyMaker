@@ -12,14 +12,17 @@
   import MenuPanel from "./MenuPanel.svelte";
   import {
     clickedSnackStore,
-    graphStore,
     nodesMetadata,
+    graphStore,
     papersStore,
     updatePaperMetadata,
+    countDoneStore,
+    updateCountDone
   } from "../../data";
   import { getPapers } from "../../api/get";
   import Snackbar, { Actions, Label } from "@smui/snackbar";
   import IconButton from "@smui/icon-button";
+  import SearchBar from "./SearchBar.svelte";
   // Make a fetch request to backend to get the papersVisu every 5 seconds
   let graphHtml;
   let selNode;
@@ -56,6 +59,8 @@
     }
   }
   // console.log("refresh");
+  let countSelected = 0;
+  countDoneStore.subscribe((value) => (countSelected = value));
   nodesMetadata.subscribe((value) => {
     // console.log("update ", value);
     updateSVGClasses();
@@ -84,7 +89,9 @@
     {/if}
   </div>
 </div>
+<SearchBar />
 <MenuPanel />
+<div class="counter">{countSelected}</div>
 {#if status !== "idle"}
   <div
     style="display: flex; justify-content: center; position: absolute; top: 4em; right: 0em; transform: translate(-100%,0%);"
@@ -99,6 +106,15 @@
 {/if}
 
 <style>
+  .counter {
+    position: absolute;
+    top: 1em;
+    left: 1em;
+    padding: 0.5em;
+    background: transparent;
+    color: white;
+    font-size: 2em;
+  }
   /* Make it so the graph takes all the remaining space of the container */
   .container-visu {
     display: flex;
@@ -162,10 +178,10 @@
   :global(.node.neutral > text) {
     fill: var(--color-graph);
   }
-  :global(.node.done.neutral > :is(polygon, ellipse, polyline, path)) {
+  :global(.node.done > :is(polygon, ellipse, polyline, path)) {
     stroke: var(--accent3);
   }
-  :global(.node.done.neutral > :is(text)) {
+  :global(.node.done > :is(text)) {
     fill: var(--accent3);
   }
 </style>

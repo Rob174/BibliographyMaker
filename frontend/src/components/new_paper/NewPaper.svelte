@@ -5,7 +5,7 @@
   import MultilineFormatDel from "./InputLists/Inputs/MultilineButtons.svelte";
   import MultilineFormatDelList from "./InputLists/MultilineFormatDelList.svelte";
   import AutocompleteButList from "./InputLists/AutocompleteButList.svelte";
-  import { nodesMetadata, tagsStore } from "../../data";
+  import { nodesMetadata, tagsStore, updateCountDone } from "../../data";
   import { onMount } from "svelte";
   import { getTags } from "../../api/get";
   import Switch from "@smui/switch";
@@ -54,7 +54,7 @@
     });
   });
   $: {
-    if(relevantTexts.length === 0) relevantTexts = [""];
+    if (relevantTexts.length === 0) relevantTexts = [""];
   }
 </script>
 
@@ -71,13 +71,13 @@
     <MultilineFormatDelList
       label="Relevant Texts"
       bind:texts={relevantTexts}
-      formatAction={(text) => text.replace("\n", " ")}
+      formatAction={(text) => text.replaceAll("\n", " ")}
     />
     <AutocompleteButList
       label="Tags"
       bind:texts={tags}
       possibleValues={exitingTags}
-      formatAction={(text) => text.replace(" ", "")}
+      formatAction={(text) => text.replaceAll(" ", "")}
     />
     <!-- Analysis Text -->
     <div class="analysis">
@@ -86,7 +86,7 @@
         bind:text={analysisText}
         buttons={[]}
         on:format={() => {
-          analysisText = analysisText.replace("\n", " ");
+          analysisText = analysisText.replaceAll("\n", " ");
         }}
       />
     </div>
@@ -99,6 +99,8 @@
     >
     {#if id_in_db !== ""}
       <SwitchText
+        {done}
+        label={text}
         style="width:100%; margin-top:2em;"
         on:change={(e) => {
           const sel = e.detail;
@@ -116,6 +118,7 @@
             });
             return value;
           });
+          updateCountDone();
         }}
       />
     {/if}

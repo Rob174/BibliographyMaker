@@ -13,7 +13,6 @@
   import {tabPossibilities} from "./data";
   let active = "Add paper by doi";
   activeTabStore.subscribe((value) => {
-    console.log("update active tab ", value)
     active = value;
   });
   // Add listener so that ctrl + & switches tabs

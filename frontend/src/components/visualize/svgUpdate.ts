@@ -4,7 +4,13 @@ export let selectedNode = writable({ selectedNode: null, id: 0 });
 export let updateSvgActive = writable({ status: false, id: null });
 import { getGraph } from "../../api/graph";
 import { serverRunning } from "../../api/get";
-import { othersShownStore, nodesMetadata, structureStore, tagsStore, clickedSnackStore } from "../../data";
+import {
+  othersShownStore,
+  nodesMetadata,
+  structureStore,
+  tagsStore,
+  clickedSnackStore,
+} from "../../data";
 import { tagsPoss } from "../../types";
 
 class Transform {
@@ -22,27 +28,47 @@ class Transform {
     return this;
   }
   getString() {
-    return `translate(${this.translateX}, ${this.translateY}) scale(${this.scale})`;
+    return `scale(${this.scale}) translate(${this.translateX}, ${this.translateY})`;
   }
 }
+export var zoom;
 function updateSVGWindow() {
   const svg = document.querySelector(".graph svg");
   // Set the size of the svg
   svg.setAttribute("width", "100%");
   svg.setAttribute("height", "100%");
   // Add drag and zoom with id graph0 for the main group containing everything
-  const zoom = d3
+  var graph0 = d3.select("#graph0");
+  var bbox = graph0.node().getBBox();
+  // Set the initial zoom transform to center the #graph0 element
+  var initialTransform = d3.zoomIdentity
+    .translate(
+      0,
+      bbox.height
+    )
+    .scale(1);
+  zoom = d3
     .zoom()
     .scaleExtent([0.1, 10])
     .on("zoom", function (event) {
-      svg
-        .querySelector("#graph0")
-        .setAttribute("transform", event.transform.toString());
+      graph0.attr(
+          "transform",
+          " translate(" +
+            event.transform.x +
+            " " +
+            event.transform.y +
+            ")" +
+            "scale(" +
+            event.transform.k +
+            ")"
+        );
     })
-    let nodesMetadataMap;
-    nodesMetadata.subscribe((value) => {
-      nodesMetadataMap = value;
-    })
+  zoom
+    .transform(d3.select(svg), initialTransform);
+  let nodesMetadataMap;
+  nodesMetadata.subscribe((value) => {
+    nodesMetadataMap = value;
+  });
   // Set all .node and .edge to class neutral
   if (nodesMetadataMap.size > 0) {
     d3.select(".graph svg")
@@ -71,7 +97,6 @@ function nodeClick(papers, papersData) {
     // Add click event listener to the node
     node.addEventListener("click", () => {
       selectedNode.update((selectedNodeObj) => {
-        console.log("click on paper");
         paperData.id = id;
         return { selectedNode: paperData, id: selectedNodeObj.id + 1 };
       });
@@ -134,11 +159,11 @@ function tagsClickCopy(tags) {
     d3.select(node).style("cursor", "text");
     // Add click event listener to the node
     node.addEventListener("click", () => {
-      console.log(node.textContent.split(" "))
-      const text = node.textContent.split(" ").at(-1).trim().split('\n').at(-1)
+      console.log(node.textContent.split(" "));
+      const text = node.textContent.split(" ").at(-1).trim().split("\n").at(-1);
       navigator.clipboard.writeText(text);
       clickedSnackStore.update((value) => {
-        return "Tag name <code>"+text+"</code> copied into clipboard!";
+        return "Tag name <code>" + text + "</code> copied into clipboard!";
       });
     });
   });
@@ -147,7 +172,7 @@ function nodeHover(papers, tags) {
   papers.forEach((paper) => {
     const id = paper.id;
     const node = document.querySelector(`#${id}`);
-    
+
     // Add click event listener to the node
     node.addEventListener("mouseover", () => {
       nodeHoverElem(node, true);
@@ -191,12 +216,12 @@ export function updateSVGClasses() {
       const newAttrClass = [...currClass, ...tags].join(" ");
       element.attr("class", newAttrClass);
     });
-    
+
   d3.select(".graph svg")
-  .selectAll(".edge")
-  .attr("class", () => {
-    return "edge neutral";
-  });
+    .selectAll(".edge")
+    .attr("class", () => {
+      return "edge neutral";
+    });
 }
 export function updateSVG(papers, papersData, tags) {
   let nodesMetadataMap;

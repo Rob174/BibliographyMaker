@@ -87,6 +87,16 @@ export const structureStore: Writable<TagStructure | undefined> =
   export const activeTabStore: Writable<string> =
     writable("Add paper by doi");
 export const othersShownStore: Writable<boolean> = writable(true);
+export const countDoneStore: Writable<number> = writable(0);
+export function updateCountDone() {
+  nodesMetadata.subscribe((nodesMetadata) => {
+    countDoneStore.set(
+      Array.from(nodesMetadata.values()).filter(
+        (nodeMetadata) => nodeMetadata.tags.includes("done")
+      ).length
+    );
+  });
+}
 export const defaultPaperWithDOIStore: () => PaperWithDOIFields = () => {
   return {
     doi: "",

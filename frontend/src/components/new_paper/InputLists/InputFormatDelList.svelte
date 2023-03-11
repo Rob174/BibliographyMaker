@@ -28,6 +28,11 @@
           delayedFocus(i);
           update++;
         }}
+        on:switch={() => {
+          texts[i] = texts[i].split(" ").reverse().join(" ");
+          delayedFocus(i);
+          update++;
+        }}
         on:add={() => {
           // Insert a new text after the current one
           texts = [...texts.slice(0, i + 1), "", ...texts.slice(i + 1)];

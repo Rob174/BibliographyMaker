@@ -1,3 +1,4 @@
+import { getCitationAbr } from "../citations";
 import { API_URL } from "../data";
 export const getTags = async () => {
   // Get tags with fetch request
@@ -21,10 +22,11 @@ export const getPapers = async () => {
       "Content-Type": "application/json",
     },
   });
-  const data = (await r.json()).map((paper: any) => {
+  const data = await Promise.all((await r.json()).map(async (paper: any) => {
     paper.tags = Array.from(new Set(paper.tags));
+    paper.citation = await getCitationAbr(paper);
     return paper;
-  });
+  }));
   return data;
 };
 export const serverRunning = async () => {

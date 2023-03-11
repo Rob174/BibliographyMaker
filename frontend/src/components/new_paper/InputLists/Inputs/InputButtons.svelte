@@ -7,7 +7,7 @@
   export let text = "";
   export let index = 0;
   export let className = "";
-  export let buttons = ["format", "add", "delete"];
+  export let buttons = ["format", "add", "delete", "switch"];
 </script>
 
 <div>
@@ -20,6 +20,16 @@
       }}
     >
       <i class="material-icons">cleaning_services</i>
+    </IconButton>
+  {/if}
+  {#if buttons.includes("switch")}
+    <IconButton
+      style="width: 1em; margin-left: 1em;"
+      on:click={() => {
+        dispatch("switch", { index });
+      }}
+    >
+      <i class="material-icons">swap_horiz</i>
     </IconButton>
   {/if}
   {#if buttons.includes("add")}
