@@ -18,6 +18,7 @@
   } from "../../data";
   import Button from "@smui/button/src/Button.svelte";
   import ButtonsCitation from "./ButtonsCitation.svelte";
+  import { onMount } from "svelte";
   const dispatch = createEventDispatcher();
 
   export let open = false;
@@ -33,8 +34,8 @@
     }
   }
   let selection = status === "todo" ? [] : ["done"];
-  nodesMetadata.subscribe((value) => {
-    selection = value.get(element.id).tags.includes("done") ? ["done"] : [];
+  onMount(() => {
+    selection = $nodesMetadata.get(element.id).tags.includes("done") ? ["done"] : [];
   });
 </script>
 
@@ -96,14 +97,17 @@
               const pties = value.get(element.id);
               const state = pties
                 .tags.filter((tag) =>
-                  Array.from(["todo", "done"]).includes(tag)
+                  !Array.from(["todo", "done"]).includes(tag)
                 );
               const toAdd = e.detail.selected ? "done" : "todo";
+              console.log("toAdd", toAdd)
               state.push(toAdd);
               pties.tags = state;
               value.set(element.id, pties);
+              console.log("pties", pties);
               return value;
             });
+            
             updateCountDone();
           }}
         >

@@ -3,6 +3,7 @@ import { updatePaper } from "../model";
 import { writePaper } from "../model";
 import { v4 as uuidv4 } from "uuid";
 import type { Bibtex, PaperJSON } from "../types";
+import { unescape } from "querystring";
 /**
  *
  * @param {*} req body contains doi, relevant_text, tags. Url will be inferred from doi
@@ -10,7 +11,7 @@ import type { Bibtex, PaperJSON } from "../types";
  */
 export const postPaperWithDOI = async (req, res) => {
   console.log("postPaper incoming");
-  const { doi, relevant_text, tags, analysis, id_in_db } = req.body;
+  const { doi, relevant_text, tags, analysis, id_in_db, url } = req.body;
   if (!doi || !relevant_text || !tags) {
     console.log("Missing parameters");
     res.status(400).send({ result: "Missing parameters" });
@@ -22,6 +23,7 @@ export const postPaperWithDOI = async (req, res) => {
     res.status(400).send({ result: "Error: bibtex is null" });
     return;
   }
+  bibtex.URL = url === "" || url === undefined ? bibtex.URL : url;
   const id = formatUUID("a" + uuidv4());
   const paper = {
     id: id_in_db === undefined || id_in_db === "" ? id : id_in_db,

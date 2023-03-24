@@ -8,10 +8,8 @@
   import { nodesMetadata, tagsStore, updateCountDone } from "../../data";
   import { onMount } from "svelte";
   import { getTags } from "../../api/get";
-  import Switch from "@smui/switch";
-  import FormField from "@smui/form-field";
   import SwitchText from "../form_elems/SwitchText.svelte";
-
+  import { parse, HtmlGenerator } from "latex.js";
   const dispatch = createEventDispatcher();
   export let id_in_db = "";
   export let relevantTexts: string[] = [""];
@@ -56,6 +54,23 @@
   $: {
     if (relevantTexts.length === 0) relevantTexts = [""];
   }
+  let renderedValue = "";
+  function renderLaTeX(latex) {
+    let generator = new HtmlGenerator({ hyphenate: false });
+    let doc = parse(latex, { generator: generator }).htmlDocument();
+    renderedValue = `
+      <html>
+        <head>
+          <link rel="stylesheet" href="https://latex.js.org/css/katex.css" type="text/css" />
+          <link rel="stylesheet" href="https://latex.js.org/css/article.css" type="text/css"/>
+          <style>body{background-color: white; color: black;}</style>
+        </head>
+        <body>
+          ${doc.documentElement.outerHTML}
+        </body>
+      </html>
+    `;
+  }
 </script>
 
 <!-- Following fields are required: doi, relevant texts (add function possible), tags (function add possible) -->
@@ -72,6 +87,9 @@
       label="Relevant Texts"
       bind:texts={relevantTexts}
       formatAction={(text) => text.replaceAll("\n", " ")}
+      tooltipFormat="Remove new lines"
+      tooltipAdd="Add new relevant text"
+      tooltipDelete="Delete current relevant text"
     />
     <AutocompleteButList
       label="Tags"
@@ -84,12 +102,18 @@
       <MultilineFormatDel
         label="Analysis Text"
         bind:text={analysisText}
-        buttons={[]}
+        buttons={["format"]}
         on:format={() => {
-          analysisText = analysisText.replaceAll("\n", " ");
+          renderLaTeX(analysisText);
         }}
+        tootipFormat="Render LaTeX"
       />
     </div>
+    {#if renderedValue !== ""}
+      <!-- Render in a iframe the latex result -->
+      <iframe sandbox="allow-same-origin allow-scripts" seamless style="width:100%; height: 100%;" srcdoc={renderedValue} title="latex-content" 
+      />
+    {/if}
     <Button
       style="width:100%; margin-top:2em;"
       variant="raised"

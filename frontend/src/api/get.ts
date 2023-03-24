@@ -1,4 +1,4 @@
-import { getCitationAbr } from "../citations";
+import { cite, getCitationAbr } from "../citations";
 import { API_URL } from "../data";
 export const getTags = async () => {
   // Get tags with fetch request
@@ -25,6 +25,7 @@ export const getPapers = async () => {
   const data = await Promise.all((await r.json()).map(async (paper: any) => {
     paper.tags = Array.from(new Set(paper.tags));
     paper.citation = await getCitationAbr(paper);
+    paper.citationFull = await cite(paper);
     return paper;
   }));
   return data;

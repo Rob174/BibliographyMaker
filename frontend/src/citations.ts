@@ -6,7 +6,7 @@ export async function cite(paper: Paper): Promise<string> {
   var options = { generateGraph: false };
   return new Promise((resolve, reject) => {
     Cite.async(JSON.stringify(paper.bibtex), options).then(function (result) {
-      const text = result.format("bibtex", { type: "text" });
+      const text = result.format("biblatex", { type: "text"});
       resolve(text);
     });
   });

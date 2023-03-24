@@ -116,6 +116,7 @@ export const getJSONGraph = async (args, res, send = false) => {
     });
     return paperCpy;
   }));
+  console.log("Papers loaded", JSON.stringify(papers.map(p=>p.id), null, 2));
   const result = buildJSONGraph(
     papers,
     tags,

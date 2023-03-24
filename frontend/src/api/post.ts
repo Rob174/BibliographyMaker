@@ -1,6 +1,7 @@
 import { API_URL } from "../data";
 export const postPaperWithDOI = async (
   doi,
+  url,
   relevant_texts,
   tags,
   analysis,
@@ -8,6 +9,7 @@ export const postPaperWithDOI = async (
 ): Promise<string> => {
   const json = {
     doi: doi,
+    url: url,
     relevant_text: relevant_texts,
     tags: tags,
     analysis: analysis,

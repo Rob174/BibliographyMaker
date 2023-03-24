@@ -16,8 +16,9 @@
   });
   let visible = false;
   document.addEventListener("keydown", (event) => {
-    // Listen for key press Ctrl + F
-    if (event.ctrlKey && event.key === "f") {
+    // Listen for key press Ctrl + F not ctrl + shift + f
+    console.log(event);
+    if (event.ctrlKey && event.key === "F" && event.shiftKey) {
       visible = !visible;
       setTimeout(() => {
         const input = document.querySelector("#search-bar input");

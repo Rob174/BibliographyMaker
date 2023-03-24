@@ -6,6 +6,7 @@ export type Paper = {
   tags: Tag[];
   analysis: string;
   citation?: string;
+  citationFull?: string;
 };
 export type DOI = string;
 export type BibTex = {
@@ -37,6 +38,7 @@ export type PaperWithDOIFields = {
   tags: string[];
   analysis: string;
   id_in_db?: string;
+  url?: string;
 };
 export type PaperWithoutDOIFields = {
   title: string;

@@ -14,6 +14,9 @@
   export let formatAction = (text: string) => {
     return text;
   };
+  export let tooltipFormat = "Format";
+  export let tooltipAdd = "Add";
+  export let tooltipDelete = "Delete";
 </script>
 
 <div class={className}>
@@ -27,12 +30,14 @@
           delayedFocus(i);
           update++;
         }}
+        tootipFormat={tooltipFormat}
         on:add={() => {
           // Insert a new text after the current one
           texts = [...texts.slice(0, i + 1), "", ...texts.slice(i + 1)];
           delayedFocus(i + 1);
           update++;
         }}
+        tooltipAdd={tooltipAdd}
         on:change={() => {
           // Insert a new text after the current one
           texts = [...texts.slice(0, i + 1), "", ...texts.slice(i + 1)];
@@ -48,6 +53,7 @@
           delayedFocus(texts.length - 1);
           update++;
         }}
+        tooltipDelete={tooltipDelete}
       />
     {/each}
   {/key}

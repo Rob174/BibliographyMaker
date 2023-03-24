@@ -49,7 +49,7 @@
   <TextValue label="Title" bind:value={title}/>
   <div>
     {#if results.length === 0}
-      <div style="margin: 1em;">Results...</div>
+      <div style="margin: 1em;">Results will be here...</div>
     {/if}
     {#each results as result}
       <div style="margin: 1em;">

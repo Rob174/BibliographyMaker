@@ -2,7 +2,7 @@
   import IconButtonText from "../form_elems/IconButtonText.svelte";
   import { fade } from "svelte/transition";
   import { getGraphSVG, getGraphDOT } from "../../api/graph";
-  import { structureStore } from "../../data";
+  import { nodesMetadata, othersShownStore, papersStore, structureStore, updateCountDone } from "../../data";
   import OtherButton from "./OtherButton.svelte";
   export let open = false;
   async function copyBlobToClipboard(blob) {
@@ -52,7 +52,6 @@
         input.remove();
       }}
     />
-    <OtherButton />
     <IconButtonText
       text="Remove structure"
       icon="delete"
@@ -62,11 +61,30 @@
       }}
     />
     <IconButtonText
+      text="Clear done papers"
+      icon="layers_clear"
+      on:click={async ($structureStore) => {
+        nodesMetadata.update((value) => {
+          // Get value (Map) keys
+          const keys = Array.from(value.keys());
+          // For each key
+          keys.forEach((key) => {
+            // Get the tags
+            const tags = value.get(key).tags.filter((tag) => tag !== "done");
+            tags.push("todo");
+            value.set(key, {...value.get(key), tags});
+          });
+          return value;
+        });
+        updateCountDone();
+      }}
+    />
+    <IconButtonText
       text="Download SVG"
       icon="download"
       on:click={() => {
         console.log("Download SVG");
-        
+
         getGraphSVG($structureStore).then((blob) => {
           const svgURL = URL.createObjectURL(blob);
           const a = document.createElement("a");
@@ -108,10 +126,59 @@
       text="Copy DOT"
       icon="content_copy"
       on:click={($structureStore) => {
-        console.log("Download SVG");
-        getGraphDOT().then(async (blob) => {
+        let structure = undefined;
+        structureStore.subscribe((value) => {
+          structure = value;
+        });
+        let showOthers = false;
+        othersShownStore.subscribe((value) => {
+          showOthers = value;
+        });
+        getGraphDOT(structure).then(async (blob) => {
           await copyBlobToClipboard(blob);
         });
+      }}
+    />
+    <IconButtonText
+      text="Copy full bibtex"
+      icon="functions"
+      on:click={async ($structureStore) => {
+        console.log("Copy full bibtex");
+        navigator.clipboard.writeText(
+          $papersStore.map((paper) => paper.citationFull).join("\n")
+        );
+      }}
+    />
+    <IconButtonText
+      text="Copy bibtex shown"
+      icon="functions"
+      on:click={async ($structureStore) => {
+        console.log("Copy bibtex shown");
+        // Iterate over .node, get id, get paper from papersStore, filter papers that are not shown, join with \n\n
+        const ids = [];
+        document.querySelectorAll(".node").forEach((node) => ids.push(node.id));
+        navigator.clipboard.writeText(
+          $papersStore
+            .filter((paper) => ids.includes(paper.id))
+            .map((paper) => paper.citationFull)
+            .join("\n")
+        );
+      }}
+    />
+    <IconButtonText
+      text="Copy cit. of done papers"
+      icon="explicit"
+      on:click={async ($structureStore) => {
+        let citations = [];
+        for (const [paperId, paperTags] of $nodesMetadata.entries()) {
+          if (paperTags.tags.includes("done")) {
+            const paper = $papersStore.filter(
+              (paper) => paper.id === paperId
+            )[0];
+            citations.push("\\citep{" + paper.citation + "}");
+          }
+        }
+        navigator.clipboard.writeText(citations.join(", "));
       }}
     />
   </div>

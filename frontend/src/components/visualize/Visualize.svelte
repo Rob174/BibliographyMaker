@@ -91,7 +91,7 @@
 </div>
 <SearchBar />
 <MenuPanel />
-<div class="counter">{countSelected}</div>
+<div class="counter">{countSelected}/{$papersStore.length}</div>
 {#if status !== "idle"}
   <div
     style="display: flex; justify-content: center; position: absolute; top: 4em; right: 0em; transform: translate(-100%,0%);"
@@ -111,7 +111,8 @@
     top: 1em;
     left: 1em;
     padding: 0.5em;
-    background: transparent;
+    background: rgba(255, 255, 255, 0.337);
+    border-radius: 0.5em;
     color: white;
     font-size: 2em;
   }

@@ -42,6 +42,7 @@ export const getGraphSVG = async (structure?: TagStructure): Promise<Blob> => {
       style: "rounded",
       splineType: "polyline",
       structure: structure,
+      includeOthers: true
     };
     const resp = await fetch(`${API_URL}/graph/svg`, {
       method: "POST",
@@ -65,6 +66,7 @@ export const getGraphDOT = async (structure?: TagStructure): Promise<Blob> => {
       style: "rounded",
       splineType: "polyline",
       structure: structure,
+      includeOthers: true
     };
     const resp = await fetch(`${API_URL}/graph/dot`, {
       method: "POST",

@@ -8,17 +8,20 @@
   let tags: string[] = [""];
   let analysisText: string = "";
   let id_in_db: string = "";
+  let url: string = "";
   paperWithDOIStore.subscribe((paper) => {
     doi = paper.doi;
     relevantTexts = paper.relevant_text
     tags = paper.tags;
     analysisText = paper.analysis;
     id_in_db = paper.id_in_db || "";
+    url = paper.url || "";
   });
   $: {
     // Update the store when any of the fields change
     paperWithDOIStore.set({
       doi,
+      url,
       relevant_text: relevantTexts,
       tags,
       analysis: analysisText,
@@ -31,6 +34,7 @@
   async function save() {
     const resultMsg: string = await postPaperWithDOI(
       doi,
+      url,
       relevantTexts,
       tags,
       analysisText,
@@ -52,4 +56,5 @@
   }}
 >
   <TextValue label="DOI" style="width: 100%;" bind:value={doi} focused={true} />
+  <TextValue label="(optional) URL" style="width: 100%;" bind:value={url} />
 </NewPaper>

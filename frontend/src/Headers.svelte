@@ -28,4 +28,6 @@
     rel="stylesheet"
     href="https://fonts.googleapis.com/css?family=Roboto+Mono"
   />
+  <link rel="stylesheet" href="/article.css" />
+  <link rel="stylesheet" href="/katex/katex.css" />
 </head>

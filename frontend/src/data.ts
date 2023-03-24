@@ -103,6 +103,7 @@ export const defaultPaperWithDOIStore: () => PaperWithDOIFields = () => {
     relevant_text: [""],
     tags: [""],
     analysis: "",
+    url: "",
   };
 };
 export const paperWithDOIStore: Writable<PaperWithDOIFields> = writable(
@@ -132,6 +133,7 @@ export const edit = (paper: any) => {
       paperWithDOIStore.tags = paper.tags;
       paperWithDOIStore.analysis = paper.analysis;
       paperWithDOIStore.id_in_db = paper.id;
+      paperWithDOIStore.url = paper.bibtex.URL;
       return paperWithDOIStore;
     });
     return "Add paper by doi"

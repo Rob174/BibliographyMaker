@@ -86,9 +86,13 @@
     focused={true}
   />
   <InputFormatDelList
-    label="Author (family name, first name)"
+    label="Author (family name space first name)"
     bind:texts={authors}
     formatAction={update}
+    tooltipFormat="Split on comma multiple authors"
+    tooltipSwitch="Switch family name and first name if space separated"
+    tooltipAdd="Add author"
+    tooltipDelete="Delete author"
   />
   <TextValue
     label="Year"
