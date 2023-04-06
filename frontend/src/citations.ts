@@ -2,8 +2,8 @@ import * as Cite from "citation-js";
 import type { Paper } from "./types";
 export async function cite(paper: Paper): Promise<string> {
   // Make a promise to get the citation as a return value
-  Cite.forceType = "@else/json";
-  var options = { generateGraph: false };
+  const forceType = "@else/json";
+  var options = { generateGraph: false, format: forceType};
   return new Promise((resolve, reject) => {
     Cite.async(JSON.stringify(paper.bibtex), options).then(function (result) {
       const text = result.format("biblatex", { type: "text"});

@@ -37,11 +37,14 @@
     "@smui/snackbar": "^7.0.0-beta.0",
     "citation-js": "^0.6.7",
     "d3": "^7.8.2",
+    "flat-colors": "^3.3.12",
     "katex": "^0.16.4",
     "latex.js": "^0.12.4",
+    "random-flat-colors": "^1.0.7",
     "socket.io": "^4.6.1",
     "socket.io-client": "^4.6.1",
     "svelte-material-ui": "^7.0.0-beta.0",
+    "tinycolor2": "^1.6.0",
     "uuid": "^9.0.0"
   }
 }
