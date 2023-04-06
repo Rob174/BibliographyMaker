@@ -6,6 +6,7 @@ import { emitPapersTags, getPapers, getPapersWithTitle, getTags } from "./ops/ge
 import { clean } from "./ops/graph/utils";
 import http from 'http';
 import { Server } from 'socket.io';
+import { getJSON, loadJSON, updateJSON } from "./model";
 
 
 const app = express();
@@ -38,6 +39,9 @@ app.get("/tags", getTags);
 app.delete("/clean", clean);
 app.post("/graph", getGraph);
 app.post("/json_graph", getJSONGraphRequest);
+app.get("/data/", getJSON);
+app.post("/data/replace/", loadJSON);
+app.post("/data/update/", updateJSON);
 
 // Define routes for websocket
 io.on('connection', (socket) => {

@@ -28,7 +28,7 @@ export const writePaper = (paper) => {
   paper.tags
     .filter((tag) => !data.tags.map((x) => x.name).includes(tag))
     .forEach((tag) => {
-      data.tags.push({ name: tag, id: formatUUID("t"+uuidv4()) });
+      data.tags.push({ name: tag, id: formatUUID("t" + uuidv4()) });
     });
   writeFileSync(file_name, JSON.stringify(data));
   return true;
@@ -44,7 +44,7 @@ export const updatePaper = (paper) => {
   paper.tags
     .filter((tag) => !data.tags.map((x) => x.name).includes(tag))
     .forEach((tag) => {
-      data.tags.push({ name: tag, id: formatUUID("t"+uuidv4()) });
+      data.tags.push({ name: tag, id: formatUUID("t" + uuidv4()) });
     });
   writeFileSync(file_name, JSON.stringify(data));
   return true;
@@ -56,6 +56,30 @@ export const getPapers = () => {
 export const getTags = () => {
   const data = JSON.parse(readFileSync(file_name).toString());
   return data.tags;
+};
+export const getJSON = (req=undefined,res=undefined) => {
+  const data = JSON.parse(readFileSync(file_name).toString());
+  if(res===undefined) return data;
+  res.status(200).send(data);
+};
+export const loadJSON = (data,res) => {
+  writeFileSync(file_name, JSON.stringify(data.body));
+  res.status(200).send({ message: "Data loaded" });
+};
+export const updateJSON = (data,res) => {
+  const json = getJSON();
+  json.papers.push(...data.body.papers);
+  json.tags.push(...data.body.tags);
+  writeFileSync(file_name, JSON.stringify(json));
+  res.status(200).send({ message: "Data updated" });
+
+};
+export const deletePaper = (req,res) => {
+  const id = req.params.id;
+  const json = getJSON();
+  json.papers = json.papers.filter((x) => x.id !== id);
+  writeFileSync(file_name, JSON.stringify(json));
+  res.status(200).send({ message: "Paper deleted" });
 };
 export const generateEmptyData = () => {
   return {

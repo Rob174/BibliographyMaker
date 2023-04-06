@@ -3,6 +3,7 @@ import { describe, it } from "mocha";
 import app from "../src/app";
 import request from "supertest";
 import chai from "chai";
+import fs from "fs";
 
 // Make a basic request to add the paper with doi 10.1016/j.dam.2005.05.020 and relevant_text "This is a test" and tags "test" and "test2"
 // Then make a request to get the papers and check that the paper is in the list
@@ -252,24 +253,26 @@ describe("Test the graph", function () {
   });
 
   // Create the structure
-  const structure = [{
-    tag: "test",
-    children: [
-      {
-        tag: "test2",
-        children: [],
-      },
-      {
-        tag: "test3",
-        children: [],
-      },
-    ],
-  }];
+  const structure = [
+    {
+      tag: "test",
+      children: [
+        {
+          tag: "test2",
+          children: [],
+        },
+        {
+          tag: "test3",
+          children: [],
+        },
+      ],
+    },
+  ];
   // Test the getGraph function
   it("Test getGraph", (done) => {
     request(app)
       .post("/graph")
-      .send({structure:structure, includeOthers: true})
+      .send({ structure: structure, includeOthers: true })
       .expect(200)
       .end((err, res) => {
         if (err) return done(err);
@@ -301,7 +304,7 @@ describe("Test the graph", function () {
         } = res.body;
         // Check the number of nodes
         chai.assert(
-          graph.nodes.length === 15,
+          graph.nodes.length === 13,
           "The number of nodes is not correct: " +
             graph.nodes.length +
             " with " +
@@ -310,7 +313,7 @@ describe("Test the graph", function () {
         // Check the number of edges
 
         chai.assert(
-          graph.edges.length === 14,
+          graph.edges.length === 12,
           "The number of edges is not correct: " +
             graph.edges.length +
             " with " +
@@ -323,7 +326,7 @@ describe("Test the graph", function () {
   it("Test getGraphSvg", (done) => {
     request(app)
       .post("/graph/svg")
-      .send({structure:structure, includeOthers: true})
+      .send({ structure: structure, includeOthers: true })
       .expect(200)
       .end((err, res) => {
         if (err) return done(err);
@@ -334,10 +337,162 @@ describe("Test the graph", function () {
   it("Test getGraphDOT", (done) => {
     request(app)
       .post("/graph/dot")
-      .send({structure:structure, includeOthers: true})
+      .send({ structure: structure, includeOthers: true })
       .expect(200)
       .end((err, res) => {
         if (err) return done(err);
+        done();
+      });
+  });
+});
+
+// Test clean the database, add two papers and then update the database with a json file
+describe("Test updateDatabase", () => {
+  it("Test clean", (done) => {
+    request(app)
+      .delete("/clean")
+      .expect(200)
+      .end((err, res) => {
+        if (err) return done(err);
+        done();
+      });
+  });
+  it("Test postPaper", (done) => {
+    request(app)
+      .post("/papers/doi")
+      .send({
+        doi: "10.1016/j.dam.2005.05.040",
+        relevant_text: "This is a test",
+        tags: ["test", "test4"],
+      })
+      .expect(200)
+      .end((err, res) => {
+        if (err) return done(err);
+        done();
+      });
+  });
+  it("Test postPaper", (done) => {
+    request(app)
+      .post("/papers/doi")
+      .send({
+        doi: "10.1016/j.dam.2005.05.041",
+        relevant_text: "This is a test",
+        tags: ["test", "test4"],
+      })
+      .expect(200)
+      .end((err, res) => {
+        if (err) return done(err);
+        done();
+      });
+  });
+  // Check that there are two papers an 2 tags
+  it("Test getPapers: 2 papers", (done) => {
+    request(app)
+      .get("/papers")
+      .expect(200)
+      .end((err, res) => {
+        if (err) return done(err);
+        const papers = res.body;
+        chai.assert.equal(papers.length, 2, "We have not 2 papers");
+        done();
+      });
+  });
+  it("Test getTags: 2 tags", (done) => {
+    request(app)
+      .get("/tags")
+      .expect(200)
+      .end((err, res) => {
+        if (err) return done(err);
+        const tags = res.body;
+        chai.assert.equal(tags.length, 2, "We have not 2 tags");
+        done();
+      });
+  });
+  // Get the JSON
+  it("Test getJSON", (done) => {
+    request(app)
+      .get("/data/")
+      .expect(200)
+      .end((err, res) => {
+        if (err) return done(err);
+        const json = res.body;
+        // Check that we have 2 fields: papers and tags
+        chai.assert.equal(Object.keys(json).length, 2, "We have not 2 fields");
+        // Check that we have 2 papers
+        chai.assert.equal(json.papers.length, 2, "We have not 2 papers");
+        // Check that we have 2 tags
+        chai.assert.equal(json.tags.length, 2, "We have not 2 tags");
+        done();
+      });
+  });
+  // Read the json file from papers_test.json and transform it into a json
+  const json = fs.readFileSync("test/papers_test.json");
+  const papers = JSON.parse(json.toString());
+  // Update the database with the json file
+  it("Test updateDatabase", (done) => {
+    request(app)
+      .post("/data/update/")
+      .send(papers)
+      .expect(200)
+      .end((err, res) => {
+        if (err) return done(err);
+        done();
+      });
+  });
+  // Check that there are 4 papers and 7+2=9 tags
+  it("Test getPapers: 4 papers", (done) => {
+    request(app)
+      .get("/papers")
+      .expect(200)
+      .end((err, res) => {
+        if (err) return done(err);
+        const papers = res.body;
+        chai.assert.equal(papers.length, 4, "We have not 4 papers");
+        done();
+      });
+  });
+  it("Test getTags: 7 tags", (done) => {
+    request(app)
+      .get("/tags")
+      .expect(200)
+      .end((err, res) => {
+        if (err) return done(err);
+        const tags = res.body;
+        chai.assert.equal(tags.length, 9, "We have not 9 tags");
+        done();
+      });
+  });
+  // Load in the database the json file
+  it("Test loadDatabase", (done) => {
+    request(app)
+      .post("/data/replace/")
+      .send(papers)
+      .expect(200)
+      .end((err, res) => {
+        if (err) return done(err);
+        done();
+      });
+  });
+  // Check that there are 2 papers and 7 tags
+  it("Test getPapers: 2 papers", (done) => {
+    request(app)
+      .get("/papers")
+      .expect(200)
+      .end((err, res) => {
+        if (err) return done(err);
+        const papers = res.body;
+        chai.assert.equal(papers.length, 2, "We have not 2 papers");
+        done();
+      });
+  });
+  it("Test getTags: 7 tags", (done) => {
+    request(app)
+      .get("/tags")
+      .expect(200)
+      .end((err, res) => {
+        if (err) return done(err);
+        const tags = res.body;
+        chai.assert.equal(tags.length, 7, "We have not 7 tags");
         done();
       });
   });
