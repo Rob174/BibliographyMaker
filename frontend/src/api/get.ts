@@ -39,3 +39,8 @@ export const serverRunning = async () => {
     return false;
   }
 };
+export const getJSON = async () => {
+  const data = await fetch(`${API_URL}/data/`);
+  const {elems} = await data.json();
+  return elems;
+}

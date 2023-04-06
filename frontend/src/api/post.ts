@@ -62,3 +62,31 @@ export const postPaperWithoutDOI = async (
   //   res.status(200).send({ result: "Added" });
   return (await r.json()).result;
 }
+export const loadJSON = async (json) => {
+  // Make a post request to the backend
+  const r = await fetch(`${API_URL}/data/replace/`, {
+    method: "POST",
+    mode: "cors",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(json),
+  });
+  // Field result contains always "Added" if the paper was added& successfully or the error message
+  //   res.status(200).send({ result: "Added" });
+  return (await r.json()).result;
+}
+export const addJSON = async (json) => {
+  // Make a post request to the backend
+  const r = await fetch(`${API_URL}/data/update/`, {
+    method: "POST",
+    mode: "cors",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(json),
+  });
+  // Field result contains always "Added" if the paper was added& successfully or the error message
+  //   res.status(200).send({ result: "Added" });
+  return (await r.json()).result;
+}

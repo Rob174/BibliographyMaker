@@ -2,8 +2,18 @@
   import IconButtonText from "../form_elems/IconButtonText.svelte";
   import { fade } from "svelte/transition";
   import { getGraphSVG, getGraphDOT } from "../../api/graph";
-  import { nodesMetadata, othersShownStore, papersStore, structureStore, updateCountDone } from "../../data";
+  import {
+    nodesMetadata,
+    othersShownStore,
+    papersStore,
+    structureStore,
+    updateCountDone,
+    updatePapersTags,
+  } from "../../data";
   import OtherButton from "./OtherButton.svelte";
+  import { addJSON, loadJSON } from "../../api/post";
+  import { clean } from "../../api/delete";
+  import { getJSON } from "../../api/get";
   export let open = false;
   async function copyBlobToClipboard(blob) {
     try {
@@ -22,6 +32,103 @@
 
 <div id="main" style={open ? "left:75vw;" : "left:calc(100vw - 2em);"}>
   <div id="icons">
+    <IconButtonText
+      text="Load JSON"
+      icon="upload_file"
+      on:click={async () => {
+        console.log("Download SVG");
+        // Open a file dialog to select a json file
+        const input = document.createElement("input");
+        input.type = "file";
+        input.accept = "application/json";
+        // And put the content of the file in the structureStore value
+        input.onchange = (e) => {
+          if (!(e.target instanceof HTMLInputElement)) {
+            return;
+          }
+          const file = e.target.files[0];
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const text = e.target.result;
+            if (typeof text !== "string") {
+              return;
+            }
+            console.log("LOADING");
+            loadJSON(JSON.parse(text)).then(() => {
+              console.log("UPDATING");
+              // Update the count of done papers
+              updatePapersTags();
+              updateCountDone();
+            });
+          };
+          reader.readAsText(file);
+        };
+        input.click();
+        // And remove the element from the DOM after the file has been selected
+        input.remove();
+      }}
+    />
+    <IconButtonText
+      text="Append JSON"
+      icon="note_add"
+      on:click={async () => {
+        console.log("Download SVG");
+        // Open a file dialog to select a json file
+        const input = document.createElement("input");
+        input.type = "file";
+        input.accept = "application/json";
+        // And put the content of the file in the structureStore value
+        input.onchange = (e) => {
+          if (!(e.target instanceof HTMLInputElement)) {
+            return;
+          }
+          const file = e.target.files[0];
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const text = e.target.result;
+            if (typeof text !== "string") {
+              return;
+            }
+            // We need to update graphStore, papersStore, tagsStore and nodesMetadata. So we refresh everything
+            addJSON(JSON.parse(text)).then(() => {
+              // Update the count of done papers
+              updatePapersTags();
+              updateCountDone();
+            });
+          };
+          reader.readAsText(file);
+        };
+        input.click();
+        // And remove the element from the DOM after the file has been selected
+        input.remove();
+      }}
+    />
+    <IconButtonText
+      text="Clear DB"
+      icon="delete_sweep"
+      on:click={async () => {
+        clean();
+      }}
+    />
+    <IconButtonText
+      text="Get DB JSON"
+      icon="download"
+      on:click={async () => {
+        let data = await getJSON();
+        console.log("data ready");
+        // Create a file, download it and copy the content to the clipboard
+        const blob = new Blob([JSON.stringify(data)], {
+          type: "application/json",
+        });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.setAttribute("href", url);
+        a.setAttribute("download", "graph.json");
+        a.click();
+        a.remove();
+        copyBlobToClipboard(blob);
+      }}
+    />
     <IconButtonText
       text="Provide structure"
       icon="account_tree"
@@ -72,7 +179,7 @@
             // Get the tags
             const tags = value.get(key).tags.filter((tag) => tag !== "done");
             tags.push("todo");
-            value.set(key, {...value.get(key), tags});
+            value.set(key, { ...value.get(key), tags });
           });
           return value;
         });
@@ -80,12 +187,12 @@
       }}
     />
     <IconButtonText
-      text="Download SVG"
-      icon="download"
+      text="Get SVG"
+      icon="content_copy"
       on:click={() => {
         console.log("Download SVG");
-
-        getGraphSVG($structureStore).then((blob) => {
+        getGraphSVG($structureStore).then(async (blob) => {
+          await copyBlobToClipboard(blob);
           const svgURL = URL.createObjectURL(blob);
           const a = document.createElement("a");
           a.href = svgURL;
@@ -97,33 +204,7 @@
       }}
     />
     <IconButtonText
-      text="Download DOT"
-      icon="download"
-      on:click={() => {
-        console.log("Download SVG");
-        getGraphDOT($structureStore).then((blob) => {
-          const dotURL = URL.createObjectURL(blob);
-          const a = document.createElement("a");
-          a.href = dotURL;
-          a.download = "graph.dot";
-          a.click();
-          // Remove the element from the DOM
-          a.remove();
-        });
-      }}
-    />
-    <IconButtonText
-      text="Copy SVG"
-      icon="content_copy"
-      on:click={() => {
-        console.log("Download SVG");
-        getGraphSVG($structureStore).then(async (blob) => {
-          await copyBlobToClipboard(blob);
-        });
-      }}
-    />
-    <IconButtonText
-      text="Copy DOT"
+      text="Get DOT"
       icon="content_copy"
       on:click={($structureStore) => {
         let structure = undefined;
@@ -136,6 +217,13 @@
         });
         getGraphDOT(structure).then(async (blob) => {
           await copyBlobToClipboard(blob);
+          const dotURL = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = dotURL;
+          a.download = "graph.dot";
+          a.click();
+          // Remove the element from the DOM
+          a.remove();
         });
       }}
     />
@@ -166,7 +254,7 @@
       }}
     />
     <IconButtonText
-      text="Copy cit. of done papers"
+      text="Copy cit. of done"
       icon="explicit"
       on:click={async ($structureStore) => {
         let citations = [];

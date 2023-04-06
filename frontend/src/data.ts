@@ -10,6 +10,7 @@ import type {
   TagStructure,
   ID,
 } from "./types";
+import { getPapers, getTags } from "./api/get";
 
 export const PORT = 3000;
 export const API_URL = `http://localhost:${PORT}`;
@@ -160,4 +161,34 @@ export const edit = (paper: any) => {
     });
     return "Add paper manually"
   }
+}
+
+export const updatePapersTags = () => {
+  // Update the papersStore
+  getPapers().then((papers) => {
+    papersStore.update((papersStore) => {
+      return papers;
+    });
+  });
+  // Update the tagsStore
+  getTags().then((tags) => {
+    tagsStore.update((tagsStore) => {
+      return tags;
+    });
+  });
+  // Update the nodesMetadata
+  // If a paper is not in the papersStore, remove it from the nodesMetadata
+  let papers;
+  papersStore.subscribe((papersStore) => {
+    papers = papersStore;
+  });
+  nodesMetadata.update((nodesMetadata) => {
+    const papersIds = papers.map((paper) => paper.id);
+    for (let [id, metadata] of nodesMetadata) {
+      if (!papersIds.includes(id)) {
+        nodesMetadata.delete(id);
+      }
+    }
+    return nodesMetadata;
+  });
 }

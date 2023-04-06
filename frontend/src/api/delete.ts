@@ -1,6 +1,6 @@
 import { API_URL } from "../data";
 export type CallBackClean = (msg: string) => void;
-export function clean(callback: CallBackClean) {
+export function clean(callback: CallBackClean = () => {}) {
   fetch(`${API_URL}/clean/`, {
     method: "DELETE",
     mode: "cors",

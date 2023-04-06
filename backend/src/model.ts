@@ -1,6 +1,8 @@
 import { writeFileSync, readFileSync, renameSync } from "fs";
 import { v4 as uuidv4 } from "uuid";
 import { formatUUID } from "./ops/utils";
+import jsonminify from 'jsonminify';
+import zlib from 'zlib';
 // We have an data.js file in the same folder to store all of the data in the format
 /**
  * {
@@ -58,9 +60,11 @@ export const getTags = () => {
   return data.tags;
 };
 export const getJSON = (req=undefined,res=undefined) => {
+  console.log("GET JSON");
   const data = JSON.parse(readFileSync(file_name).toString());
+  // minify the data and compress it
   if(res===undefined) return data;
-  res.status(200).send(data);
+  res.status(200).send({elems:JSON.stringify(data)});
 };
 export const loadJSON = (data,res) => {
   writeFileSync(file_name, JSON.stringify(data.body));
@@ -72,7 +76,6 @@ export const updateJSON = (data,res) => {
   json.tags.push(...data.body.tags);
   writeFileSync(file_name, JSON.stringify(json));
   res.status(200).send({ message: "Data updated" });
-
 };
 export const deletePaper = (req,res) => {
   const id = req.params.id;

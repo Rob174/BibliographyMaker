@@ -19,7 +19,7 @@ const server = http.createServer(app);
 const io = new Server(server);
 
 // Add middleware
-app.use(express.json());
+app.use(express.json({ limit: '500mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 app.use(cors(corsOptions));
