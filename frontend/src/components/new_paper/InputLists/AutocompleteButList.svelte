@@ -1,8 +1,7 @@
 <script lang="ts">
   import { v4 as uuidv4 } from "uuid";
-  import * as FlatColors  from "flat-colors";
-  import tinycolor from 'tinycolor2';
   import AutocompleteButtons from "./Inputs/AutocompleteButtons.svelte";
+  import { getNColorsFlat } from "../../../utils";
   export let texts: string[] = [""];
   export let label: string = "";
   export let className = "a" + uuidv4().replace(/-/g, "").slice(0, 10);
@@ -24,14 +23,7 @@
   }
   export let colors = [];
   $: {
-    colors = [];
-    for (let i = 0; i < texts.length; i++) {
-      const hueId = i;
-      const hue = (hueId * 360) / texts.length;
-      const color = tinycolor({h: hue, s: 75, l: 50}).toHexString();
-      const flatColor = FlatColors(color)
-      colors.push(`rgb(${flatColor[0]}, ${flatColor[1]}, ${flatColor[2]})`);
-    }
+    colors = getNColorsFlat(texts.length)
   }
 </script>
 
@@ -39,9 +31,6 @@
   {#key update}
     {#each texts as { }, i (i)}
       <div class="elem">
-        <div class="id-complete" style={`background-color: ${colors[i]};`}>
-          <span class="number">{i + 1}</span>
-        </div>
         <AutocompleteButtons
           {className}
           bind:text={texts[i]}

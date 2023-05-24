@@ -12,7 +12,7 @@
   import { parse, HtmlGenerator } from "latex.js";
   const dispatch = createEventDispatcher();
   export let id_in_db = "";
-  export let relevantTexts: string[] = [""];
+  export let relevantTexts: {text:string;tags:string[]}[] = [{text:"", tags:[]}];
   export let tags: string[] = [""];
   export let analysisText: string = "";
   export let save = (relevantTexts, tags, analysis) => {};
@@ -85,7 +85,8 @@
     <slot />
     <MultilineFormatDelList
       label="Relevant Texts"
-      bind:texts={relevantTexts}
+      bind:textsObj={relevantTexts}
+      possibleTags={tags}
       formatAction={(text) => text.replaceAll("\n", " ")}
       tooltipFormat="Remove new lines"
       tooltipAdd="Add new relevant text"

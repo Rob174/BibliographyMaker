@@ -24,7 +24,7 @@ The goal of this project is to provide an interface to ease the litterature revi
   - [x] Migration of current data to "a"+uuid without "-"
   - [x] Migration of tags with uuids
   - [x] Correction of the frontend
-- [ ] Relevant text linked to tags (assign a number to the tags with a color)
+- [-] Relevant text linked to tags (assign a number to the tags with a color)
 - [x] Possibility to import/export the json file
 - [ ] Group selection of papers
 - [ ] websocket to avoid spamming the server (requires everything in store)
