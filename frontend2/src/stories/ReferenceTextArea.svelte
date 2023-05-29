@@ -1,0 +1,132 @@
+<script lang="ts">
+  import TextArea from "./TextArea.svelte";
+  import { createEventDispatcher } from "svelte";
+  const dispatch = createEventDispatcher();
+  export let options: string[] = ["test1", "test2"];
+  let optionsList = [
+    ".".repeat(Math.min(...options.map((text) => text.length))),
+    ...options,
+  ];
+  optionsList.sort();
+  let id = 0;
+  let idSelect = 0;
+  export let text = "";
+  export let attachedElements = [];
+  let textarea;
+  export function setText(t: string) {
+    textarea.setText(t);
+  }
+</script>
+
+<div id="tags">
+  <div id="tags">
+    {#key id}
+      {#each attachedElements as element, i}
+        <button
+          on:click={(e) => {
+            attachedElements = attachedElements.filter((e) => e != element);
+            optionsList.push(element);
+            optionsList.sort();
+            idSelect++;
+            id++;
+            dispatch("change", { text, attached: attachedElements });
+          }}>{element}</button
+        >
+      {/each}
+    {/key}
+  </div>
+  <TextArea
+    {text}
+    bind:this={textarea}
+    on:change={(e) => {
+      text = e.detail;
+      dispatch("change", { text, attached: attachedElements });
+    }}
+  >
+    {#key idSelect}
+      <select
+        on:change={(e) => {
+          // IF not the first element
+          if (!e.target.value.includes(".")) {
+            attachedElements.push(e.target.value);
+            attachedElements.sort();
+            optionsList = optionsList.filter((o) => o !== e.target.value);
+            // select the first option back
+            document.querySelector("#tags select").selectedIndex = 0;
+            id++;
+            dispatch("change", { text, attached: attachedElements });
+          }
+        }}
+      >
+        {#each optionsList as option}
+          <option value={option}>{option}</option>
+        {/each}
+      </select>
+    {/key}
+    <slot />
+  </TextArea>
+</div>
+
+<style>
+  /* Styling the select element */
+  select {
+    appearance: none; /* Remove default styling */
+    padding: 8px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #fff;
+    color: #333;
+    width: auto;
+    margin-left: 1em;
+    margin-right: 1em;
+  }
+
+  /* Styling the dropdown arrow */
+  select::-ms-expand {
+    display: none; /* Remove IE arrow */
+  }
+
+  select::after {
+    content: "\25BE"; /* Unicode character for down arrow */
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    transform: translateY(-50%);
+    color: #666;
+    pointer-events: none; /* Prevent click events on the arrow */
+  }
+
+  /* Styling the dropdown options */
+  select option {
+    padding: 8px;
+  }
+  #tags button {
+    appearance: none; /* Remove default styling */
+    padding: 0.5em;
+    margin-right: 0.5em;
+    margin-bottom: 1em;
+    border-radius: 0.5em;
+    border: 1px solid var(--neutral-color);
+    background-color: transparent;
+    font-family: inherit;
+    font-size: 0.75em;
+    cursor: pointer;
+    transition: all var(--transition-duration) ease-in-out;
+    outline: none;
+  }
+  #tags button:hover {
+    background-color: var(--accent-color);
+    color: white;
+    border-color: white;
+  }
+  #tags button:focus {
+    background-color: var(--accent-color);
+    color: white;
+    border-color: white;
+  }
+  select:focus {
+    outline: none;
+    border: 4px solid var(--accent-color);
+  }
+</style>
