@@ -49,6 +49,9 @@
     border-bottom: 3px solid var(--accent-color);
     outline: none;
   }
+  input:hover {
+    border: 1px solid var(--accent-color);
+  }
   label {
     margin-right: 0.5rem;
   }

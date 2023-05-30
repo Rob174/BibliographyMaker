@@ -3,6 +3,8 @@
   import References from "./References.svelte";
   import Tags from "./Tags.svelte";
   import { v4 as uuidv4 } from "uuid";
+  import { createEventDispatcher } from "svelte";
+  const dispatch = createEventDispatcher();
   function emptyText() {
     return {
       id: uuidv4(),
@@ -11,19 +13,20 @@
       obj: null,
     };
   }
-  let tags: string[] = [""];
-  let citations = [emptyText()];
-  let analysis = "";
+  export let tags: string[] = [""];
+  export let citations = [emptyText()];
+  export let analysis = "";
   let id = 0;
 </script>
 
+<slot />
 {#key id}
   <References
     {tags}
     data={citations}
     on:change={(e) => {
       citations = e.detail;
-      // id++;
+      dispatch("change", { citations, tags, analysis });
     }}
   />
 {/key}
@@ -31,6 +34,13 @@
   on:change={(e) => {
     tags = e.detail.map((x) => x.text);
     id++;
+    dispatch("change", { citations, tags, analysis });
   }}
 />
-<Analysis {analysis} on:change={(e) => (analysis = e.detail)} />
+<Analysis
+  {analysis}
+  on:change={(e) => {
+    analysis = e.detail;
+    dispatch("change", { citations, tags, analysis });
+  }}
+/>

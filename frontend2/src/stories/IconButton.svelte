@@ -7,7 +7,7 @@
   export let iconName: string = "close";
 </script>
 
-<button class="input-container" on:click={(e) => handleInput(e)}>
+<button class="input-container" on:click={(e) => handleInput(e)} on:blur={(e)=>dispatch("blur")}>
   <span class="material-symbols-outlined">
     {iconName}
   </span>

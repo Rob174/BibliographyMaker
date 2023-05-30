@@ -28,9 +28,9 @@
   function clickPoss(poss) {
     text = poss;
     id++;
-    const e = document.querySelector("#autocomplete input")
+    const e = document.querySelector("#autocomplete input");
     e.focus();
-    
+
     updateMatchingPossibilities(poss);
   }
   let selectedPossId = -1;
@@ -47,7 +47,16 @@
     if (id >= length) return id - length;
     return id;
   }
+  export function setFocus(focus) {
+    focused = focus;
+  }
   export let text: string = "";
+  dispatch("outOfFocus", {
+    on: () => {
+      console.log("1");
+      focused = false;
+    },
+  });
 </script>
 
 <div

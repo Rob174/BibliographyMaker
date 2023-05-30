@@ -71,16 +71,29 @@
                 selectLast();
               }}
             />
-            <IconButton
-              iconName="cleaning_services"
-              on:change={(e) => {
-                const idx = data.indexOf(data.filter((x) => x.id == d.id)[0]);
-                console.log(data[idx].text);
-                data[idx].text = preprocessLatexText(data[idx].text);
-                dispatch("change", data);
-                selectI(idx);
-              }}
-            />
+            {#if i === data.length - 1}
+              <IconButton
+                iconName="cleaning_services"
+                on:change={(e) => {
+                  const idx = data.indexOf(data.filter((x) => x.id == d.id)[0]);
+                  console.log(data[idx].text);
+                  data[idx].text = preprocessLatexText(data[idx].text);
+                  dispatch("change", data);
+                  selectI(idx);
+                }}
+              />
+            {:else}
+              <IconButton
+                iconName="cleaning_services"
+                on:change={(e) => {
+                  const idx = data.indexOf(data.filter((x) => x.id == d.id)[0]);
+                  console.log(data[idx].text);
+                  data[idx].text = preprocessLatexText(data[idx].text);
+                  dispatch("change", data);
+                  selectI(idx);
+                }}
+              />
+            {/if}
           </svelte:fragment>
         </AutocompleteInput>
       {/key}
