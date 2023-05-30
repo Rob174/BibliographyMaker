@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from "@storybook/svelte";
 import AutocompleteInput from "./AutocompleteInput.svelte";
 
 const meta = {
-  title: "AutocompleteInput",
+  title: "Element/AutocompleteInput",
   component: AutocompleteInput,
   tags: ["autodocs"],
 } satisfies Meta<AutocompleteInput>;

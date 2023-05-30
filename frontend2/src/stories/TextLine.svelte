@@ -13,6 +13,7 @@
     inputField.focus();
     dispatch("change", text);
   }
+  export let text: string = "";
 </script>
 
 <div class="input-container">
@@ -24,7 +25,9 @@
     on:input={(e) => handleInput(e)}
     on:focus={(e) => dispatch("focusInput")}
     on:blur={(e) => dispatch("blurInput")}
+    value={text}
   />
+  <slot />
 </div>
 
 <style>

@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from "@storybook/svelte";
 import TextArea from "./TextArea.svelte";
 
 const meta = {
-  title: "TextArea",
+  title: "Element/TextArea",
   component: TextArea,
   tags: ["autodocs"],
   argTypes: {},

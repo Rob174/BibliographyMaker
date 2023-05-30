@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from "@storybook/svelte";
 import TextLine from "./TextLine.svelte";
 
 const meta = {
-  title: "TextLine",
+  title: "Element/TextLine",
   component: TextLine,
   tags: ["autodocs"],
   argTypes: {},

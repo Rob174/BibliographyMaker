@@ -1,4 +1,6 @@
 export function preprocessLatexText(txt) {
     const exceptions = ["•"]
-    return txt.replace(/\n/g, " ")
+    let t = txt.replace(/\n/g, " ")
+    t = t.trim();
+    return t;
 }

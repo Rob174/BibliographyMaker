@@ -6,8 +6,8 @@
   import { createEventDispatcher } from "svelte";
   const dispatch = createEventDispatcher();
   export let tags: string[] = ["test1", "test2"];
-  let data = [emptyText()];
-  function emptyText() {
+  export let data = [emptyText()];
+  export function emptyText() {
     return {
       id: uuidv4(),
       text: "",
@@ -34,9 +34,10 @@
   {#key id}
     {#each data as d, i}
       <ReferenceTextArea
+        label={`§${i+1}`}
         text={d.text}
         attachedElements={d.tags}
-        options={tags}
+        options={tags.filter(x=>x!=="")}
         on:change={(e) => {
           const idx = data.indexOf(data.filter((x) => x.id == d.id)[0]);
 
@@ -75,6 +76,7 @@
             selectI(idx);
           }}
         />
+        <IconButton iconName="image" on:change={(e) => {}} />
       </ReferenceTextArea>
     {/each}
   {/key}

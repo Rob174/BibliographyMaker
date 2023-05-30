@@ -2,6 +2,8 @@
   import { onMount } from "svelte";
   import TextLine from "./TextLine.svelte";
   import { clickOutside } from "./clickOutside";
+  import { createEventDispatcher } from "svelte";
+  const dispatch = createEventDispatcher();
   export let label: string = "";
   export let possibilities: string[] = [];
   // Matching possibilities will
@@ -15,6 +17,7 @@
       matchingPossibilities = possibilities.filter((p) => p.includes(text));
     }
     id++;
+    dispatch("change", text ? text : "");
   }
 
   onMount(() => {
@@ -22,9 +25,13 @@
     matchingPossibilities = [...possibilities];
   });
   let focused = false;
-  let textCont;
   function clickPoss(poss) {
-    textCont.setText(poss);
+    text = poss;
+    id++;
+    const e = document.querySelector("#autocomplete input")
+    e.focus();
+    
+    updateMatchingPossibilities(poss);
   }
   let selectedPossId = -1;
   function setClass(selected) {
@@ -40,9 +47,11 @@
     if (id >= length) return id - length;
     return id;
   }
+  export let text: string = "";
 </script>
 
 <div
+  id="autocomplete"
   use:clickOutside
   on:click_outside={(e) => {
     focused = false;
@@ -51,7 +60,6 @@
     focused = false;
   }}
 >
-  <slot id="front" />
   <div
     on:keydown={(e) => {
       // If down arrow increase selectedPossId, else decrease it. Modulo number of matchingPossibilities
@@ -76,14 +84,15 @@
     }}
   >
     <TextLine
-      bind:this={textCont}
       {label}
+      {text}
       on:change={(text) => {
         updateMatchingPossibilities(text.detail);
       }}
       on:focusInput={(e) => (focused = true)}
-    />
-    <slot id="after" />
+    >
+      <slot name="after" />
+    </TextLine>
   </div>
   {#if focused}
     <div id="container">
@@ -107,6 +116,10 @@
             <button
               class="possibility"
               id={`poss-${i}`}
+              on:click={() => clickPoss(possibility)}
+              on:keypress={(e) => {
+                if (e.key === "Enter") clickPoss(possibility);
+              }}
               tabindex="-1"
               on:mouseenter={(e) => {
                 setClass(i);

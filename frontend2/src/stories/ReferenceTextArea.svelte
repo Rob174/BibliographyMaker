@@ -4,9 +4,9 @@
   const dispatch = createEventDispatcher();
   export let options: string[] = ["test1", "test2"];
   let optionsList = [
-    ".".repeat(Math.min(...options.map((text) => text.length))),
-    ...options,
+    "..."
   ];
+  options.forEach(o=>optionsList.push(o))
   optionsList.sort();
   let id = 0;
   let idSelect = 0;
@@ -16,6 +16,7 @@
   export function setText(t: string) {
     textarea.setText(t);
   }
+  export let label="___";
 </script>
 
 <div id="tags">
@@ -37,6 +38,7 @@
   </div>
   <TextArea
     {text}
+    {label}
     bind:this={textarea}
     on:change={(e) => {
       text = e.detail;

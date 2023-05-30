@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from "@storybook/svelte";
 import References from "./References.svelte";
 
 const meta = {
-  title: "References",
+  title: "Composed/References",
   component: References,
   tags: ["autodocs"],
   argTypes: {},

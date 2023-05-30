@@ -1,13 +1,13 @@
 import type { Meta, StoryObj } from "@storybook/svelte";
 
-import ReferenceTextArea from "./ReferenceTextArea.svelte";
+import Tags from "./Tags.svelte";
 
 const meta = {
-  title: "Element/ReferenceTextArea",
-  component: ReferenceTextArea,
+  title: "Composed/Tags",
+  component: Tags,
   tags: ["autodocs"],
   argTypes: {},
-} satisfies Meta<ReferenceTextArea>;
+} satisfies Meta<Tags>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
