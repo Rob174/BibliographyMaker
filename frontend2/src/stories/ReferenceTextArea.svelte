@@ -1,12 +1,11 @@
 <script lang="ts">
+  import TagButton from "./TagButton.svelte";
   import TextArea from "./TextArea.svelte";
   import { createEventDispatcher } from "svelte";
   const dispatch = createEventDispatcher();
   export let options: string[] = ["test1", "test2"];
-  let optionsList = [
-    "..."
-  ];
-  options.forEach(o=>optionsList.push(o))
+  let optionsList = ["..."];
+  options.forEach((o) => optionsList.push(o));
   optionsList.sort();
   let id = 0;
   let idSelect = 0;
@@ -16,14 +15,15 @@
   export function setText(t: string) {
     textarea.setText(t);
   }
-  export let label="___";
+  export let label = "___";
 </script>
 
 <div id="tags">
   <div id="tags">
     {#key id}
       {#each attachedElements as element, i}
-        <button
+        <TagButton
+          tag_name={element}
           on:click={(e) => {
             attachedElements = attachedElements.filter((e) => e != element);
             optionsList.push(element);
@@ -31,8 +31,8 @@
             idSelect++;
             id++;
             dispatch("change", { text, attached: attachedElements });
-          }}>{element}</button
-        >
+          }}
+        />
       {/each}
     {/key}
   </div>
@@ -102,30 +102,6 @@
   /* Styling the dropdown options */
   select option {
     padding: 8px;
-  }
-  #tags button {
-    appearance: none; /* Remove default styling */
-    padding: 0.5em;
-    margin-right: 0.5em;
-    margin-bottom: 1em;
-    border-radius: 0.5em;
-    border: 1px solid var(--neutral-color);
-    background-color: transparent;
-    font-family: inherit;
-    font-size: 0.75em;
-    cursor: pointer;
-    transition: all var(--transition-duration) ease-in-out;
-    outline: none;
-  }
-  #tags button:hover {
-    background-color: var(--accent-color);
-    color: white;
-    border-color: white;
-  }
-  #tags button:focus {
-    background-color: var(--accent-color);
-    color: white;
-    border-color: white;
   }
   select:focus {
     outline: none;

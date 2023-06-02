@@ -4,7 +4,7 @@
   const dispatch = createEventDispatcher();
 </script>
 
-<button on:click={(e) => dispatch("click")}>
+<button on:click={(e) => dispatch("click")} on:keydown>
   {label}
 </button>
 

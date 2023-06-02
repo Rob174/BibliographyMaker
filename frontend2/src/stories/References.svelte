@@ -12,7 +12,7 @@
       id: uuidv4(),
       text: "",
       tags: [],
-      obj: null,
+      files: [],
     };
   }
   function selectLast() {
@@ -28,16 +28,17 @@
     }, 100);
   }
   let id = 0;
+  let selectedId= -1;
 </script>
 
 <div id="references">
   {#key id}
     {#each data as d, i}
       <ReferenceTextArea
-        label={`§${i+1}`}
+        label={`§${i + 1}`}
         text={d.text}
         attachedElements={d.tags}
-        options={tags.filter(x=>x!=="")}
+        options={tags.filter((x) => x !== "")}
         on:change={(e) => {
           const idx = data.indexOf(data.filter((x) => x.id == d.id)[0]);
 
@@ -76,7 +77,32 @@
             selectI(idx);
           }}
         />
-        <IconButton iconName="image" on:change={(e) => {}} />
+        <IconButton
+          iconName="image"
+          on:change={(e) => {
+            document.querySelector("#load-file").click();
+            selectedId = d.id;
+          }}
+        />
+        <input
+          id="load-file"
+          type="file"
+          accept="image/*"
+          style="display: none;"
+          on:change={(e) => {
+            const idx = data.findIndex((x) => x.id === selectedId);
+            console.log("inserting in index ",idx, data.map(x=>x.id), selectedId)
+            const file = e.target.files[0];
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              const imageSrc = e.target.result;
+              data[idx].files = [imageSrc];
+              dispatch("change", data);
+              selectI(idx);
+            };
+            reader.readAsDataURL(file);
+          }}
+        />
       </ReferenceTextArea>
     {/each}
   {/key}
