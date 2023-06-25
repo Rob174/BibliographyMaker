@@ -85,6 +85,6 @@ import Button from "./Button.svelte";
 
 ## Architecture
 
-![./architecture.png]
+![](./architecture.png)
 
 (To modify modify and rerender the architecture.dot with graphviz online)
