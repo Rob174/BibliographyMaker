@@ -1,10 +1,10 @@
 
 <script lang="ts">
-  import svelteLogo from './assets/svelte.svg'
+  import Window from "./stories/Window.svelte";
 </script>
 
-<main>
-</main>
+<Window />
 
 <style>
+  
 </style>
