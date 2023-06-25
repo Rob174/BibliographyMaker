@@ -14,6 +14,8 @@ Relevant extract of the interactive svelte documentation for this project
 
 ### Import formats order
 
+(every element is optional, we want to demonstrate the order if all possible types of imports are used)
+
 1. The svelte specific imports
 ```ts
 import { createEventDispatcher, onMount } from "svelte";
@@ -40,6 +42,8 @@ import Button from "./Button.svelte";
 ```
 
 ### Organization of a svelte file
+
+(every element except the doc and html elements is optional: here we want to demonstrate the full example with the order of the elements)
 
 ```html
 <script lang="ts">
