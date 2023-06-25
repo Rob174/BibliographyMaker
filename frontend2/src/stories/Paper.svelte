@@ -1,13 +1,27 @@
 <script lang="ts">
+  /**
+   * *@param {id_paper}{string} the id of the paper (uuidv4)
+   * *@param {citations}{TextType[]} citations for the paper added by the user
+   * *@param {tags}{TagType[]} tags specified for the paper
+   * *@param {analysis}{string} analysis for the paper
+  */
+  import { v4 as uuidv4 } from "uuid";
+  import { createEventDispatcher } from "svelte";
   import Analysis from "./Analysis.svelte";
   import References from "./References.svelte";
   import Tags from "./Tags.svelte";
-  import { v4 as uuidv4 } from "uuid";
-  import { createEventDispatcher } from "svelte";
   import TextLine from "./TextLine.svelte";
   import { emptyTag } from "./libs";
   import type { TagType } from "../data";
+
+  export let id_paper = uuidv4();
+  export let citations = [emptyText()];
+  export let tags: TagType[] = [emptyTag()];
+  export let analysis = "";
+
   const dispatch = createEventDispatcher();
+  let id = 0;
+
   export function emptyText() {
     return {
       id: uuidv4(),
@@ -16,11 +30,6 @@
       files: [],
     };
   }
-  export let tags: TagType[] = [emptyTag()];
-  export let citations = [emptyText()];
-  export let analysis = "";
-  export let id_paper = uuidv4();
-  let id = 0;
   function change() {
     dispatch("change", { id_paper, citations, tags, analysis });
   }

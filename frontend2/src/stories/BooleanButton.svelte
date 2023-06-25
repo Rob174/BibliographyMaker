@@ -1,10 +1,16 @@
 <script lang="ts">
+  /** A button switch to select if a value is true or false
+   * @param {label}{string} The label text shown on the button
+  */
   import { createEventDispatcher } from "svelte";
+
+  export let label: string = "close";
+
   const dispatch = createEventDispatcher();
+
   function handleInput(event: Event) {
     dispatch("change", event.target.checked);
   }
-  export let label: string = "close";
   </script>
 
 <div class="switch-container">

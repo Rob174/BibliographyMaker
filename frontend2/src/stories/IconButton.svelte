@@ -1,10 +1,17 @@
 <script lang="ts">
+  /**
+   * @param {iconName}{string} the name of the icon to display (use material design icon names https://fonts.google.com/icons)
+   * @fires change fired when we click on the button
+  */
   import { createEventDispatcher } from "svelte";
+
+  export let iconName: string = "close";
+
   const dispatch = createEventDispatcher();
+
   function handleInput(event: Event) {
     dispatch("change", (event.target as HTMLInputElement).value);
   }
-  export let iconName: string = "close";
 </script>
 
 <button class="input-container" on:click={(e) => handleInput(e)} on:blur={(e)=>dispatch("blur")}>

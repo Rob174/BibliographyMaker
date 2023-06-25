@@ -1,13 +1,23 @@
 <script lang="ts">
+  /** This component allows to enter paper for which no doi is provided or if the doi is not recognized
+   * *@param {id_paper}{string} the id of the paper (uuidv4)
+   * *@param {title}{string} the title of the paper
+   * *@param {url}{string} the url of the paper
+   * *@param {year}{string} the year of the paper
+   * *@param {authors}{AuthorType[]} the authors of the paper of the paper
+   * *@param {citations}{TextType[]} citations for the paper added by the user
+   * *@param {tags}{TagType[]} tags specified for the paper
+   * *@param {analysis}{string} analysis for the paper
+   * *@fires change { doi, url, tags, citations, analysis } when the user change the values
+   * *@fires done { id, doi, url, tags, citations, analysis }
+   * *@stores nonDoiPaperStore { id, title, authors, year, url, citations, tags, analysis} to store the data of the paper beeing entered. Allows to not loose the entered information when switching tab
+  */
   import Paper from "./Paper.svelte";
   import { v4 as uuidv4 } from "uuid";
   import { createEventDispatcher } from "svelte";
   import TextLine from "./TextLine.svelte";
   import Button from "./Button.svelte";
-  const dispatch = createEventDispatcher();
   import {
-    doiPaperStore,
-    paperStore,
     type AuthorType,
     nonDoiPaperStore,
     type TagType,
@@ -17,22 +27,24 @@
     emptyAuthor,
     emptyTag,
     emptyText,
-    insertDOIPaper,
     insertNonDOIPaper,
     processAuthor,
   } from "./libs";
   import IconButton from "./IconButton.svelte";
   import { onMount } from "svelte";
 
-  export let tags: TagType[] = [emptyTag()];
-  export let citations = [emptyText()];
-  export let analysis = "";
-  export let year = "";
-  export let authors: AuthorType[] = [emptyAuthor()];
+  export let id_paper: string = uuidv4();
   export let title = "";
   export let url = "";
-  export let id_paper: string = uuidv4();
+  export let year = "";
+  export let authors: AuthorType[] = [emptyAuthor()];
+  export let citations = [emptyText()];
+  export let tags: TagType[] = [emptyTag()];
+  export let analysis = "";
+  
+  const dispatch = createEventDispatcher();
   let id = 0;
+
   onMount(() => {
     let v;
     nonDoiPaperStore.subscribe((p) => {
