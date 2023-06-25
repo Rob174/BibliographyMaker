@@ -1,4 +1,7 @@
 <script lang="ts">
+  /** Visualize the details of one paper
+   * *@param {paper}{GenericPaper} the paper to visualize
+  */
   import { tagsPossibilities, type GenericPaper } from "../data";
   import TagButton from "./TagButton.svelte";
   import { copyToClipboard } from "./utils";
@@ -141,5 +144,8 @@
   .full-size-button:hover {
     border: 1px solid var(--accent-color);
     background-color: var(--accent-color);
+  }
+  img {
+    width: 100%;
   }
 </style>
