@@ -1,6 +1,11 @@
 <script lang="ts">
-  export let label: string = "click me!";
+  /**
+   * A button with a text inside that takes all of the width
+   * @param {label}{string} the text to display on the button
+   * @fires click
+  */
   import { createEventDispatcher } from "svelte";
+  export let label: string = "click me!";
   const dispatch = createEventDispatcher();
 </script>
 

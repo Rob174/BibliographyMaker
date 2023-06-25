@@ -1,10 +1,21 @@
 <script lang="ts">
+  /** UI element to enter a paper with a DOI
+   * *@param {id}{string} the id of the paper (uuidv4)
+   * *@param {doi}{string} the doi of the paper
+   * *@param {url}{string} the url of the paper
+   * *@param {citations}{TextType[]} citations for the paper added by the user
+   * *@param {tags}{TagType[]} tags specified for the paper
+   * *@param {analysis}{string} analysis for the paper
+   * *@fires change { doi, url, tags, citations, analysis } when the user change the values
+   * *@fires done { id, doi, url, tags, citations, analysis }
+   * *@stores doiPaperStore { id, doi, url, tags, citations, analysis } to store the data of the paper beeing entered. Allows to not loose the entered information when switching tab
+   * @type {SvelteComponent}
+  */
   import Paper from "./Paper.svelte";
   import { v4 as uuidv4 } from "uuid";
   import { createEventDispatcher, onMount } from "svelte";
   import TextLine from "./TextLine.svelte";
   import Button from "./Button.svelte";
-  const dispatch = createEventDispatcher();
   import {
     doiPaperStore,
     paperStore,
@@ -12,6 +23,15 @@
     type TagType,
   } from "../data";
   import { emptyTag, insertDOIPaper } from "./libs";
+
+  export let id_paper: string = uuidv4();
+  export let doi = "";
+  export let url = "";
+  export let citations = [emptyText()];
+  export let tags: TagType[] = [emptyTag()];
+  export let analysis = "";
+
+  const dispatch = createEventDispatcher();
   let id = 0;
 
   export function emptyText() {
@@ -22,21 +42,6 @@
       files: [],
     };
   }
-  export let tags: TagType[] = [emptyTag()];
-  export let citations = [emptyText()];
-  export let analysis = "";
-  export let doi = "";
-  export let url = "";
-  export let id_paper: string = uuidv4();
-  onMount(() => {
-    let v;
-    doiPaperStore.subscribe((p) => {
-      v = p;
-    });
-    if (v!== undefined) {
-      set(v);
-    }
-  });
   export function set(paper: DOIPaper) {
     id_paper = paper.id;
     doi = paper.doi;
@@ -46,6 +51,15 @@
     analysis = paper.analysis;
     id++;
   }
+  onMount(() => {
+    let v;
+    doiPaperStore.subscribe((p) => {
+      v = p;
+    });
+    if (v!== undefined) {
+      set(v);
+    }
+  });
 </script>
 
 <div id="container-paper">
@@ -107,16 +121,8 @@
     label="SAVE"
     on:click={(e) => {
       doiPaperStore.set({ id: id_paper, doi, url, tags, citations, analysis });
-      console.log("insert", {
-        id: id_paper,
-        doi,
-        url,
-        tags,
-        citations,
-        analysis,
-      });
       insertDOIPaper({ id: id_paper, doi, url, tags, citations, analysis });
-      dispatch("done", { id_paper, doi, url, tags, citations, analysis });
+      dispatch("done", { id: id_paper, doi, url, tags, citations, analysis });
       // Set focus to first input
       setTimeout(() => {
         const buttons = document.querySelectorAll("#container-paper button");
@@ -133,6 +139,7 @@
       tags = [emptyTag()];
       citations = [emptyText()];
       analysis = "";
+      id_paper = uuidv4()
       doiPaperStore.set({ id: id_paper, doi, url, tags, citations, analysis });
       // Set focus to first input
       id++;
@@ -141,7 +148,6 @@
       }, 100);
     }}
     on:keydown={(e) => {
-      console.log("eeee");
       if (e.key == "Enter" || e.key == "Tab") {
         document.querySelectorAll("#container-paper input")[0].focus();
         e.preventDefault();
