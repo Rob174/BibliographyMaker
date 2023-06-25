@@ -3,14 +3,13 @@
    * 
   */
   import { fade } from "svelte/transition";
-  import PapersList from "./PapersList.svelte";
-  import DOIPaper from "./DOIPaper.svelte";
-  import NonDOIPaper from "./NonDOIPaper.svelte";
   import { genericPaperToDOIPaper, genericPaperToNonDOIPaper } from "./libs";
   import { paperStore } from "../data";
   import { onMount } from "svelte";
+  import PapersList from "./PapersList.svelte";
+  import DOIPaper from "./DOIPaper.svelte";
+  import NonDOIPaper from "./NonDOIPaper.svelte";
 
-  type VisibleWindowsType = "papersList" | "paperDOI" | "paperNonDOI" | "graph";
   let visibleWindow = "papersList";
   let paperdoi;
   let papernondoi;
@@ -20,10 +19,10 @@
     if (e.ctrlKey && e.key === "&") {
       const currIdx = tabs.indexOf(visibleWindow);
       visibleWindow = tabs[(currIdx + 1) % tabs.length];
-    console.log("keydown", visibleWindow);
     }
   }
   onMount(() => {
+    /* Add an event listener to make a ctrl+& shortcut to switch between tabs */
     window.addEventListener("keydown", handleKeyDown);
     return () => {
       // Clean up the event listener on component unmount
