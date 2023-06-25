@@ -1,0 +1,20 @@
+name: Move Issue to Project Column to test
+
+on:
+  issues:
+    types:
+      - labeled
+
+jobs:
+  moveIssue:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Move issue to project column to test
+      uses: peter-evans/move-project-card@v2
+      with:
+        project: 'Bibliography Maker tasks'
+        column: 'To test'
+        issue_number: ${{ github.event.issue.number }}
+        token: ${{ secrets.TOKEN }}
+        label: 'toTest'
