@@ -1,22 +1,32 @@
 <script lang="ts">
+  /**A line of the table to display papers: this component represents one paper
+   * *@param {paper}{GenericPaper} A paper of the database that contains the data to display
+   * *@param {idx}{number} The id of the line to display for numerotation purposes (line 1, line 2, etc)
+  */
   import { tagsPossibilities, type GenericPaper } from "../data";
   import TagButton from "./TagButton.svelte";
   import { shortString } from "./libs";
   import { copyToClipboard } from "./utils";
   import { createEventDispatcher } from "svelte";
-  const dispatch = createEventDispatcher();
+
   export let paper: GenericPaper;
+  export let idx: number = 0;
+
+  const dispatch = createEventDispatcher();
   let tags = [];
+
   tagsPossibilities.subscribe((x) => {
     // Filter in x the tags that are in paper.tags (text field)
     const tagsInPaper = new Set();
     paper.tags.forEach((x) => tagsInPaper.add(x.text));
     tags = x.filter((x) => tagsInPaper.has(x.text));
-    console.log(tags);
   });
 </script>
 
 <tr class="tr">
+  <td>
+    {idx}
+  </td>
   <td
     class="clickable"
     on:click={(e) => {
