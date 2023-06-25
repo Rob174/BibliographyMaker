@@ -1,0 +1,55 @@
+digraph {
+    Analysis
+    AutocompleteInput
+    BooleanButton
+    IconButton
+    Paper
+    References
+    ReferenceTextArea
+    Tags
+    TextArea
+    TextLine
+    PapersListElem
+    PaperVisualization
+    Button
+    TagButton
+    PapersList
+    DOIPaper
+    NonDOIPaper
+    Window
+    
+    Window -> PapersList
+    Window -> DOIPaper
+    Window -> NonDOIPaper
+    
+    PapersList -> PapersListElem
+    PapersList -> PaperVisualization
+    PapersList -> Button
+    PapersList -> TagButton
+    
+    PapersListElem -> TagButton
+    
+    DOIPaper -> TextLine
+    DOIPaper -> Button
+    DOIPaper -> Paper
+    
+    
+    Paper -> Analysis
+    Paper -> References
+    Paper -> Tags
+    Paper -> TextLine
+    
+    NonDOIPaper -> Paper
+    NonDOIPaper -> TextLine
+    NonDOIPaper -> Button
+    NonDOIPaper -> IconButton
+    
+    Analysis -> TextArea
+    Analysis -> IconButton
+    
+    References -> ReferenceTextArea
+    References -> IconButton
+    
+    Tags -> AutocompleteInput
+    Tags -> IconButton
+}
