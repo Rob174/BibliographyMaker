@@ -1,14 +1,25 @@
 <script lang="ts">
+  /** Component that allows to enter a single line text and displays a list matching the entered text (regex)
+   * @param {label}{string} the label in front of the input field
+   * @param {possibilities}{string[]} the list of possibilities to match the input text against
+   * @param {text}{string} the text entered by the user inside the input field; bind it to have the value of the text
+   * @slot {after} the slot to put other components (like buttons) on the same line of the input
+  */
   import { onMount } from "svelte";
   import TextLine from "./TextLine.svelte";
   import { clickOutside } from "./clickOutside";
   import { createEventDispatcher } from "svelte";
-  const dispatch = createEventDispatcher();
+
   export let label: string = "";
   export let possibilities: string[] = [];
+  export let text: string = "";
+
+  const dispatch = createEventDispatcher();
   // Matching possibilities will
   let matchingPossibilities = [...possibilities];
   let id = 0;
+  let focused = false;
+  let selectedPossId = -1;
   // Function to update matchingPossibilities based on the input text
   function updateMatchingPossibilities(text: string) {
     if (text.length === 0) {
@@ -19,12 +30,6 @@
     id++;
     dispatch("change", text ? text : "");
   }
-
-  onMount(() => {
-    // Initialize matchingPossibilities on mount
-    matchingPossibilities = [...possibilities];
-  });
-  let focused = false;
   function clickPoss(poss) {
     text = poss;
     id++;
@@ -33,7 +38,11 @@
 
     updateMatchingPossibilities(poss);
   }
-  let selectedPossId = -1;
+
+  onMount(() => {
+    // Initialize matchingPossibilities on mount
+    matchingPossibilities = [...possibilities];
+  });
   function setClass(selected) {
     selectedPossId = selected;
     const poss = document.querySelectorAll(".possibility");
@@ -50,10 +59,9 @@
   export function setFocus(focus) {
     focused = focus;
   }
-  export let text: string = "";
+  
   dispatch("outOfFocus", {
     on: () => {
-      console.log("1");
       focused = false;
     },
   });

@@ -1,12 +1,20 @@
 <script lang="ts">
+  /** Component to enter an analysis of the paper that we are entering in the form
+   * @type {import("svelte").SvelteComponent}
+   * @param {analysis}{string}
+   * @param {change}{function} Function to call when the analysis is changed
+  */
   import TextArea from "./TextArea.svelte";
   import IconButton from "./IconButton.svelte";
   import { createEventDispatcher } from "svelte";
-  const dispatch = createEventDispatcher();
   import { parse, HtmlGenerator } from "latex.js";
+
+  const dispatch = createEventDispatcher();
+
   export let analysis = "";
 
   let renderedValue = "";
+  
   function renderLaTeX(latex) {
     let generator = new HtmlGenerator({ hyphenate: false });
     let doc = parse(latex, { generator: generator }).htmlDocument();
