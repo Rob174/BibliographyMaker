@@ -1,8 +1,11 @@
 ## Elements of svelte used inside this project
 
-- svelte events
-- svelte stores
-- svelte bindings
+- [svelte events](https://svelte.dev/tutorial/component-events)
+- [svelte stores](https://svelte.dev/tutorial/writable-stores)
+- [svelte bindings](https://svelte.dev/repl/c233f0db93fa4f3ba3f503fefd6faa7d?version=3.16.0) --> maybe find a better source
+- [lifecycle](https://svelte.dev/tutorial/onmount)
+- [slots](https://svelte.dev/tutorial/slots) & [named slots](https://svelte.dev/tutorial/named-slots)
+- [conditionnaly show elements & loops](https://svelte.dev/tutorial/if-blocks)
 
 
 ## Guidelines (to be discussed)
