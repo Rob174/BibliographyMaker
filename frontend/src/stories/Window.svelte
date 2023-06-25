@@ -126,4 +126,7 @@
   :root {
     font-family: Open Sans, sans-serif;
   }
+  #main {
+    padding: 2em;
+  }
 </style>

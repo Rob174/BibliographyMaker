@@ -51,6 +51,14 @@
     analysis = paper.analysis;
     id++;
   }
+  function reset() {
+    doi = "";
+    url = "";
+    tags = [emptyTag()];
+    citations = [emptyText()];
+    analysis = "";
+    id_paper = uuidv4();
+  }
   onMount(() => {
     let v;
     doiPaperStore.subscribe((p) => {
@@ -123,35 +131,12 @@
       doiPaperStore.set({ id: id_paper, doi, url, tags, citations, analysis });
       insertDOIPaper({ id: id_paper, doi, url, tags, citations, analysis });
       dispatch("done", { id: id_paper, doi, url, tags, citations, analysis });
-      // Set focus to first input
-      setTimeout(() => {
-        const buttons = document.querySelectorAll("#container-paper button");
-        console.log(buttons);
-        buttons[buttons.length - 1].focus();
-      }, 100);
-    }}
-  />
-  <Button
-    label="CLEAR FIELDS"
-    on:click={(e) => {
-      doi = "";
-      url = "";
-      tags = [emptyTag()];
-      citations = [emptyText()];
-      analysis = "";
-      id_paper = uuidv4();
-      doiPaperStore.set({ id: id_paper, doi, url, tags, citations, analysis });
-      // Set focus to first input
+      reset();
       id++;
+      // Set focus to first input
       setTimeout(() => {
         document.querySelectorAll("input")[0].focus();
       }, 100);
-    }}
-    on:keydown={(e) => {
-      if (e.key == "Enter" || e.key == "Tab") {
-        document.querySelectorAll("#container-paper input")[0].focus();
-        e.preventDefault();
-      }
     }}
   />
 </div>

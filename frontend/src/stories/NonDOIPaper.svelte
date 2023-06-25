@@ -201,30 +201,12 @@
         analysis,
       });
       refreshStore("done");
-      // Set focus to first input
-      setTimeout(() => {
-        const buttons = document.querySelectorAll("#container-paper button");
-        console.log(buttons);
-        buttons[buttons.length - 1].focus();
-      }, 100);
-    }}
-  />
-  <Button
-    label="CLEAR FIELDS"
-    on:click={(e) => {
       reset();
-      refreshStore("change");
-      // Set focus to first input
       id++;
+      // Set focus to first input
       setTimeout(() => {
         document.querySelectorAll("input")[0].focus();
       }, 100);
-    }}
-    on:keydown={(e) => {
-      if (e.key == "Enter" || e.key == "Tab") {
-        document.querySelectorAll("#container-paper input")[0].focus();
-        e.preventDefault();
-      }
     }}
   />
 </div>
