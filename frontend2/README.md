@@ -24,3 +24,4 @@ This is why the current project has form main goal to provide an interface to ma
 2. Clone this repository (I assume already done if you are here 😋)
 3. Cd in frontend2 & `npm install`
 4. `npm run storybook`
+5. It should open the localhost:6006 automatically
