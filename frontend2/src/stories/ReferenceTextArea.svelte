@@ -1,21 +1,30 @@
 <script lang="ts">
+  /** The reference text area with the dropdown to choose tags to attach to
+   * *@param {string[]} {options} - the possible tags to choose from 
+   * *@param {string} {text} - the text inside the text area
+   * *@param {string[]} {attachedElements} - the tags to display above the text area
+   * *@param {string} {label} - the label to display before the text area
+   * *@fires {change} - when the text or the attached elements change
+  */
   import TagButton from "./TagButton.svelte";
   import TextArea from "./TextArea.svelte";
   import { createEventDispatcher } from "svelte";
-  const dispatch = createEventDispatcher();
+
   export let options: string[] = ["test1", "test2"];
+  export let text = "";
+  export let attachedElements = [];
+  export let label = "___";
+
+  const dispatch = createEventDispatcher();
+  let id = 0;
+  let idSelect = 0;
+  let textarea;
   let optionsList = ["..."];
   options.forEach((o) => optionsList.push(o));
   optionsList.sort();
-  let id = 0;
-  let idSelect = 0;
-  export let text = "";
-  export let attachedElements = [];
-  let textarea;
   export function setText(t: string) {
     textarea.setText(t);
   }
-  export let label = "___";
 </script>
 
 <div id="tags">

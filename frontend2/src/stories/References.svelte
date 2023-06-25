@@ -1,12 +1,21 @@
 <script lang="ts">
+  /** A component to display a list of references.
+   * *@param {tags}{string[]} the tags to display above the reference to indicate that this reference is linked to thhese tags
+   * *@param {data}{{idd, text, tags, file}} the data associated to the reference
+  */
   import ReferenceTextArea from "./ReferenceTextArea.svelte";
   import IconButton from "./IconButton.svelte";
   import { preprocessLatexText } from "./preprocessings";
   import { v4 as uuidv4 } from "uuid";
   import { createEventDispatcher } from "svelte";
-  const dispatch = createEventDispatcher();
+
   export let tags: string[] = ["test1", "test2"];
   export let data = [emptyText()];
+
+  const dispatch = createEventDispatcher();
+  let id = 0;
+  let selectedId= -1;
+
   export function emptyText() {
     return {
       id: uuidv4(),
@@ -27,8 +36,6 @@
       x[i].focus();
     }, 100);
   }
-  let id = 0;
-  let selectedId= -1;
 </script>
 
 <div id="references">
