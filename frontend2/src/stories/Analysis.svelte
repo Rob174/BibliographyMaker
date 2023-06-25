@@ -4,10 +4,10 @@
    * @param {analysis}{string}
    * @param {change}{function} Function to call when the analysis is changed
   */
-  import TextArea from "./TextArea.svelte";
-  import IconButton from "./IconButton.svelte";
   import { createEventDispatcher } from "svelte";
   import { parse, HtmlGenerator } from "latex.js";
+  import TextArea from "./TextArea.svelte";
+  import IconButton from "./IconButton.svelte";
 
   const dispatch = createEventDispatcher();
 

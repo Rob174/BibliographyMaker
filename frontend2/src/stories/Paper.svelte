@@ -9,12 +9,12 @@
   */
   import { v4 as uuidv4 } from "uuid";
   import { createEventDispatcher } from "svelte";
+  import { emptyTag } from "./libs";
+  import type { TagType } from "../data";
   import Analysis from "./Analysis.svelte";
   import References from "./References.svelte";
   import Tags from "./Tags.svelte";
   import TextLine from "./TextLine.svelte";
-  import { emptyTag } from "./libs";
-  import type { TagType } from "../data";
 
   export let id_paper = uuidv4();
   export let citations = [emptyText()];

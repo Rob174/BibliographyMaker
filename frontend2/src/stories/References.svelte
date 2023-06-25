@@ -3,11 +3,12 @@
    * *@param {tags}{string[]} the tags to display above the reference to indicate that this reference is linked to thhese tags
    * *@param {data}{{idd, text, tags, file}} the data associated to the reference
   */
-  import ReferenceTextArea from "./ReferenceTextArea.svelte";
-  import IconButton from "./IconButton.svelte";
   import { preprocessLatexText } from "./preprocessings";
   import { v4 as uuidv4 } from "uuid";
   import { createEventDispatcher } from "svelte";
+  
+  import ReferenceTextArea from "./ReferenceTextArea.svelte";
+  import IconButton from "./IconButton.svelte";
 
   export let tags: string[] = ["test1", "test2"];
   export let data = [emptyText()];

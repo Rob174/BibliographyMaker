@@ -12,11 +12,13 @@
    * *@fires done { id, doi, url, tags, citations, analysis }
    * *@stores nonDoiPaperStore { id, title, authors, year, url, citations, tags, analysis} to store the data of the paper beeing entered. Allows to not loose the entered information when switching tab
   */
-  import Paper from "./Paper.svelte";
-  import { v4 as uuidv4 } from "uuid";
+  import { onMount } from "svelte";
   import { createEventDispatcher } from "svelte";
+  import { v4 as uuidv4 } from "uuid";
+  import Paper from "./Paper.svelte";
   import TextLine from "./TextLine.svelte";
   import Button from "./Button.svelte";
+  import IconButton from "./IconButton.svelte";
   import {
     type AuthorType,
     nonDoiPaperStore,
@@ -30,8 +32,6 @@
     insertNonDOIPaper,
     processAuthor,
   } from "./libs";
-  import IconButton from "./IconButton.svelte";
-  import { onMount } from "svelte";
 
   export let id_paper: string = uuidv4();
   export let title = "";

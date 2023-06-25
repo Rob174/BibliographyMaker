@@ -10,12 +10,9 @@
    * *@fires done { id, doi, url, tags, citations, analysis }
    * *@stores doiPaperStore { id, doi, url, tags, citations, analysis } to store the data of the paper beeing entered. Allows to not loose the entered information when switching tab
    * @type {SvelteComponent}
-  */
-  import Paper from "./Paper.svelte";
+   */
   import { v4 as uuidv4 } from "uuid";
   import { createEventDispatcher, onMount } from "svelte";
-  import TextLine from "./TextLine.svelte";
-  import Button from "./Button.svelte";
   import {
     doiPaperStore,
     paperStore,
@@ -23,6 +20,9 @@
     type TagType,
   } from "../data";
   import { emptyTag, insertDOIPaper } from "./libs";
+  import Paper from "./Paper.svelte";
+  import TextLine from "./TextLine.svelte";
+  import Button from "./Button.svelte";
 
   export let id_paper: string = uuidv4();
   export let doi = "";
@@ -56,7 +56,7 @@
     doiPaperStore.subscribe((p) => {
       v = p;
     });
-    if (v!== undefined) {
+    if (v !== undefined) {
       set(v);
     }
   });
@@ -139,7 +139,7 @@
       tags = [emptyTag()];
       citations = [emptyText()];
       analysis = "";
-      id_paper = uuidv4()
+      id_paper = uuidv4();
       doiPaperStore.set({ id: id_paper, doi, url, tags, citations, analysis });
       // Set focus to first input
       id++;

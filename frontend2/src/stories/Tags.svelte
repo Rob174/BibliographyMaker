@@ -4,12 +4,12 @@
    * *@stores tagsPossibilities read to get the list of current tags in the database
    * *@fires change when the user change one tag for the current form, every tags of the form are send with the event
   */
-  import AutocompleteInput from "./AutocompleteInput.svelte";
-  import IconButton from "./IconButton.svelte";
   import { createEventDispatcher } from "svelte";
   import { preprocessLatexText } from "./preprocessings";
   import { tagsPossibilities, type TagType } from "../data";
   import { emptyTag } from "./libs";
+  import AutocompleteInput from "./AutocompleteInput.svelte";
+  import IconButton from "./IconButton.svelte";
 
   export let data: TagType[] = [emptyTag()];
 
