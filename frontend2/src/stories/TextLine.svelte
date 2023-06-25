@@ -1,7 +1,17 @@
 <script lang="ts">
+  /**An input field that can be used to enter text.
+   * @param {label}{string} the text in front of the input
+   * @param {text}{string} the text that is written inside the input
+   * @fires change - when the text in the input is changed (with the text of the input)
+   * 
+  */
   import { createEventDispatcher } from "svelte";
-  const dispatch = createEventDispatcher();
+
   export let label: string = "____";
+  export let text: string = "";
+
+  const dispatch = createEventDispatcher();
+
   function handleInput(event: Event) {
     dispatch("change", (event.target as HTMLInputElement).value);
   }
@@ -13,7 +23,6 @@
     inputField.focus();
     dispatch("change", text);
   }
-  export let text: string = "";
 </script>
 
 <div class="input-container">

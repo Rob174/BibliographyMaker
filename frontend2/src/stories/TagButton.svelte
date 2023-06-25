@@ -1,6 +1,10 @@
+
 <script lang="ts">
-  import { createEventDispatcher } from "svelte";
-  const dispatch = createEventDispatcher();
+  /** A tag element text that can be clicked as a button
+   * *@param {tag_name}{string} the text to display inside the button
+   * *@param {color}{string} the color of the button
+   * *@fires click by event forwarding
+  */
   export let tag_name: string = "";
   export let color: string = "transparent";
 </script>

@@ -1,12 +1,25 @@
 <script lang="ts">
+  /** The list of tags fields to enter by the user
+   * *@param {data}{TagType[]} the list of tags currently in the form
+   * *@stores tagsPossibilities read to get the list of current tags in the database
+   * *@fires change when the user change one tag for the current form, every tags of the form are send with the event
+  */
   import AutocompleteInput from "./AutocompleteInput.svelte";
   import IconButton from "./IconButton.svelte";
   import { createEventDispatcher } from "svelte";
   import { preprocessLatexText } from "./preprocessings";
   import { tagsPossibilities, type TagType } from "../data";
   import { emptyTag } from "./libs";
-  const dispatch = createEventDispatcher();
+
   export let data: TagType[] = [emptyTag()];
+
+  const dispatch = createEventDispatcher();
+  let id = 0;
+  let possibilities = [];
+  tagsPossibilities.subscribe((p) => {
+    possibilities = p;
+  });
+
   function selectLast() {
     setTimeout(() => {
       const x = document.querySelectorAll("#tags input");
@@ -19,11 +32,6 @@
       x[i].focus();
     }, 100);
   }
-  let id = 0;
-  let possibilities = [];
-  tagsPossibilities.subscribe((p) => {
-    possibilities = p;
-  });
 </script>
 
 <div id="tags">

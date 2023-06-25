@@ -4,7 +4,7 @@
    * *@param {string} {text} - the text inside the text area
    * *@param {string[]} {attachedElements} - the tags to display above the text area
    * *@param {string} {label} - the label to display before the text area
-   * *@fires {change} - when the text or the attached elements change
+   * *@fires {change} - when the text or the attached elements (tags) change
   */
   import TagButton from "./TagButton.svelte";
   import TextArea from "./TextArea.svelte";

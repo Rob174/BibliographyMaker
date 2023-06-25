@@ -1,8 +1,16 @@
 <script lang="ts">
+  /**A textarea to that allows to set the text from the outside with setText
+   * *@param {label}{string} the label in front of the textarea
+   * *@param {text}{string} the text in the textarea
+   * *@fires change{string} when the text in the textarea changes (with the new text)
+   * *@slot - to put elements on the same line, after the textarea
+  */
   import { createEventDispatcher } from "svelte";
-  const dispatch = createEventDispatcher();
+
   export let label: string = "____";
   export let text: string = "";
+
+  const dispatch = createEventDispatcher();
   function handleInput(event: Event) {
     dispatch("change", (event.target as HTMLInputElement).value);
   }
