@@ -1,194 +1,91 @@
-import { derived, writable, type Readable, type Writable } from "svelte/store";
-import type {
-  Node,
-  Edge,
-  Graph,
-  Paper,
-  PaperWithDOIFields,
-  PaperWithoutDOIFields,
-  Tag,
-  TagStructure,
-  ID,
-} from "./types";
-import { getPapers, getTags } from "./api/get";
-
-export const PORT = 3000;
-export const API_URL = `http://localhost:${PORT}`;
-export const checkField = (fields: any) => {
-  const regexTag = /^[a-zA-Z0-9_-]+$/;
-  const { doi, relevant_text, tags } = fields;
-  if (doi == "" || doi == null) {
-    return { error: true, message: "DOI is required" };
-  }
-  // Check if tags are not empty
-  const sentTags = tags.filter((tag) => tag != "");
-  if (sentTags.length == 0) {
-    return { error: true, message: "At least one non empty tag is required" };
-  }
-  // Check that each tag contains only letters, numbers and underscores or -
-  for (let tag of sentTags) {
-    if (!regexTag.test(tag)) {
-      return {
-        error: true,
-        message:
-          "Each tag must contain only letters, numbers and underscores or -",
-      };
+import { writable, derived } from "svelte/store";
+import type { Writable } from "svelte/store";
+import {
+  emptyDOIPaper,
+  emptyNonDOIPaper,
+  generateColors,
+  getBibtex,
+} from "./stories/libs";
+import { v4 as uuidv4 } from "uuid";
+export type CitationType = {
+  id: string;
+  text: string;
+  tags: string[];
+  files: any[];
+};
+export type AuthorType = {
+  family: string;
+  given: string;
+  raw: string;
+};
+export type DatePartsType = { "date-parts": Array<Array<number>> };
+export type BibtexType = {
+  DOI: string;
+  title: string[];
+  author: AuthorType[];
+  URL: string;
+  created: DatePartsType;
+  issued: DatePartsType;
+  published: DatePartsType;
+  "published-print": DatePartsType;
+};
+export type DOIPaper = {
+  id: string;
+  doi: string;
+  url: string;
+  citations: CitationType[];
+  tags: TagType[];
+  analysis: string;
+};
+export type NonDOIPaper = {
+  id: string;
+  title: string;
+  authors: AuthorType[];
+  year: string;
+  url: string;
+  citations: CitationType[];
+  tags: TagType[];
+  analysis: string;
+};
+export type TagType = {
+  id: string;
+  text: string;
+  color: string;
+};
+export type PaperType = "doi" | "nondoi";
+export type GenericPaper = {
+  id: string;
+  type: PaperType;
+  title: string;
+  authors: AuthorType[];
+  year: string;
+  url: string;
+  doi: string;
+  citations: CitationType[];
+  tags: TagType[];
+  analysis: string;
+  bibtex: BibtexType;
+};
+export const doiPaperStore: Writable<DOIPaper> = writable(emptyDOIPaper());
+export const nonDoiPaperStore: Writable<NonDOIPaper> = writable(
+  emptyNonDOIPaper()
+);
+export const paperStore: Writable<GenericPaper[]> = writable([]);
+export const tagsPossibilities = writable([]);
+paperStore.subscribe((paperStore) => {
+  const tags: Set<string> = new Set();
+  for (const paper of paperStore) {
+    for (const tag of paper.tags) {
+      tags.add(tag.text);
     }
   }
-  return { error: false, message: "" };
-};
-type GraphData = {
-  svg: string;
-  graph: Graph;
-  paperNode: Node;
-  tagsNodes: Node[];
-  papersNodes: Node[];
-  paperTagsEdges: Edge[];
-  tagsPapersEdges: Edge[];
-};
-export const graphStore: Writable<GraphData> = writable({
-  svg: "",
-  graph: { nodes: [], edges: [] },
-  paperNode: { id: "", label: "", type: "paper" },
-  tagsNodes: [],
-  papersNodes: [],
-  paperTagsEdges: [],
-  tagsPapersEdges: [],
+  const sortedTags = Array.from(tags);
+  sortedTags.sort();
+  const colors = generateColors(sortedTags.length);
+  console.log("colors", colors);
+  tagsPossibilities.set(sortedTags.map((x, i) => ({
+    id: uuidv4(),
+    text: x,
+    color: colors[i],
+  })));
 });
-export const nodesMetadata: Writable<Map<ID, { id: ID; tags: string[] }>> =
-  writable(new Map());
-export const papersStore: Writable<Paper[]> = writable([]);
-export const tagsStore: Writable<Tag[]> = writable([]);
-export const clickedSnackStore: Writable<string> = writable("");
-export function updatePaperMetadata() {
-  graphStore.subscribe((graphStore) => {
-    // For each paperNode if it is not yet in papersMetadata, add it with default tags todo and neutral
-    nodesMetadata.update((papersMetadata) => {
-      const nodes = graphStore.papersNodes.concat(graphStore.tagsNodes);
-      nodes.forEach((paperNode) => {
-        if (!papersMetadata.has(paperNode.id)) {
-          papersMetadata.set(paperNode.id, {
-            id: paperNode.id,
-            tags: ["todo", "neutral"],
-          });
-        }
-      });
-      return papersMetadata;
-    });
-  });
-}
-export const structureStore: Writable<TagStructure | undefined> =
-  writable(undefined);
-  export const tabPossibilities = [
-    "Add paper by doi",
-    "Add paper manually",
-    "Search DOI",
-    "Visualize",
-  ];
-  export const activeTabStore: Writable<string> =
-    writable("Add paper by doi");
-export const othersShownStore: Writable<boolean> = writable(true);
-export const countDoneStore: Writable<number> = writable(0);
-export function updateCountDone() {
-  nodesMetadata.subscribe((nodesMetadata) => {
-    countDoneStore.set(
-      Array.from(nodesMetadata.values()).filter(
-        (nodeMetadata) => nodeMetadata.tags.includes("done")
-      ).length
-    );
-  });
-}
-export const defaultPaperWithDOIStore: () => PaperWithDOIFields = () => {
-  return {
-    doi: "",
-    relevant_text: [""],
-    tags: [""],
-    analysis: "",
-    url: "",
-  };
-};
-export const paperWithDOIStore: Writable<PaperWithDOIFields> = writable(
-  defaultPaperWithDOIStore()
-);
-export const defaultPaperWithoutDOIStore: () => PaperWithoutDOIFields = () => {
-  return {
-    title: "",
-    authors: [""],
-    year: "",
-    url: "",
-    relevant_text: [""],
-    tags: [""],
-    analysis: "",
-  };
-};
-export const paperWithoutDOIStore: Writable<PaperWithoutDOIFields> = writable(
-  defaultPaperWithoutDOIStore()
-);
-export const edit = (paper: any) => {
-  if (paper.bibtex.DOI !== undefined && paper.bibtex.DOI !== "") {
-    // Update the paperWithDOIStore
-    paperWithDOIStore.update((paperWithDOIStore) => {
-      
-      paperWithDOIStore.doi = paper.bibtex.DOI;
-      paperWithDOIStore.relevant_text = paper.relevant_text;
-      paperWithDOIStore.tags = paper.tags;
-      paperWithDOIStore.analysis = paper.analysis;
-      paperWithDOIStore.id_in_db = paper.id;
-      paperWithDOIStore.url = paper.bibtex.URL;
-      return paperWithDOIStore;
-    });
-    return "Add paper by doi"
-  } else {
-    // Update the paperWithoutDOIStore
-    paperWithoutDOIStore.update((paperWithoutDOIStore) => {
-      paperWithoutDOIStore.title = paper.bibtex.title[0];
-      paperWithoutDOIStore.authors = paper.bibtex.author.map((author) => {
-        return author.family + " " + author.given;
-      });
-      let year
-      if (paper.bibtex.created !== undefined) {
-        year = paper.bibtex.created["date-parts"][0][0];
-      } else {
-        year = paper.bibtex.issued["date-parts"][0][0];
-      }
-      paperWithoutDOIStore.year = year;
-      paperWithoutDOIStore.url = paper.bibtex.URL;
-      paperWithoutDOIStore.relevant_text = paper.relevant_text;
-      paperWithoutDOIStore.tags = paper.tags;
-      paperWithoutDOIStore.analysis = paper.analysis;
-      paperWithoutDOIStore.id_in_db = paper.id;
-      return paperWithoutDOIStore;
-    });
-    return "Add paper manually"
-  }
-}
-
-export const updatePapersTags = () => {
-  // Update the papersStore
-  getPapers().then((papers) => {
-    papersStore.update((papersStore) => {
-      return papers;
-    });
-  });
-  // Update the tagsStore
-  getTags().then((tags) => {
-    tagsStore.update((tagsStore) => {
-      return tags;
-    });
-  });
-  // Update the nodesMetadata
-  // If a paper is not in the papersStore, remove it from the nodesMetadata
-  let papers;
-  papersStore.subscribe((papersStore) => {
-    papers = papersStore;
-  });
-  nodesMetadata.update((nodesMetadata) => {
-    const papersIds = papers.map((paper) => paper.id);
-    for (let [id, metadata] of nodesMetadata) {
-      if (!papersIds.includes(id)) {
-        nodesMetadata.delete(id);
-      }
-    }
-    return nodesMetadata;
-  });
-}

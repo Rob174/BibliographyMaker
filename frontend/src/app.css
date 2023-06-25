@@ -1,20 +1,7 @@
 body {
   margin: 0;
-  background-color: hsl(0, 0%, 90%);
-  font-family: 'Open Sans', sans-serif;
-}
-/** Define color palet  in css variables */
-:root {
-  --bg: hsl(120, 100%, 15%);;
-  --bg-lighter: hsl(120, 100%, 25%);
-  --mdc-theme-primary: hsl(0, 100%, 15%);
-  --accent2: var(--mdc-theme-primary);
-}
-
-.container {
-  margin: 1em 1em;
-  border: 1px solid var(--bg-lighter);
-  border-radius: 0.5em;
-  background-color: white;
-  padding: 1em;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
 }
