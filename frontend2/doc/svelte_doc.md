@@ -1,5 +1,7 @@
 ## Elements of svelte used inside this project
 
+Relevant extract of the interactive svelte documentation for this project
+
 - [svelte events](https://svelte.dev/tutorial/component-events)
 - [svelte stores](https://svelte.dev/tutorial/writable-stores)
 - [svelte bindings](https://svelte.dev/repl/c233f0db93fa4f3ba3f503fefd6faa7d?version=3.16.0) --> maybe find a better source
