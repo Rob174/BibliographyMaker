@@ -72,6 +72,7 @@ export const nonDoiPaperStore: Writable<NonDOIPaper> = writable(
 );
 export const paperStore: Writable<GenericPaper[]> = writable([]);
 export const tagsPossibilities = writable([]);
+let loaded = false;
 paperStore.subscribe((paperStore) => {
   const tags: Set<string> = new Set();
   for (const paper of paperStore) {
@@ -88,7 +89,10 @@ paperStore.subscribe((paperStore) => {
     text: x,
     color: colors[i],
   })));
-  saveToLocalStorage("paperStore",paperStore);
+  if (loaded) {
+    saveToLocalStorage("paperStore",paperStore);
+  }
+  loaded = true;
 });
 export function restoreFromLocalStorage() {
   console.log("Restoring...")
@@ -102,7 +106,6 @@ export function restoreFromLocalStorage() {
   }
 }
 export function saveToLocalStorage(key, value) {
-  if(value.length==0) return
   console.log("Saving to local storage ",value)
   localStorage.setItem(key, JSON.stringify(value));
 }
