@@ -16,7 +16,7 @@
   const tabs = ["papersList", "paperDOI", "paperNonDOI"];
 
   function handleKeyDown(e) {
-    if (e.ctrlKey && e.key === "&") {
+    if (e.ctrlKey && e.key === "1" && e.shiftKey) {
       const currIdx = tabs.indexOf(visibleWindow);
       visibleWindow = tabs[(currIdx + 1) % tabs.length];
     }
@@ -31,7 +31,7 @@
   });
 </script>
 
-<div>
+<div id="main">
   <!-- Tabs available -->
   <div id="tabs">
     <button
