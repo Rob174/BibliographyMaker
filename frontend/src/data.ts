@@ -88,4 +88,26 @@ paperStore.subscribe((paperStore) => {
     text: x,
     color: colors[i],
   })));
+  saveToLocalStorage("paperStore",paperStore);
 });
+export function restoreFromLocalStorage() {
+  console.log("Restoring...")
+  const paperStoreValues = getFromLocalStorage("paperStore");
+  console.log("Found ",paperStoreValues)
+  if (paperStoreValues && paperStoreValues !== null) {
+    paperStore.update((paperStore) => paperStoreValues);
+  }
+  else {
+    console.log("Nothing found")
+  }
+}
+export function saveToLocalStorage(key, value) {
+  if(value.length==0) return
+  console.log("Saving to local storage ",value)
+  localStorage.setItem(key, JSON.stringify(value));
+}
+
+export function getFromLocalStorage(key) {
+  const item = localStorage.getItem(key);
+  return item ? JSON.parse(item) : null;
+}
