@@ -1,11 +1,12 @@
 <script lang="ts">
   /** Visualize the details of one paper
    * *@param {paper}{GenericPaper} the paper to visualize
-  */
+   */
+  import { createEventDispatcher } from "svelte";
   import { tagsPossibilities, type GenericPaper } from "../data";
+  import { renderLaTeX } from "./latexRender";
   import TagButton from "./TagButton.svelte";
   import { copyToClipboard } from "./utils";
-  import { createEventDispatcher } from "svelte";
   const dispatch = createEventDispatcher();
 
   export let paper: GenericPaper;
@@ -83,7 +84,17 @@
   {/each}
   <h2>Analysis</h2>
   <div>
-    {paper.analysis.trim() === "" ? "No analysis available." : paper.analysis}
+    {#if paper.analysis.trim() === ""}
+      No analysis available.
+    {:else}
+      <iframe
+        sandbox="allow-same-origin allow-scripts"
+        seamless
+        style="width:100%; height: 100%;"
+        srcdoc={renderLaTeX(paper.analysis)}
+        title="latex-content"
+      />
+    {/if}
   </div>
   <button
     class="full-size-button"

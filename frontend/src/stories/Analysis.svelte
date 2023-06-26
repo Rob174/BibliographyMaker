@@ -5,9 +5,9 @@
    * @param {change}{function} Function to call when the analysis is changed
   */
   import { createEventDispatcher } from "svelte";
-  import { parse, HtmlGenerator } from "latex.js";
   import TextArea from "./TextArea.svelte";
   import IconButton from "./IconButton.svelte";
+  import {renderLaTeX} from "./latexRender"
 
   const dispatch = createEventDispatcher();
 
@@ -15,22 +15,6 @@
 
   let renderedValue = "";
   
-  function renderLaTeX(latex) {
-    let generator = new HtmlGenerator({ hyphenate: false });
-    let doc = parse(latex, { generator: generator }).htmlDocument();
-    renderedValue = `
-      <html>
-        <head>
-          <link rel="stylesheet" href="https://latex.js.org/css/katex.css" type="text/css" />
-          <link rel="stylesheet" href="https://latex.js.org/css/article.css" type="text/css"/>
-          <style>body{background-color: white; color: black;}</style>
-        </head>
-        <body>
-          ${doc.documentElement.outerHTML}
-        </body>
-      </html>
-    `;
-  }
 </script>
 
 <TextArea
@@ -44,7 +28,7 @@
   <IconButton
     iconName="iframe"
     on:change={(e) => {
-      renderLaTeX(analysis);
+      renderedValue = renderLaTeX(analysis);
     }}
   />
 </TextArea>
