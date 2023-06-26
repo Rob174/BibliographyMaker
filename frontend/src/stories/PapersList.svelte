@@ -19,6 +19,7 @@
 
   paperStore.subscribe((e) => {
     papers = e;
+    console.log(e)
   });
   tagsPossibilities.subscribe((t) => {
     tags = t;

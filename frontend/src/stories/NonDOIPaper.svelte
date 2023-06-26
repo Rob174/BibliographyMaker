@@ -72,10 +72,11 @@
     citations = [emptyText()];
     analysis = "";
     year = "";
-    authors = [];
+    authors = [emptyAuthor()];
     title = "";
     url = "";
     id_paper = uuidv4();
+    refreshStore("none")
   }
   function refreshStore(event = "change") {
     const vals = {
