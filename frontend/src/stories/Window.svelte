@@ -3,9 +3,10 @@
    * 
   */
   import { fade } from "svelte/transition";
+  import { onMount } from "svelte";
   import { genericPaperToDOIPaper, genericPaperToNonDOIPaper } from "./libs";
   import { paperStore } from "../data";
-  import { onMount } from "svelte";
+  import { restoreFromLocalStorage } from "../data";
   import PapersList from "./PapersList.svelte";
   import DOIPaper from "./DOIPaper.svelte";
   import NonDOIPaper from "./NonDOIPaper.svelte";
@@ -22,6 +23,8 @@
     }
   }
   onMount(() => {
+    // Load from localStorage
+    restoreFromLocalStorage();
     /* Add an event listener to make a ctrl+& shortcut to switch between tabs */
     window.addEventListener("keydown", handleKeyDown);
     return () => {
