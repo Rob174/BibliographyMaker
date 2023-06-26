@@ -63,25 +63,29 @@
     {/each}
   </div>
   <h2>Relevant texts</h2>
-  {#each paper.citations as c}
-    <div>
+  {#if paper.citations.length > 1 || (paper.citations.length && (paper.citations[0].text.trim() !== "" || paper.citations[0].files.length > 0))}
+    {#each paper.citations as c}
       <div>
-        {#each c.tags as t1}
-          <TagButton
-            tag_name={t1}
-            color={tags.filter((x) => x.text == t1)[0].color}
-          />
-        {/each}
+        <div>
+          {#each c.tags as t1}
+            <TagButton
+              tag_name={t1}
+              color={tags.filter((x) => x.text == t1)[0].color}
+            />
+          {/each}
+        </div>
+        <div class="citation">
+          <p>{c.text}</p>
+          {#each c.files as f}
+            <!-- Render the image  -->
+            <img src={f} alt="" />
+          {/each}
+        </div>
       </div>
-      <div class="citation">
-        <p>{c.text}</p>
-        {#each c.files as f}
-          <!-- Render the image  -->
-          <img src={f} alt="" />
-        {/each}
-      </div>
-    </div>
-  {/each}
+    {/each}
+  {:else}
+    No citations found
+  {/if}
   <h2>Analysis</h2>
   <div>
     {#if paper.analysis.trim() === ""}
@@ -90,8 +94,8 @@
       <iframe
         sandbox="allow-same-origin allow-scripts"
         seamless
-        style="width:100%; height: 100%;"
-        srcdoc={renderLaTeX(paper.analysis)}
+        style="width:100%; height: 100%; border: none;"
+        srcdoc={renderLaTeX(paper.analysis, " font-size: 3em;")}
         title="latex-content"
       />
     {/if}
