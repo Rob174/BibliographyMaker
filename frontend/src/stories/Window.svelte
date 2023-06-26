@@ -11,6 +11,7 @@
   import DOIPaper from "./DOIPaper.svelte";
   import NonDOIPaper from "./NonDOIPaper.svelte";
   import GraphWindow from "./GraphWindow.svelte";
+  import PaperVisualization from "./PaperVisualization.svelte";
 
   let visibleWindow = "papersList";
   let paperdoi;
@@ -33,6 +34,7 @@
       window.removeEventListener("keydown", handleKeyDown);
     };
   });
+  let selectedPaper = null;
 </script>
 
 <div id="main">
@@ -46,6 +48,15 @@
       transition:fade
     >
       Papers list
+    </button>
+    <button
+      class={visibleWindow === "detail" ? "selected" : ""}
+      on:click={() => {
+        visibleWindow = "detail";
+      }}
+      transition:fade
+    >
+      Detail paper
     </button>
     <button
       class={visibleWindow === "paperDOI" ? "selected" : ""}
@@ -98,8 +109,16 @@
           return p;
         });
       }}
+      on:visualize={(e)=> {
+        selectedPaper = e.detail;
+        visibleWindow = "detail";
+      }}
     />
-  {:else if visibleWindow === "paperDOI"}
+    {:else if visibleWindow === "detail"}
+    <PaperVisualization
+      paper={selectedPaper}
+    />
+    {:else if visibleWindow === "paperDOI"}
     <DOIPaper bind:this={paperdoi} />
   {:else if visibleWindow === "paperNonDOI"}
     <NonDOIPaper bind:this={papernondoi} />

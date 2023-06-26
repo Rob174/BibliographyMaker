@@ -9,104 +9,99 @@
   import { copyToClipboard } from "./utils";
   const dispatch = createEventDispatcher();
 
-  export let paper: GenericPaper;
+  export let paper: GenericPaper = null;
 
   let tags = [];
   tagsPossibilities.subscribe((x) => {
     // Filter in x the tags that are in paper.tags (text field)
-    const tagsInPaper = new Set();
-    paper.tags.forEach((x) => tagsInPaper.add(x.text));
-    tags = x.filter((x) => tagsInPaper.has(x.text));
+    if (paper !== null) {
+      const tagsInPaper = new Set();
+      paper.tags.forEach((x) => tagsInPaper.add(x.text));
+      tags = x.filter((x) => tagsInPaper.has(x.text));
+    }
   });
 </script>
 
 <div id="root">
-  <h1>{paper.title}</h1>
-  <button
-    id="back-button"
-    on:click={() => {
-      dispatch("back-to-table");
-    }}
-    on:keydown={(e) => {
-      if (e.key == "Enter") dispatch("back-to-table");
-    }}><span class="material-symbols-outlined">table_chart </span></button
-  >
-  <p>
-    {paper.year} ; DOI: "<i
-      class="clickable"
-      on:click={() => {
-        copyToClipboard(paper.doi);
-      }}>{paper.doi}</i
-    >"" ; ID : "<i
-      class="clickable"
-      on:click={() => {
-        copyToClipboard(paper.id);
-      }}>{paper.id}</i
-    >"
-  </p>
-  <p />
-  <p>
-    <a
-      href={paper.url}
-      on:click={() => {
-        copyToClipboard(paper.url);
-      }}>{paper.url}</a
-    >
-  </p>
-  <p>
-    {paper.authors.map((x) => x.family + " " + x.given).join(" & ")}
-  </p>
-  <h2>Tags</h2>
-  <div>
-    {#each tags as t}
-      <TagButton tag_name={t.text} color={t.color} />
-    {/each}
-  </div>
-  <h2>Relevant texts</h2>
-  {#if paper.citations.length > 1 || (paper.citations.length && (paper.citations[0].text.trim() !== "" || paper.citations[0].files.length > 0))}
-    {#each paper.citations as c}
-      <div>
+  {#if paper !== null}
+    <h1>{paper.title}</h1>
+    <p>
+      {paper.year} ; DOI: "<i
+        class="clickable"
+        on:click={() => {
+          copyToClipboard(paper.doi);
+        }}>{paper.doi}</i
+      >"" ; ID : "<i
+        class="clickable"
+        on:click={() => {
+          copyToClipboard(paper.id);
+        }}>{paper.id}</i
+      >"
+    </p>
+    <p />
+    <p>
+      <a
+        href={paper.url}
+        on:click={() => {
+          copyToClipboard(paper.url);
+        }}>{paper.url}</a
+      >
+    </p>
+    <p>
+      {paper.authors.map((x) => x.family + " " + x.given).join(" & ")}
+    </p>
+    <h2>Tags</h2>
+    <div>
+      {#each tags as t}
+        <TagButton tag_name={t.text} color={t.color} />
+      {/each}
+    </div>
+    <h2>Relevant texts</h2>
+    {#if paper.citations.length > 1 || (paper.citations.length && (paper.citations[0].text.trim() !== "" || paper.citations[0].files.length > 0))}
+      {#each paper.citations as c}
         <div>
-          {#each c.tags as t1}
-            <TagButton
-              tag_name={t1}
-              color={tags.filter((x) => x.text == t1)[0].color}
-            />
-          {/each}
+          <div>
+            {#each c.tags as t1}
+              <TagButton
+                tag_name={t1}
+                color={tags.filter((x) => x.text == t1)[0].color}
+              />
+            {/each}
+          </div>
+          <div class="citation">
+            <p>{c.text}</p>
+            {#each c.files as f}
+              <!-- Render the image  -->
+              <img src={f} alt="" />
+            {/each}
+          </div>
         </div>
-        <div class="citation">
-          <p>{c.text}</p>
-          {#each c.files as f}
-            <!-- Render the image  -->
-            <img src={f} alt="" />
-          {/each}
-        </div>
-      </div>
-    {/each}
-  {:else}
-    No citations found
-  {/if}
-  <h2>Analysis</h2>
-  <div>
-    {#if paper.analysis.trim() === ""}
-      No analysis available.
+      {/each}
     {:else}
-      <iframe
-        sandbox="allow-same-origin allow-scripts"
-        seamless
-        style="width:100%; height: 100%; border: none;"
-        srcdoc={renderLaTeX(paper.analysis, " font-size: 3em;")}
-        title="latex-content"
-      />
+      No citations found
     {/if}
-  </div>
-  <button
-    class="full-size-button"
-    on:click={() => {
-      console.log(paper);
-      copyToClipboard(JSON.stringify(paper, null, 2));
-    }}>Get Data</button
-  >
+    <h2>Analysis</h2>
+    <div>
+      {#if paper.analysis.trim() === ""}
+        No analysis available.
+      {:else}
+        <iframe
+          sandbox="allow-same-origin allow-scripts"
+          seamless
+          style="width:100%; height: 100%; border: none;"
+          srcdoc={renderLaTeX(paper.analysis, " font-size: 3em;")}
+          title="latex-content"
+        />
+      {/if}
+    </div>
+    <button
+      class="full-size-button"
+      on:click={() => {
+        console.log(paper);
+        copyToClipboard(JSON.stringify(paper, null, 2));
+      }}>Get Data</button
+    >
+  {/if}
 </div>
 
 <style>

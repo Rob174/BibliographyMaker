@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { createEventDispatcher } from "svelte";
   /** A table to display the papers with 2 buttons to load a json or download the data. See PaperListElem for more details of the fields shown on each line
    * *@stores read/write paperStore, to have access to the papers in memory or load new papers 
    * *@stores read tagsPossibilities, to have access to the list of tags (see data for updates details)
@@ -9,6 +10,7 @@
   import PapersListElem from "./PapersListElem.svelte";
   import TagButton from "./TagButton.svelte";
 
+  const dispatch = createEventDispatcher();
   let papers: GenericPaper[];
   let tags = [];
   let id = 0;
@@ -112,7 +114,6 @@
     <TagButton tag_name={t.text} color={t.color} />
   {/each}
 </div>
-{#if view == "table"}
   {#key id}
     <table id="papers">
       <thead>
@@ -166,22 +167,13 @@
             on:edit
             on:delete
             on:visualize={(e) => {
-              selectedPaper = e.detail;
-              view = "detail";
+              dispatch("visualize", e.detail);
             }}
           />
         {/each}
       </tbody>
     </table>
   {/key}
-{:else if view == "detail"}
-  <PaperVisualization
-    paper={selectedPaper}
-    on:back-to-table={() => {
-      view = "table";
-    }}
-  />
-{/if}
 
 <style>
   .clickable {
