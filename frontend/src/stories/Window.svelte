@@ -1,7 +1,7 @@
 <script lang="ts">
   /**Contains all of the forms and allow to switch between them with a tab system at the top
-   * 
-  */
+   *
+   */
   import { fade } from "svelte/transition";
   import { onMount } from "svelte";
   import { genericPaperToDOIPaper, genericPaperToNonDOIPaper } from "./libs";
@@ -10,6 +10,7 @@
   import PapersList from "./PapersList.svelte";
   import DOIPaper from "./DOIPaper.svelte";
   import NonDOIPaper from "./NonDOIPaper.svelte";
+  import GraphWindow from "./GraphWindow.svelte";
 
   let visibleWindow = "papersList";
   let paperdoi;
@@ -102,6 +103,8 @@
     <DOIPaper bind:this={paperdoi} />
   {:else if visibleWindow === "paperNonDOI"}
     <NonDOIPaper bind:this={papernondoi} />
+  {:else if visibleWindow === "graph"}
+    <GraphWindow />
   {/if}
 </div>
 
