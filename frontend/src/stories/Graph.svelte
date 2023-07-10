@@ -45,9 +45,10 @@ const dispatch = createEventDispatcher();
     setTimeout(() => {
       // add the listener to each node to chaneg the view to the details wen click on a node of type paper
       document.querySelectorAll(".node").forEach((e) => {
-        for (let event in ["mouseleave", "mouseenter"]) {
+        for (let event of ["mouseleave", "mouseenter"]) {
           e.addEventListener(event, () => {
             const id = e.id;
+            // console.log(branchesElem.get(id),id)
             Array.from([...branchesElem.get(id)]).forEach((n) => {
               document.getElementById(n).classList.toggle("selected");
             });
@@ -65,22 +66,10 @@ const dispatch = createEventDispatcher();
         }
       });
       
-    },200)
+    },600)
   }
   onMount(() => {
     update();
-    setTimeout(() => {
-      document.querySelectorAll(".node").forEach((e) => {
-        for (let event in ["mouseleave", "mouseenter"]) {
-          e.addEventListener(event, () => {
-            const id = e.id;
-            Array.from([...branchesElem.get(id)]).forEach((n) => {
-              document.getElementById(n).classList.toggle("selected");
-            });
-          });
-        }
-      });
-    }, 100);
   });
 </script>
 
@@ -98,5 +87,8 @@ const dispatch = createEventDispatcher();
   }
   :global(.node:hover text) {
     fill:red;
+  }
+  :global(.selected polygon) {
+    stroke: orange;
   }
 </style>
