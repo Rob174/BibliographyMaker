@@ -5,7 +5,7 @@
   import Button from "./Button.svelte";
   import type { Structure } from "./graph";
   let structure: Structure[] = [];
-
+  
   let visibleWindow = "config";
   let papers = []
   paperStore.subscribe(p=>(papers = p))
@@ -58,7 +58,7 @@
         <Button label="Remove structure" on:click={removeStructure} />
     </div>
 {:else if visibleWindow === "graph"}
-  <Graph {structure} {papers} />
+  <Graph {structure} {papers} on:visualize/>
 {/if}
 
 <style>

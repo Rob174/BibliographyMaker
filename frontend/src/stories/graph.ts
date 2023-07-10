@@ -17,6 +17,136 @@ export type Node = {
     children: string[];
     papers: GenericPaper[];
 }
+export type NodeMap = Map<string, Set<string>>;
+
+type GraphNode = {
+    id: string;
+    children: string[];
+    allChildren: string[]
+    parents: string[];
+};
+function getBranches(nodes: Node[]): NodeMap {
+    const graph: Map<string, GraphNode> = new Map();
+
+    // Build the graph representation
+    for (const node of nodes) {
+        const allChildren = getAllChildren(node, nodes);
+        const parents = getParents(node.id, nodes);
+
+        graph.set(node.id, {
+            id: node.id,
+            children: node.children,
+            allChildren,
+            parents,
+        });
+
+        for (const childId of node.children) {
+            if (graph.has(childId)) {
+                graph.get(childId)!.parents.push(node.id);
+            } else {
+                graph.set(childId, {
+                    id: childId,
+                    children: [],
+                    allChildren: [],
+                    parents: [node.id],
+                });
+            }
+        }
+    }
+
+    // Build the node map using breadth-first search
+    const nodeMap: NodeMap = new Map();
+
+    for (const [nodeId, _] of graph) {
+        const visited = new Set<string>();
+        const queue: string[] = [];
+
+        // Perform BFS traversal starting from the current node
+        queue.push(nodeId);
+
+        while (queue.length > 0) {
+            const currentId = queue.shift()!;
+            visited.add(currentId);
+
+            const currentNode = graph.get(currentId)!;
+
+            if (!nodeMap.has(currentNode.id)) {
+                nodeMap.set(currentNode.id, new Set<string>());
+            }
+
+            // Add parents and their children to node map
+            for (const parentId of currentNode.parents) {
+                if (!visited.has(parentId)) {
+                    nodeMap.get(currentNode.id)?.add(parentId);
+                    queue.push(parentId);
+                    visited.add(parentId);
+
+                    const parentChildren = graph.get(parentId)!.children;
+                    for (const childId of parentChildren) {
+                        if (!visited.has(childId)) {
+                            nodeMap.get(currentNode.id)?.add(childId);
+                            queue.push(childId);
+                            visited.add(childId);
+                        }
+
+                        const childNode = graph.get(childId);
+                        if (childNode) {
+                            const indirectChildren = childNode.allChildren;
+                            for (const indirectChildId of indirectChildren) {
+                                if (!visited.has(indirectChildId)) {
+                                    nodeMap.get(currentNode.id)?.add(indirectChildId);
+                                    queue.push(indirectChildId);
+                                    visited.add(indirectChildId);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Add children to node map
+            for (const childId of currentNode.children) {
+                if (!visited.has(childId)) {
+                    nodeMap.get(currentNode.id)?.add(childId);
+                    queue.push(childId);
+                    visited.add(childId);
+                }
+            }
+        }
+    }
+
+    return nodeMap;
+}
+
+function getAllChildren(node: Node, nodes: Node[]): string[] {
+    let allChildren: string[] = [];
+
+    for (const childId of node.children) {
+        const childNode = nodes.find((n) => n.id === childId);
+        if (childNode) {
+            allChildren.push(childId, ...getAllChildren(childNode, nodes));
+
+            const indirectChildren = childNode.children;
+            for (const indirectChildId of indirectChildren) {
+                allChildren.push(indirectChildId, ...getAllChildren(nodes.find((n) => n.id === indirectChildId)!, nodes));
+            }
+        }
+    }
+
+    return allChildren;
+}
+
+function getParents(nodeId: string, nodes: Node[]): string[] {
+    const parents: string[] = [];
+
+    for (const node of nodes) {
+        if (node.children.includes(nodeId)) {
+            parents.push(node.id, ...getParents(node.id, nodes));
+        }
+    }
+
+    return parents;
+}
 export function applyStructure(structure: Structure[], papers: GenericPaper[]) {
     // We want to extract given a list of Structures the tags for each one + other tags that are not in the structure
     let papersAvailable = papers.slice();
@@ -112,10 +242,12 @@ export function applyStructure(structure: Structure[], papers: GenericPaper[]) {
         children: bfs(queue, papersAvailable),
         papers: papersAvailable
     })
+    console.log(papers, nodes)
     return nodes
 }
-export async function nodesToSvg(structure: Structure[], papers: GenericPaper[], getLabel: (paper: Node) => string) {
+export async function nodesToSvg(structure: Structure[], papers: GenericPaper[], getLabel: (paper: Node) => string, dispatch) {
     const nodes = applyStructure(structure, papers);
+    const branches = await getBranches(nodes);
     // Make the dot graph
     const nodesTxt = nodes.map(n => `"${n.id}" [label="${getLabel(n)}", id="${n.id}"]`).join("\n");
     const linksTxt = nodes.map(n => n.children.map(c => `"${n.id}" -> "${c}"`).join("\n")).join("\n");
@@ -128,5 +260,9 @@ export async function nodesToSvg(structure: Structure[], papers: GenericPaper[],
     // We then convert it to svg
     const viz = await Viz.instance();
     const serializer = new XMLSerializer();
-    return {graph:await serializer.serializeToString(await viz.renderSVGElement(dot)), nodes};
+    const svg = await viz.renderSVGElement(dot)
+    const graph = await serializer.serializeToString(svg)
+    // Add the listeners
+    return {graph, nodes, branches};
 }
+// function addPaperDetail(html: )

@@ -123,7 +123,12 @@
   {:else if visibleWindow === "paperNonDOI"}
     <NonDOIPaper bind:this={papernondoi} />
   {:else if visibleWindow === "graph"}
-    <GraphWindow />
+    <GraphWindow 
+    on:visualize={(e)=> {
+      console.log("eve,t")
+      selectedPaper = e.detail;
+      visibleWindow = "detail";
+    }}/>
   {/if}
 </div>
 

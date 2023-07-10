@@ -18,7 +18,7 @@ export const Primary: Story = {
   args: {
     papers: [
       {
-        id: "342afd76-3268-4841-98c8-56c601fe93de",
+        id: "343afd76-3268-4841-98c8-56c601fe93de",
         doi: "10.1016/j.dam.2005.05.028",
         url: "https://www.sciencedirect.com/science/article/pii/S0166218X05003021",
         tags: [
@@ -38,7 +38,7 @@ export const Primary: Story = {
         analysis: "sdf",
         type: "doi",
         title:
-          "Computational complexity of isothermic DNA sequencing by hybridization",
+          "Title1",
         authors: [
           {
             given: "Jacek",
@@ -520,7 +520,289 @@ export const Primary: Story = {
         ],
         analysis: "sddsds",
         type: "doi",
-        title: "First vs. best improvement: An empirical study",
+        title: "Title2",
+        authors: [
+          {
+            given: "Pierre",
+            family: "Hansen",
+            sequence: "first",
+            affiliation: [],
+          },
+          {
+            given: "Nenad",
+            family: "Mladenović",
+            sequence: "additional",
+            affiliation: [],
+          },
+        ],
+        year: 2006,
+        bibtex: {
+          indexed: {
+            "date-parts": [[2023, 6, 26]],
+            "date-time": "2023-06-26T08:26:53Z",
+            timestamp: 1687768013237,
+          },
+          "reference-count": 11,
+          publisher: "Elsevier BV",
+          issue: "5",
+          license: [
+            {
+              start: {
+                "date-parts": [[2006, 4, 1]],
+                "date-time": "2006-04-01T00:00:00Z",
+                timestamp: 1143849600000,
+              },
+              "content-version": "tdm",
+              "delay-in-days": 0,
+              URL: "https://www.elsevier.com/tdm/userlicense/1.0/",
+            },
+            {
+              start: {
+                "date-parts": [[2013, 7, 17]],
+                "date-time": "2013-07-17T00:00:00Z",
+                timestamp: 1374019200000,
+              },
+              "content-version": "vor",
+              "delay-in-days": 2664,
+              URL: "https://www.elsevier.com/open-access/userlicense/1.0/",
+            },
+          ],
+          "content-domain": {
+            domain: [],
+            "crossmark-restriction": false,
+          },
+          "short-container-title": ["Discrete Applied Mathematics"],
+          "published-print": {
+            "date-parts": [[2006, 4]],
+          },
+          DOI: "10.1016/j.dam.2005.05.020",
+          type: "journal-article",
+          created: {
+            "date-parts": [[2005, 12, 15]],
+            "date-time": "2005-12-15T17:59:32Z",
+            timestamp: 1134669572000,
+          },
+          page: "802-817",
+          source: "Crossref",
+          "is-referenced-by-count": 74,
+          title: ["First vs. best improvement: An empirical study"],
+          prefix: "10.1016",
+          volume: "154",
+          author: [
+            {
+              given: "Pierre",
+              family: "Hansen",
+              sequence: "first",
+              affiliation: [],
+            },
+            {
+              given: "Nenad",
+              family: "Mladenović",
+              sequence: "additional",
+              affiliation: [],
+            },
+          ],
+          member: "78",
+          reference: [
+            {
+              key: "10.1016/j.dam.2005.05.020_bib1",
+              "doi-asserted-by": "crossref",
+              "first-page": "387",
+              DOI: "10.1287/ijoc.4.4.387",
+              "article-title":
+                "Fast algorithms for geometric traveling salesman problem",
+              volume: "4",
+              author: "Bentley",
+              year: "1992",
+              "journal-title": "ORSA J. Comput.",
+            },
+            {
+              key: "10.1016/j.dam.2005.05.020_bib2",
+              "doi-asserted-by": "crossref",
+              "first-page": "791",
+              DOI: "10.1287/opre.6.6.791",
+              "article-title":
+                "A method for solving traveling salesman problems",
+              volume: "6",
+              author: "Croes",
+              year: "1958",
+              "journal-title": "Oper. Res.",
+            },
+            {
+              issue: "1",
+              key: "10.1016/j.dam.2005.05.020_bib3",
+              "doi-asserted-by": "crossref",
+              "first-page": "61",
+              DOI: "10.1287/opre.4.1.61",
+              "article-title": "The traveling salesman problem",
+              volume: "4",
+              author: "Flood",
+              year: "1956",
+              "journal-title": "Oper. Res.",
+            },
+            {
+              key: "10.1016/j.dam.2005.05.020_bib4",
+              "doi-asserted-by": "crossref",
+              "first-page": "432",
+              DOI: "10.1006/jagm.1995.1018",
+              "article-title": "Data structures for traveling salesman",
+              volume: "18",
+              author: "Fredman",
+              year: "1995",
+              "journal-title": "J. Algorithms",
+            },
+            {
+              key: "10.1016/j.dam.2005.05.020_bib5",
+              "doi-asserted-by": "crossref",
+              "first-page": "449",
+              DOI: "10.1016/S0377-2217(00)00100-4",
+              "article-title":
+                "Variable neighborhood search: principles and applications",
+              volume: "130",
+              author: "Hansen",
+              year: "2001",
+              "journal-title": "European J. Oper. Res.",
+            },
+            {
+              key: "10.1016/j.dam.2005.05.020_bib6",
+              "doi-asserted-by": "crossref",
+              unstructured:
+                "P. Hansen, N. Mladenovic, Variable neighbourhood search in: F. Glover, G. Kochenberger (Eds.), Handbook of Mataheuristics, Kluwer Academic Publishers, Dordrecht, 2003, pp. 145–184.",
+              DOI: "10.4114/ia.v7i19.717",
+            },
+            {
+              key: "10.1016/j.dam.2005.05.020_bib7",
+              "series-title": "Local Search in Combinatorial Optimization",
+              "article-title":
+                "The traveling salesman problem: a case study in local optimization",
+              author: "Johnson",
+              year: "1996",
+            },
+            {
+              key: "10.1016/j.dam.2005.05.020_bib8",
+              "doi-asserted-by": "crossref",
+              "first-page": "48",
+              DOI: "10.1090/S0002-9939-1956-0078686-7",
+              "article-title":
+                "On the shortest spanning subtree of a graph and the traveling salesman problem",
+              volume: "7",
+              author: "Kruskal",
+              year: "1956",
+              "journal-title": "Proc. Amer. Math. Soc.",
+            },
+            {
+              key: "10.1016/j.dam.2005.05.020_bib9",
+              "doi-asserted-by": "crossref",
+              "first-page": "1097",
+              DOI: "10.1016/S0305-0548(97)00031-2",
+              "article-title": "Variable neighborhood search",
+              volume: "24",
+              author: "Mladenović",
+              year: "1997",
+              "journal-title": "Comput. Oper. Res.",
+            },
+            {
+              key: "10.1016/j.dam.2005.05.020_bib10",
+              "doi-asserted-by": "crossref",
+              "first-page": "376",
+              DOI: "10.1287/ijoc.3.4.376",
+              "article-title": "TSP-LIB a traveling salesman library",
+              volume: "3",
+              author: "Reinelt",
+              year: "1991",
+              "journal-title": "ORSA J. Comput.",
+            },
+            {
+              key: "10.1016/j.dam.2005.05.020_bib11",
+              "series-title":
+                "Proceedings of the 6th Annual Alerton Conference on Communication, Control and Computing",
+              "first-page": "814",
+              "article-title":
+                "Some improved algorithms for computer solution of the traveling salesman problem",
+              author: "Steiglitz",
+              year: "1968",
+            },
+          ],
+          "container-title": ["Discrete Applied Mathematics"],
+          "original-title": [],
+          language: "en",
+          link: [
+            {
+              URL: "https://api.elsevier.com/content/article/PII:S0166218X05003070?httpAccept=text/xml",
+              "content-type": "text/xml",
+              "content-version": "vor",
+              "intended-application": "text-mining",
+            },
+            {
+              URL: "https://api.elsevier.com/content/article/PII:S0166218X05003070?httpAccept=text/plain",
+              "content-type": "text/plain",
+              "content-version": "vor",
+              "intended-application": "text-mining",
+            },
+          ],
+          deposited: {
+            "date-parts": [[2019, 1, 19]],
+            "date-time": "2019-01-19T14:51:49Z",
+            timestamp: 1547909509000,
+          },
+          score: 1,
+          resource: {
+            primary: {
+              URL: "https://linkinghub.elsevier.com/retrieve/pii/S0166218X05003070",
+            },
+          },
+          subtitle: [],
+          "short-title": [],
+          issued: {
+            "date-parts": [[2006, 4]],
+          },
+          "references-count": 11,
+          "journal-issue": {
+            issue: "5",
+            "published-print": {
+              "date-parts": [[2006, 4]],
+            },
+          },
+          "alternative-id": ["S0166218X05003070"],
+          URL: "http://dx.doi.org/10.1016/j.dam.2005.05.020",
+          relation: {},
+          ISSN: ["0166-218X"],
+          "issn-type": [
+            {
+              value: "0166-218X",
+              type: "print",
+            },
+          ],
+          subject: [
+            "Applied Mathematics",
+            "Discrete Mathematics and Combinatorics",
+          ],
+          published: {
+            "date-parts": [[2006, 4]],
+          },
+        },
+      },
+      {
+        id: "fcadf338-edb4-4888-981a-ffb2143d5e86",
+        doi: "10.1016/j.dam.2005.05.020",
+        url: "10.1016/j.dam.2005.05.020",
+        tags: [
+          {
+            id: "7665e06e-f1f2-483a-bd5f-d7e09d41846a",
+            text: "aaze",
+          },
+        ],
+        citations: [
+          {
+            id: "0ab63c65-cc34-4d0f-9ecf-51a4a11c4016",
+            text: "provement at each iteration gives worse results on average than selecting the first improvement, if the initial so",
+            tags: ["aaze"],
+            files: [],
+          },
+        ],
+        analysis: "sddsds",
+        type: "doi",
+        title: "Patate et carrotes",
         authors: [
           {
             given: "Pierre",
@@ -785,11 +1067,24 @@ export const Primary: Story = {
     ],
     structure: [
       {
-        "id":uuidv4(),
-        "expression": "others",
-        "children":[],
-        "type":"tag"
-      }
-    ]
+        id: uuidv4(),
+        expression: "others",
+        children: [
+          {
+            id: uuidv4(),
+            expression: "aaze",
+            children: [],
+            type: "tag",
+          },
+          {
+            id: uuidv4(),
+            expression: "others",
+            children: [],
+            type: "tag",
+          },
+        ],
+        type: "tag",
+      },
+    ],
   },
 };
