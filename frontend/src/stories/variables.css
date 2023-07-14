@@ -1,6 +1,9 @@
 :root {
-  --accent-color: red;
-  --neutral-color: grey;
-  --light-neutral-color: hsl(0, 0%, 75%);
+  --accent-color: #71303b;
+  --neutral-color: hsl(196, 31%, 15%);
+  --light-neutral-color: hsl(196, 31%, 80%);
   --transition-duration: 100ms;
+}
+body {
+  color: var(--neutral-color);
 }
