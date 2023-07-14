@@ -49,7 +49,20 @@ const dispatch = createEventDispatcher();
             const id = e.id;
             Array.from([...branchesElem.get(id)]).forEach((n) => {
               document.getElementById(n).classList.toggle("selected");
+              // And select edges with id composed of the characters of the source node and the characters of the destination node
+              Array.from(document.querySelectorAll(".edge")).forEach((edge) => {
+                const [id1,id2] = edge.id.split("_")
+                // if id1 and id2 in branchesElem then toogle
+                const branch = Array.from([...branchesElem.get(id)])
+                branch.push(id)
+                const branchSet = new Set(branch)
+                if (branchSet.has(id1) && branchSet.has(id2)) {
+                    edge.classList.toggle("selected");
+                }
+                
+              });
             });
+            
           });
         }
         // if node of type paper
@@ -87,6 +100,9 @@ const dispatch = createEventDispatcher();
     fill:red;
   }
   :global(.selected polygon) {
+    stroke: orange;
+  }
+  :global(.selected path) {
     stroke: orange;
   }
 </style>

@@ -233,7 +233,7 @@ export async function nodesToSvg(structure: Structure[], papers: GenericPaper[],
     const branches = await getBranches(nodes);
     // Make the dot graph
     const nodesTxt = nodes.map(n => `"${n.id}" [label="${getLabel(n)}", id="${n.id}"]`).join("\n");
-    const linksTxt = nodes.map(n => n.children.map(c => `"${n.id}" -> "${c}"`).join("\n")).join("\n");
+    const linksTxt = nodes.map(n => n.children.map(c => `"${n.id}" -> "${c}"[id="${n.id}_${c}"]`).join("\n")).join("\n");
     const dot = `digraph {
         rankdir=LR;
         node [shape=box];
