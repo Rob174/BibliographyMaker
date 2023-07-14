@@ -27,97 +27,80 @@ type GraphNode = {
 };
 function getBranches(nodes: Node[]): NodeMap {
     const graph: Map<string, GraphNode> = new Map();
-
+  
     // Build the graph representation
     for (const node of nodes) {
-        const allChildren = getAllChildren(node, nodes);
-        const parents = getParents(node.id, nodes);
-
-        graph.set(node.id, {
-            id: node.id,
-            children: node.children,
-            allChildren,
-            parents,
-        });
-
+      const allChildren = getAllChildren(node, nodes);
+      const parents = getParents(node.id, nodes);
+  
+      graph.set(node.id, {
+        id: node.id,
+        children: node.children,
+        allChildren,
+        parents,
+      });
+  
+      for (const childId of node.children) {
+        if (graph.has(childId)) {
+          graph.get(childId)!.parents.push(node.id);
+        } else {
+          graph.set(childId, {
+            id: childId,
+            children: [],
+            allChildren: [],
+            parents: [node.id],
+          });
+        }
+      }
+    }
+  
+    // Helper function to recursively get all descendants of a node
+    function getAllDescendants(nodeId: string): Set<string> {
+      const descendants = new Set<string>();
+      const node = graph.get(nodeId);
+  
+      if (node) {
         for (const childId of node.children) {
-            if (graph.has(childId)) {
-                graph.get(childId)!.parents.push(node.id);
-            } else {
-                graph.set(childId, {
-                    id: childId,
-                    children: [],
-                    allChildren: [],
-                    parents: [node.id],
-                });
-            }
+          descendants.add(childId);
+          const childDescendants = getAllDescendants(childId);
+          for (const descendantId of childDescendants) {
+            descendants.add(descendantId);
+          }
         }
+      }
+  
+      return descendants;
     }
-
-    // Build the node map using breadth-first search
+  
+    // Create the NodeMap with children and ancestors
     const nodeMap: NodeMap = new Map();
-
-    for (const [nodeId, _] of graph) {
-        const visited = new Set<string>();
-        const queue: string[] = [];
-
-        // Perform BFS traversal starting from the current node
-        queue.push(nodeId);
-
-        while (queue.length > 0) {
-            const currentId = queue.shift()!;
-            visited.add(currentId);
-
-            const currentNode = graph.get(currentId)!;
-
-            if (!nodeMap.has(currentNode.id)) {
-                nodeMap.set(currentNode.id, new Set<string>());
-            }
-
-            // Add parents and their children to node map
-            for (const parentId of currentNode.parents) {
-                if (!visited.has(parentId)) {
-                    nodeMap.get(currentNode.id)?.add(parentId);
-                    queue.push(parentId);
-                    visited.add(parentId);
-
-                    const parentChildren = graph.get(parentId)!.children;
-                    for (const childId of parentChildren) {
-                        if (!visited.has(childId)) {
-                            nodeMap.get(currentNode.id)?.add(childId);
-                            queue.push(childId);
-                            visited.add(childId);
-                        }
-
-                        const childNode = graph.get(childId);
-                        if (childNode) {
-                            const indirectChildren = childNode.allChildren;
-                            for (const indirectChildId of indirectChildren) {
-                                if (!visited.has(indirectChildId)) {
-                                    nodeMap.get(currentNode.id)?.add(indirectChildId);
-                                    queue.push(indirectChildId);
-                                    visited.add(indirectChildId);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            // Add children to node map
-            for (const childId of currentNode.children) {
-                if (!visited.has(childId)) {
-                    nodeMap.get(currentNode.id)?.add(childId);
-                    queue.push(childId);
-                    visited.add(childId);
-                }
-            }
+  
+    for (const node of nodes) {
+      const descendants = getAllDescendants(node.id);
+      const ancestors = new Set<string>();
+  
+      let parentIds = graph.get(node.id)?.parents;
+  
+      while (parentIds && parentIds.length > 0) {
+        const newParentIds: string[] = [];
+  
+        for (const parentId of parentIds) {
+          ancestors.add(parentId);
+  
+          const parent = graph.get(parentId);
+          if (parent && parent.parents.length > 0) {
+            newParentIds.push(...parent.parents);
+          }
         }
+  
+        parentIds = newParentIds;
+      }
+  
+      nodeMap.set(node.id, new Set([...descendants, ...ancestors]));
     }
-
+  
     return nodeMap;
-}
-
+  }
 function getAllChildren(node: Node, nodes: Node[]): string[] {
     let allChildren: string[] = [];
 

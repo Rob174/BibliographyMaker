@@ -38,7 +38,6 @@ const dispatch = createEventDispatcher();
       },
       dispatch
     );
-    console.log(nodes);
     graphSvg = graph;
     nodesList = nodes;
     branchesElem = branches;
@@ -48,7 +47,6 @@ const dispatch = createEventDispatcher();
         for (let event of ["mouseleave", "mouseenter"]) {
           e.addEventListener(event, () => {
             const id = e.id;
-            // console.log(branchesElem.get(id),id)
             Array.from([...branchesElem.get(id)]).forEach((n) => {
               document.getElementById(n).classList.toggle("selected");
             });
