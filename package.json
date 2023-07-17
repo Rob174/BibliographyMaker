@@ -30,7 +30,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "storybook": "^7.0.18",
-    "svelte": "^3.52.0",
+    "svelte": "^3.53.0",
     "svelte-check": "^2.9.2",
     "svelte-click-outside": "^1.0.0",
     "svelte-preprocess": "^4.10.7",
