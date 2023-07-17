@@ -1,6 +1,6 @@
 import type { GenericPaper } from "../data";
 import { v4 as uuidv4 } from "uuid";
-import * as Viz from "@viz-js/viz/lib/viz-standalone"
+import * as Viz from "../../node_modules/@viz-js/viz/lib/viz-standalone.js"
 export type Structure = {
     id: string;
     type: "tag" | "expression"
