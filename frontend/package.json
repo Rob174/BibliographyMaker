@@ -9,7 +9,10 @@
     "preview": "vite preview",
     "check": "svelte-check --tsconfig ./tsconfig.json",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist",
+    "clean": "gh-pages-clean"
   },
   "devDependencies": {
     "@storybook/addon-essentials": "^7.0.18",
@@ -21,6 +24,7 @@
     "@storybook/testing-library": "^0.0.14-next.2",
     "@sveltejs/vite-plugin-svelte": "^1.1.0",
     "@tsconfig/svelte": "^3.0.0",
+    "gh-pages": "^5.0.0",
     "katex": "^0.16.4",
     "latex.js": "^0.12.4",
     "react": "^18.2.0",
