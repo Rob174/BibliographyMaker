@@ -18,7 +18,7 @@
       const reader = new FileReader();
       reader.onload = (e) => {
         const data = JSON.parse(e.target.result);
-        structure.push(data);
+        structure = data;
       };
       reader.readAsText(file);
     };

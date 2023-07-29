@@ -109,6 +109,12 @@
     navigator.clipboard.writeText(jsonString);
   }}
 />
+<Button
+  label="Clear data"
+  on:click={() => {
+    paperStore.set([])
+  }}
+/>
 <div id="tags">
   {#each tags as t}
     <TagButton tag_name={t.text} color={t.color} />

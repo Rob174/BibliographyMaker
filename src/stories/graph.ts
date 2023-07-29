@@ -1,6 +1,6 @@
 import type { GenericPaper } from "../data";
 import { v4 as uuidv4 } from "uuid";
-import * as Viz from "../../node_modules/@viz-js/viz/lib/viz-standalone.js"
+import { instance } from "@viz-js/viz";
 export type Structure = {
     id: string;
     type: "tag" | "expression"
@@ -135,6 +135,7 @@ export function applyStructure(structure: Structure[], papers: GenericPaper[]) {
     let papersAvailable = papers.slice();
     // Then we do a BFS to extract the tags
     let queue = structure.slice()
+    console.log(queue)
     var nodes = [];
     const bfs = (queue: Structure[], papersAvailable: GenericPaper[]) => {
         // Recursive version of the bfs
@@ -145,6 +146,7 @@ export function applyStructure(structure: Structure[], papers: GenericPaper[]) {
         let others = {present:false, structure: null};
         let childrenIds = [];
         queue.forEach((s: Structure):Node[] => {
+            console.log(s)
             var node = {
                 id: get_id(),
                 type: s.type,
@@ -164,6 +166,7 @@ export function applyStructure(structure: Structure[], papers: GenericPaper[]) {
                 // If the structure is an expression we need to extract the tags from the expression
                 node.papers = papersAvailable.filter(paper => {
                     // We replace each tag that is in paper.tags by true inside the string
+                    console.log(s.expression)
                     let expression = s.expression.slice();
                     // We want to match the biggest tags before the smallest so we order the tags to have the longest first
                     let tags = paper.tags.slice().sort((a, b) => b.text.length - a.text.length)
@@ -232,6 +235,7 @@ export async function nodesToSvg(structure: Structure[], papers: GenericPaper[],
     const nodes = applyStructure(structure, papers);
     const branches = await getBranches(nodes);
     // Make the dot graph
+    console.log(nodes)
     const nodesTxt = nodes.map(n => `"${n.id}" [label="${getLabel(n)}", id="${n.id}"]`).join("\n");
     const linksTxt = nodes.map(n => n.children.map(c => `"${n.id}" -> "${c}"[id="${n.id}_${c}"]`).join("\n")).join("\n");
     const dot = `digraph {
@@ -241,7 +245,8 @@ export async function nodesToSvg(structure: Structure[], papers: GenericPaper[],
         ${linksTxt}
     };`
     // We then convert it to svg
-    const viz = await Viz.instance();
+    console.log(instance)
+    const viz = await instance();
     const serializer = new XMLSerializer();
     const svg = await viz.renderSVGElement(dot)
     const graph = await serializer.serializeToString(svg)
