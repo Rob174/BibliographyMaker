@@ -66,6 +66,20 @@ export type GenericPaper = {
   analysis: string;
   bibtex: BibtexType;
 };
+export type CommonPaper = {
+  id: string;
+  type: PaperType;
+  title: string;
+  authors: AuthorType[];
+  year: string;
+  url: string;
+  doi: string;
+  citations: CitationType[];
+  relevant: CitationType[];
+  tags: TagType[];
+  analysis: string;
+  bibtex: BibtexType;
+};
 export const doiPaperStore: Writable<DOIPaper> = writable(emptyDOIPaper());
 export const nonDoiPaperStore: Writable<NonDOIPaper> = writable(
   emptyNonDOIPaper()
@@ -84,29 +98,30 @@ paperStore.subscribe((paperStore) => {
   sortedTags.sort();
   const colors = generateColors(sortedTags.length);
   console.log("colors", colors);
-  tagsPossibilities.set(sortedTags.map((x, i) => ({
-    id: uuidv4(),
-    text: x,
-    color: colors[i],
-  })));
+  tagsPossibilities.set(
+    sortedTags.map((x, i) => ({
+      id: uuidv4(),
+      text: x,
+      color: colors[i],
+    }))
+  );
   if (loaded) {
-    saveToLocalStorage("paperStore",paperStore);
+    saveToLocalStorage("paperStore", paperStore);
   }
   loaded = true;
 });
 export function restoreFromLocalStorage() {
-  console.log("Restoring...")
+  console.log("Restoring...");
   const paperStoreValues = getFromLocalStorage("paperStore");
-  console.log("Found ",paperStoreValues)
+  console.log("Found ", paperStoreValues);
   if (paperStoreValues && paperStoreValues !== null) {
     paperStore.update((paperStore) => paperStoreValues);
-  }
-  else {
-    console.log("Nothing found")
+  } else {
+    console.log("Nothing found");
   }
 }
 export function saveToLocalStorage(key, value) {
-  console.log("Saving to local storage ",value)
+  console.log("Saving to local storage ", value);
   localStorage.setItem(key, JSON.stringify(value));
 }
 
@@ -114,3 +129,4 @@ export function getFromLocalStorage(key) {
   const item = localStorage.getItem(key);
   return item ? JSON.parse(item) : null;
 }
+// export function convertToGenericPaper(paper: )

@@ -123,7 +123,7 @@
   {#key id}
     <table id="papers">
       <thead>
-        <tr>
+        <tr style="color: white">
           <th rowspan="2" />
           <th rowspan="2">Detail </th>
           <th

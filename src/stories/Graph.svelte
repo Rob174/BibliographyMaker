@@ -7,7 +7,7 @@
   import { nodesToSvg } from "./graph";
   import type { Structure, Node, NodeMap } from "./graph";
   import { onMount } from "svelte";
-import { createEventDispatcher } from "svelte";
+  import { createEventDispatcher } from "svelte";
   export let structure: Structure[] = [
     { id: "aaaa", type: "tag", expression: "CNN", children: [] },
   ];
@@ -17,7 +17,7 @@ import { createEventDispatcher } from "svelte";
   var nodesList: Node[] = [];
   let nodesMap = new Map();
   let branchesElem: NodeMap | null = null;
-const dispatch = createEventDispatcher();
+  const dispatch = createEventDispatcher();
   nodesList.forEach((n) => {
     nodesMap.set(n.id, n);
   });
@@ -31,6 +31,7 @@ const dispatch = createEventDispatcher();
         } else if (Array.from(["tag", "expression"]).includes(node.type)) {
           return `${node.expression}\n${node.papers.length} papers`;
         } else if (Array.from(["paper"]).includes(node.type)) {
+          // console.log(node);
           return `${node.papers[0].title}`;
         } else {
           throw new Error();
@@ -38,6 +39,7 @@ const dispatch = createEventDispatcher();
       },
       dispatch
     );
+    console.log(nodes);
     graphSvg = graph;
     nodesList = nodes;
     branchesElem = branches;
@@ -51,33 +53,30 @@ const dispatch = createEventDispatcher();
               document.getElementById(n).classList.toggle("selected");
               // And select edges with id composed of the characters of the source node and the characters of the destination node
               Array.from(document.querySelectorAll(".edge")).forEach((edge) => {
-                const [id1,id2] = edge.id.split("_")
+                const [id1, id2] = edge.id.split("_");
                 // if id1 and id2 in branchesElem then toogle
-                const branch = Array.from([...branchesElem.get(id)])
-                branch.push(id)
-                const branchSet = new Set(branch)
+                const branch = Array.from([...branchesElem.get(id)]);
+                branch.push(id);
+                const branchSet = new Set(branch);
                 if (branchSet.has(id1) && branchSet.has(id2)) {
-                    edge.classList.toggle("selected");
+                  edge.classList.toggle("selected");
                 }
-                
               });
             });
-            
           });
         }
         // if node of type paper
         const id = e.id;
-        const node = nodes.find(x=>x.id === id) 
-        if(node) {
-          if(node.type === "paper") {
+        const node = nodes.find((x) => x.id === id);
+        if (node) {
+          if (node.type === "paper") {
             e.addEventListener("click", () => {
               dispatch("visualize", node.papers[0]);
             });
           }
         }
       });
-      
-    },600)
+    }, 600);
   }
   onMount(() => {
     update();
@@ -91,13 +90,12 @@ const dispatch = createEventDispatcher();
 <style>
   :global(.node) {
     cursor: pointer;
-
   }
   :global(.node:hover > polygon) {
     stroke: red;
   }
   :global(.node:hover text) {
-    fill:red;
+    fill: red;
   }
   :global(.selected polygon) {
     stroke: orange;

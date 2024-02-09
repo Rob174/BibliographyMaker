@@ -19,6 +19,7 @@
       reader.onload = (e) => {
         const data = JSON.parse(e.target.result);
         structure = data;
+        console.log(structure)
       };
       reader.readAsText(file);
     };

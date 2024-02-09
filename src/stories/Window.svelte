@@ -109,26 +109,24 @@
           return p;
         });
       }}
-      on:visualize={(e)=> {
+      on:visualize={(e) => {
         selectedPaper = e.detail;
         visibleWindow = "detail";
       }}
     />
-    {:else if visibleWindow === "detail"}
-    <PaperVisualization
-      paper={selectedPaper}
-    />
-    {:else if visibleWindow === "paperDOI"}
+  {:else if visibleWindow === "detail"}
+    <PaperVisualization paper={selectedPaper} />
+  {:else if visibleWindow === "paperDOI"}
     <DOIPaper bind:this={paperdoi} />
   {:else if visibleWindow === "paperNonDOI"}
     <NonDOIPaper bind:this={papernondoi} />
   {:else if visibleWindow === "graph"}
-    <GraphWindow 
-    on:visualize={(e)=> {
-      console.log("eve,t")
-      selectedPaper = e.detail;
-      visibleWindow = "detail";
-    }}/>
+    <GraphWindow
+      on:visualize={(e) => {
+        selectedPaper = e.detail;
+        visibleWindow = "detail";
+      }}
+    />
   {/if}
 </div>
 
@@ -154,7 +152,9 @@
     background-color: #ccc;
   }
   :root {
-    font-family: Open Sans, sans-serif;
+    font-family:
+      Open Sans,
+      sans-serif;
   }
   #main {
     padding: 2em;

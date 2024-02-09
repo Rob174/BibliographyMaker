@@ -1,6 +1,6 @@
 :root {
   --accent-color: #71303b;
-  --neutral-color: hsl(0, 0%, 62%);
+  --neutral-color: hsl(0, 0%, 46%);
   --light-neutral-color: hsl(196, 31%, 80%);
   --transition-duration: 100ms;
 }

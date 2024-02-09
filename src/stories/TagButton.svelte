@@ -36,4 +36,9 @@
     color: white;
     border-color: white;
   }
+  button:active {
+    background-color: white;
+    color: black;
+    border-color: black;
+  }
 </style>

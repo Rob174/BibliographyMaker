@@ -20,12 +20,16 @@
       tags = x.filter((x) => tagsInPaper.has(x.text));
     }
   });
+  console.log(paper)
 </script>
 
 <div id="root">
   {#if paper !== null}
     <h1>{paper.title}</h1>
     <p>
+      <!-- svelte-ignore a11y-click-events-have-key-events -->
+      <!-- svelte-ignore a11y-no-static-element-interactions -->
+      <!-- svelte-ignore a11y-click-events-have-key-events -->
       {paper.year} ; DOI: "<i
         class="clickable"
         on:click={() => {
